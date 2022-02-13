@@ -17,7 +17,8 @@ import { useGroups, usePerson } from '../../hooks';
 
 type ListProps = {
   groups: IGroupData[];
-  idPerson: number,
+  onDelete: (idGroup: number) => void; 
+  idPerson: number;
   selectedIndex: number;
   onClick: (index: number) => void;
 };
@@ -59,14 +60,8 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }));
 
 
-export const AccordionCp: React.FC<ListProps> = ({ groups, idPerson }) => {
-  const [groupIdDelete, setGroupIdDelete] = useState(0);
-  const { deleteGroupByGroupId } = useGroups();
+export const AccordionCp: React.FC<ListProps> = ({ groups, idPerson, onDelete }) => {
 
-  const handleDeleteGroup = useCallback(async () => {
-    await deleteGroupByGroupId(groupIdDelete);
-  },
-    []);
 
   return (
     <div>
@@ -88,7 +83,7 @@ export const AccordionCp: React.FC<ListProps> = ({ groups, idPerson }) => {
                   <IconButton 
                     edge="end"
                     aria-label="deleteGroup"
-                    // onClick={setGroupIdDelete(this.idGroup)}
+                    onClick={() => onDelete(group.idGroup)}
                     >
                     <DeleteIcon />
                   </IconButton>

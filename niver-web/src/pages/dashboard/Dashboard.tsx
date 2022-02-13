@@ -17,8 +17,10 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useCallback, useEffect, useState } from 'react';
 import { usePerson, useGroups } from '../../hooks';
-import { AccordionCp } from '../../components/list';
 import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
+import IGroupData from '../../shared/types/Group';
+import { GroupService } from '../../services/GroupService';
+import { GroupAccordion } from '../../components/GroupAccordion';
 
 const drawerWidth = 240;
 
@@ -33,27 +35,48 @@ interface Props {
 export default function ResponsiveDrawer(props: Props) {
   const { person, getPersonById } = usePerson();
   const [nameGroup, setNameGroup] = useState('');
-  const { groups, getGroupsByPerson, createGroup } = useGroups();
+  const [groups, setGroups] = useState<Array<IGroupData>>([]);
+  // const { groups, getGroupsByPerson, createGroup } = useGroups();
   const idPerson = 12;
   const [groupsIndex, setGroupsIndex] = useState(0);
 
   useEffect(() => {
     getPersonById();
-    getGroupsByPerson();
-  }, [
-    getPersonById,
-    getGroupsByPerson
-  ])
+  }, [])
+
+  useEffect(() => {
+    GroupService.getGroupsByPerson().then(({ status, data }) => {
+      if (status === 200) {
+        setGroups(data)
+      }
+    })
+  }, [person])
 
 
-  const handleRegisterNewGroup = useCallback(async () => {
-    await createGroup({ idOwner: person?.idPerson, name: nameGroup });
-    await getPersonById();
-    await getGroupsByPerson();
+  const handleRegisterNewGroup = async () => {
+    console.log('person:', JSON.stringify(person))
+    let { status, data } = await GroupService.createGroup({ owner: person?.idPerson, name: nameGroup })
+    if (status === 200) {
+      setGroups([...groups, data])
+    }
     setNameGroup('');
     handleClose();
-  },
-    [createGroup, nameGroup]);
+  }
+
+  const handleDeleteGroup = async (idGroup: number) => {
+    let { status } = await GroupService.deleteGroupByGroupId(idGroup)
+    if (status === 200) {
+      setGroups(groups.filter((group) => group.idGroup !== idGroup))
+    }
+  }
+
+  const handleEditGroup = async (groupEdit: IGroupData) => {
+    console.log('objeto' + JSON.stringify(groupEdit))
+    let { status, data } = await GroupService.editGroup(groupEdit)
+    if (status === 200) {
+      setGroups(groups.map(g => g.idGroup === data.idGroup ? data : g))
+    }
+  }
 
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -212,7 +235,14 @@ export default function ResponsiveDrawer(props: Props) {
 
 
           <Divider sx={{ margin: 1 }} />
-          <AccordionCp groups={groups} idPerson={idPerson} selectedIndex={groupsIndex} onClick={setGroupsIndex} />
+
+          {
+            groups.map((group, indexGroup) => (
+              <GroupAccordion group={group} key={group.idGroup} idPerson={person?.idPerson} onDelete={handleDeleteGroup} onEdit={handleEditGroup} />
+            ))
+          }
+
+          {/* <AccordionCp groups={groups} idPerson={idPerson} onDelete={handleDeleteGroup} selectedIndex={groupsIndex} onClick={setGroupsIndex} /> */}
         </Box>
       </Box>
     </Box >

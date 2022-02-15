@@ -1,4 +1,4 @@
-import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemText, Tooltip } from '@mui/material';
+import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemAvatar, ListItemText, Tooltip } from '@mui/material';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import React from 'react';
 import IMemberData from '../shared/types/Member';
@@ -12,6 +12,21 @@ type ListProps = {
 };
 
 export const GroupMemberListItem: React.FC<ListProps> = ({ member, idPerson, idGroup, idOwner, onDeleteMember }) => {
+  const [openDialogRemoveMemberGroup, setOpenDialogRemoveMemberGroup] = React.useState(false);
+
+  const handleClickOpenDialogRemoveMemberGroup = () => {
+    setOpenDialogRemoveMemberGroup(true);
+  };
+
+  const handleCloseDialogRemoveMemberGroup = () => {
+    setOpenDialogRemoveMemberGroup(false);
+  };
+
+  const handleConfirmRemoveMemberGroup = (idPersonRemove: number, idGroup: number) => {
+    onDeleteMember(idPersonRemove, idGroup)
+    setOpenDialogRemoveMemberGroup(false);
+  }
+
   return (
     <ListItem
       secondaryAction={
@@ -21,7 +36,7 @@ export const GroupMemberListItem: React.FC<ListProps> = ({ member, idPerson, idG
               <IconButton
                 edge="end"
                 aria-label="delete"
-                onClick={() => onDeleteMember(member?.idPerson, idGroup)}>
+                onClick={handleClickOpenDialogRemoveMemberGroup}>
                 <RemoveCircleIcon />
               </IconButton>
             </Tooltip> : null
@@ -33,7 +48,21 @@ export const GroupMemberListItem: React.FC<ListProps> = ({ member, idPerson, idG
         primary={member?.idPerson === idPerson ? "Você" : member?.name}
         secondary={member?.idPerson === idOwner ? "Dono do Grupo" : null}
       />
+
+      <Dialog open={openDialogRemoveMemberGroup} onClose={handleCloseDialogRemoveMemberGroup}>
+        <DialogTitle>Remover membro do grupo</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Tem certeza que deseja remover "<strong>{member?.name}</strong>" do grupo?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialogRemoveMemberGroup}>Cancelar</Button>
+          <Button onClick={() => handleConfirmRemoveMemberGroup(member?.idPerson, idGroup)}>Sim</Button>
+        </DialogActions>
+      </Dialog>
+
     </ListItem>
-    
+
   )
 }

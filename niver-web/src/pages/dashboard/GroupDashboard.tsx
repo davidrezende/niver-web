@@ -54,26 +54,35 @@ export default function ResponsiveDrawer(props: Props) {
 
 
   const handleRegisterNewGroup = async () => {
+    handleCloseDialogNewGroup();
     console.log('person:', JSON.stringify(person))
-    let { status, data } = await GroupService.createGroup({ owner: person?.idPerson, name: nameGroup })
+    let { status, data } = await GroupService.createGroup({ owner: { idPerson: person?.idPerson }, name: nameGroup })
     if (status === 200) {
       setGroups([...groups, data])
     }
     setNameGroup('');
-    handleClose();
   }
 
-  const handleDeleteGroup = async (idGroup: number) => {
-    let { status } = await GroupService.deleteGroupByGroupId(idGroup)
-    if (status === 200) {
-      setGroups(groups.filter((group) => group.idGroup !== idGroup))
+  const handleDeleteGroup = async (idGroup: number, idPerson: number) => {
+    if (groups.filter((group) => group.idGroup === idGroup)[0].owner !== idPerson) {
+      let { status } = await GroupService.removeMemberFromGroupId(idPerson, idGroup)
+      if (status === 200) {
+        setGroups(groups.filter((group) => group.idGroup !== idGroup))
+      }
+    } else {
+      let { status } = await GroupService.deleteGroupByGroupId(idGroup)
+      if (status === 200) {
+        setGroups(groups.filter((group) => group.idGroup !== idGroup))
+      }
     }
+
   }
 
   const handleEditGroup = async (groupEdit: IGroupData) => {
     console.log('objeto' + JSON.stringify(groupEdit))
     let { status, data } = await GroupService.editGroup(groupEdit)
     if (status === 200) {
+      console.log('objetoRetornoEditGroup:' + JSON.stringify(data))
       setGroups(groups.map(g => g.idGroup === data.idGroup ? data : g))
     }
   }
@@ -85,14 +94,14 @@ export default function ResponsiveDrawer(props: Props) {
     setMobileOpen(!mobileOpen);
   };
 
-  const [open, setOpen] = React.useState(false);
+  const [openDialogNewGroup, setOpenDialogNewGroup] = React.useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleClickOpenDialogNewGroup = () => {
+    setOpenDialogNewGroup(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseDialogNewGroup = () => {
+    setOpenDialogNewGroup(false);
   };
 
   const drawer = (
@@ -205,11 +214,11 @@ export default function ResponsiveDrawer(props: Props) {
             alignItems: 'center',
           }}
         >
-          <Button variant="contained" onClick={handleClickOpen} size="large" startIcon={<AddBox />}>
+          <Button variant="contained" onClick={handleClickOpenDialogNewGroup} size="large" startIcon={<AddBox />}>
             Novo Grupo
           </Button>
 
-          <Dialog open={open} onClose={handleClose}>
+          <Dialog open={openDialogNewGroup} onClose={handleCloseDialogNewGroup}>
             <DialogTitle>Novo Grupo</DialogTitle>
             <DialogContent>
               <DialogContentText>
@@ -228,7 +237,7 @@ export default function ResponsiveDrawer(props: Props) {
               />
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleCloseDialogNewGroup}>Cancelar</Button>
               <Button onClick={handleRegisterNewGroup}>Confirmar</Button>
             </DialogActions>
           </Dialog>

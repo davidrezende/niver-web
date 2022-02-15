@@ -1,4 +1,4 @@
 export default interface IMemberData {
-  id?: any | null,
+  idPerson?: any | null,
   name?: string
 }

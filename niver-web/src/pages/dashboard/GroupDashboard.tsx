@@ -55,7 +55,7 @@ export default function ResponsiveDrawer(props: Props) {
 
   const handleRegisterNewGroup = async () => {
     console.log('person:', JSON.stringify(person))
-    let { status, data } = await GroupService.createGroup({ owner: person?.idPerson, name: nameGroup })
+    let { status, data } = await GroupService.createGroup({ owner: { idPerson: person?.idPerson }, name: nameGroup })
     if (status === 200) {
       setGroups([...groups, data])
     }
@@ -63,17 +63,26 @@ export default function ResponsiveDrawer(props: Props) {
     handleClose();
   }
 
-  const handleDeleteGroup = async (idGroup: number) => {
-    let { status } = await GroupService.deleteGroupByGroupId(idGroup)
-    if (status === 200) {
-      setGroups(groups.filter((group) => group.idGroup !== idGroup))
+  const handleDeleteGroup = async (idGroup: number, idPerson: number) => {
+    if (groups.filter((group) => group.idGroup === idGroup)[0].owner !== idPerson) {
+      let { status } = await GroupService.removeMemberFromGroupId(idPerson, idGroup)
+      if (status === 200) {
+        setGroups(groups.filter((group) => group.idGroup !== idGroup))
+      }
+    } else {
+      let { status } = await GroupService.deleteGroupByGroupId(idGroup)
+      if (status === 200) {
+        setGroups(groups.filter((group) => group.idGroup !== idGroup))
+      }
     }
+
   }
 
   const handleEditGroup = async (groupEdit: IGroupData) => {
     console.log('objeto' + JSON.stringify(groupEdit))
     let { status, data } = await GroupService.editGroup(groupEdit)
     if (status === 200) {
+      console.log('objetoRetornoEditGroup:' + JSON.stringify(data))
       setGroups(groups.map(g => g.idGroup === data.idGroup ? data : g))
     }
   }

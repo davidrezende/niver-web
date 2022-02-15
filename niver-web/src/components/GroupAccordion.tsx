@@ -6,7 +6,7 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import React, { useCallback, useEffect, useState } from 'react';
-import { IconButton, styled, ListItem, Tooltip, AccordionDetails, TextField, List } from '@mui/material';
+import { IconButton, styled, ListItem, Tooltip, AccordionDetails, TextField, List, DialogTitle, Dialog, DialogContentText, DialogActions, Button, DialogContent } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -33,9 +33,36 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
   const [openAccordion, setOpenAccordion] = useState(false)
   const [groupName, setGroupName] = useState(group.name)
   const [members, setMembers] = useState(group.members)
+  const [openDialogDeleteGroup, setOpenDialogDeleteGroup] = React.useState(false);
+  const [openDialogExitGroup, setOpenDialogExitGroup] = React.useState(false);
 
+  const handleClickOpenDialogExitGroup = () => {
+    setOpenDialogExitGroup(true);
+  };
 
-  const handleRemoveMember = async (idPerson: number, idGroup: number, ) => {
+  const handleCloseDialogExitGroup = () => {
+    setOpenDialogExitGroup(false);
+  };
+
+  const handleClickOpenDialogDeleteGroup = () => {
+    setOpenDialogDeleteGroup(true);
+  };
+
+  const handleCloseDialogDeleteGroup = () => {
+    setOpenDialogDeleteGroup(false);
+  };
+
+  const handleConfirmDialogDeleteGroup = (idGroup: number, idPerson: number) => {
+    onDelete(idGroup, idPerson)
+    setOpenDialogDeleteGroup(false)
+  };
+
+  const handleConfirmDialogExitGroup = (idGroup: number, idPerson: number) => {
+    onDelete(idGroup, idPerson)
+    setOpenDialogExitGroup(false);
+  };
+
+  const handleRemoveMember = async (idPerson: number, idGroup: number,) => {
     let { status } = await GroupService.removeMemberFromGroupId(idPerson, idGroup)
     if (status === 200) {
       setMembers(members?.filter((member) => member.idPerson !== idPerson))
@@ -50,6 +77,7 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
   }
 
   return (
+
     <MuiAccordion
       expanded={openAccordion}>
       <MuiAccordionSummary
@@ -112,7 +140,7 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
                 <IconButton
                   edge="end"
                   aria-label="deleteGroup"
-                  onClick={() => onDelete(group.idGroup, idPerson)}
+                  onClick={handleClickOpenDialogDeleteGroup}
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -120,10 +148,10 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
             </>
             :
             <Tooltip title="Sair do Grupo">
-              <IconButton 
-              edge="end" 
-              aria-label="exitGroup"
-              onClick={() => onDelete(group.idGroup, idPerson)}>
+              <IconButton
+                edge="end"
+                aria-label="exitGroup"
+                onClick={handleClickOpenDialogExitGroup}>
                 <GroupRemoveIcon />
               </IconButton>
             </Tooltip>}>
@@ -133,14 +161,43 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
         <Typography>
           Membros do grupo:
           <List>
-          {
-            members?.map((member, indexGroup) => (
-              <GroupMemberListItem member={member} key={member.idPerson} idPerson={idPerson} idOwner={group.owner?.idPerson} idGroup={group.idGroup} onDeleteMember={handleRemoveMember} />
-            ))
-          }
+            {
+              members?.map((member, indexGroup) => (
+                <GroupMemberListItem member={member} key={member.idPerson} idPerson={idPerson} idOwner={group.owner?.idPerson} idGroup={group.idGroup} onDeleteMember={handleRemoveMember} />
+              ))
+            }
           </List>
         </Typography>
       </AccordionDetails>
+
+      <Dialog open={openDialogDeleteGroup} onClose={handleCloseDialogDeleteGroup}>
+        <DialogTitle>Deletar grupo</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Tem certeza que deseja deletar o grupo:
+            "<strong>{group.name}</strong>"?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialogDeleteGroup}>Cancelar</Button>
+          <Button onClick={() => handleConfirmDialogDeleteGroup(group.idGroup, idPerson)}>Sim</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openDialogExitGroup} onClose={handleCloseDialogExitGroup}>
+        <DialogTitle>Sair do grupo</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Tem certeza que deseja sair do grupo:
+            "<strong>{group.name}</strong>"?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialogExitGroup}>Cancelar</Button>
+          <Button onClick={() => handleConfirmDialogExitGroup(group.idGroup, idPerson)}>Sim</Button>
+        </DialogActions>
+      </Dialog>
+
     </MuiAccordion >
   )
 }

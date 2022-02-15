@@ -34,5 +34,6 @@ export const GroupMemberListItem: React.FC<ListProps> = ({ member, idPerson, idG
         secondary={member?.idPerson === idOwner ? "Dono do Grupo" : null}
       />
     </ListItem>
+    
   )
 }

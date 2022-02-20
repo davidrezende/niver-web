@@ -16,11 +16,11 @@ import AddBox from '@mui/icons-material/AddBox';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useCallback, useEffect, useState } from 'react';
-import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, TextField } from '@mui/material';
+import { Avatar, Button, Checkbox, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Grid, Link, TextField } from '@mui/material';
 import IGroupData from '../../shared/types/Group';
 import { GroupService } from '../../services/GroupService';
 import { GroupAccordion } from '../../components/GroupAccordion';
-import CalendarBirthdays from '../../components/CalendarBirthdays';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import IPersonData from '../../shared/types/Person';
 import { PersonService } from '../../services/PersonService';
 
@@ -35,7 +35,7 @@ interface Props {
 }
 
 export default function ResponsiveDrawer(props: Props) {
-  const [person, setPerson] = useState<IPersonData>();
+  const [person, setPerson ] = useState<IPersonData>();
   const [nameGroup, setNameGroup] = useState('');
   const [groups, setGroups] = useState<Array<IGroupData>>([]);
   // const { groups, getGroupsByPerson, createGroup } = useGroups();
@@ -43,13 +43,11 @@ export default function ResponsiveDrawer(props: Props) {
   const [groupsIndex, setGroupsIndex] = useState(0);
 
   useEffect(() => {
-    PersonService.getPersonById().then(({ status, data, config }) => {
+    PersonService.getPersonById().then(({ status, data }) => {
       if (status === 200) {
         setPerson(data)
       }
-      console.log(JSON.stringify(config))
     })
-
   }, [])
 
   useEffect(() => {
@@ -57,7 +55,6 @@ export default function ResponsiveDrawer(props: Props) {
       if (status === 200) {
         setGroups(data)
       }
-      console.log(JSON.stringify(data))
     })
   }, [person])
 
@@ -70,14 +67,6 @@ export default function ResponsiveDrawer(props: Props) {
       setGroups([...groups, data])
     }
     setNameGroup('');
-  }
-
-
-  const handleTeste = () => {
-    console.log(localStorage.getItem('token'))
-    PersonService.getPersonById().catch(error => {
-      console.log(error.response)
-  });
   }
 
   const handleDeleteGroup = async (idGroup: number, idPerson: number) => {
@@ -172,7 +161,8 @@ export default function ResponsiveDrawer(props: Props) {
           ml: { sm: `${drawerWidth}px` },
         }}
       >
-        <Toolbar>
+        <Toolbar
+        >
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -183,7 +173,7 @@ export default function ResponsiveDrawer(props: Props) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Grupos
+            Seus dados
           </Typography>
         </Toolbar>
       </AppBar>
@@ -231,69 +221,68 @@ export default function ResponsiveDrawer(props: Props) {
             alignItems: 'center',
           }}
         >
-          <Button variant="contained" onClick={handleClickOpenDialogNewGroup} size="large" startIcon={<AddBox />}>
-            Novo Grupo
-          </Button>
-
-          <Dialog open={openDialogNewGroup} onClose={handleCloseDialogNewGroup}>
-            <DialogTitle>Novo Grupo</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                Crie um grupo com seus amigos para ser lembrado quando o aniversário de algum deles estiver próximo.
-              </DialogContentText>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="nameGroup"
-                type="input"
-                label="Nome do grupo"
-                value={nameGroup}
-                fullWidth
-                variant="standard"
-                onChange={(e) => setNameGroup(e.target.value)}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseDialogNewGroup}>Cancelar</Button>
-              <Button onClick={handleRegisterNewGroup}>Confirmar</Button>
-            </DialogActions>
-          </Dialog>
-
-
-          <Divider sx={{ margin: 1 }} />
-          <Grid container spacing={2}
+          <Box
             sx={{
+              marginTop: 2,
               display: 'flex',
-              flexDirection: 'row',
+              flexDirection: 'column',
               alignItems: 'center',
             }}
           >
-            <Grid item xs={8}
-              sx={{
-                width: '100%',
-              }}
-            >
-
-              <Button onClick={handleTeste}>Teste</Button>
-
-              {
-                groups.map((group, indexGroup) => (
-                  <GroupAccordion group={group} key={group.idGroup} idPerson={person?.idPerson} onDelete={handleDeleteGroup} onEdit={handleEditGroup} />
-                ))
-              }
-            </Grid>
-            <Grid item xs={4}
-              sx={{
-                display: 'flex',
-                flexDirection: 'collumn',
-                alignItems: 'center',
-              }}
-            >
-              <CalendarBirthdays />
-            </Grid>
-          </Grid>
-
-          {/* <AccordionCp groups={groups} idPerson={idPerson} onDelete={handleDeleteGroup} selectedIndex={groupsIndex} onClick={setGroupsIndex} /> */}
+            <Box component="form" noValidate sx={{ mt: 3 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    autoComplete="given-name"
+                    name="firstName"
+                    required
+                    disabled
+                    fullWidth
+                    label="Nome"
+                    variant="standard"
+                    value={person?.name}
+                    id="firstName"
+                    autoFocus
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    disabled
+                    fullWidth
+                    id="email"
+                    label="Seu melhor email"
+                    name="email"
+                    variant="standard"
+                    value={person?.email}
+                    autoComplete="email"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    disabled
+                    fullWidth
+                    name="password"
+                    label="A melhor senha da sua vida"
+                    type="password"
+                    variant="standard"
+                    id="password"
+                    value="testesteste"
+                    autoComplete="new-password"
+                  />
+                </Grid>
+              </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Alterar
+              </Button>
+            </Box>
+          </Box>
         </Box>
       </Box>
     </Box >

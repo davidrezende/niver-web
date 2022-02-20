@@ -13,8 +13,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { AuthenticationService } from '../../services/AuthenticationService';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import ITokenData from '../../shared/types/Token';
+import AuthContext from '../../context/auth';
 
 function Copyright(props: any) {
   return (
@@ -32,24 +33,19 @@ function Copyright(props: any) {
 const theme = createTheme();
 
 export default function SignIn() {
-  const [token, setToken] = useState<ITokenData>();
   const [emailUser, setEmailUser] = useState('null');
   const [passUser, setPassUser] = useState('null');
-
+  const {signed, user, Login} = useContext(AuthContext);
+  console.log('valor do signed:', signed)
+  console.log('valor do user:', user)
   useEffect(() => {
-    localStorage.clear();
+    localStorage.clear()
   }, [])
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log('usuario:', emailUser, ' senha:', passUser)
-    const form = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    let { status, data, headers, request, config } = await AuthenticationService.login({ "email": emailUser, "password": passUser })
-    setToken(data)
-    localStorage.setItem('token', 'Bearer '+token?.accessToken)
-    console.log(' token setado', localStorage.getItem('token')?.toString())
-  };
+
+  const handleSubmit = async () => {
+    await Login({ "email": emailUser, "password": passUser })
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -69,7 +65,7 @@ export default function SignIn() {
           <Typography component="h2" variant="h5">
             Loga aí pow
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -99,7 +95,8 @@ export default function SignIn() {
               label="Remember me"
             />
             <Button
-              type="submit"
+              type="button"
+              onClick={() => handleSubmit()}
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}

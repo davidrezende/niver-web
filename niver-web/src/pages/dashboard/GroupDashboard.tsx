@@ -15,7 +15,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AddBox from '@mui/icons-material/AddBox';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, TextField } from '@mui/material';
 import IGroupData from '../../shared/types/Group';
 import { GroupService } from '../../services/GroupService';
@@ -23,6 +23,7 @@ import { GroupAccordion } from '../../components/GroupAccordion';
 import CalendarBirthdays from '../../components/CalendarBirthdays';
 import IPersonData from '../../shared/types/Person';
 import { PersonService } from '../../services/PersonService';
+import AuthContext from '../../context/auth';
 
 const drawerWidth = 240;
 
@@ -41,7 +42,10 @@ export default function ResponsiveDrawer(props: Props) {
   // const { groups, getGroupsByPerson, createGroup } = useGroups();
   const idPerson = 12;
   const [groupsIndex, setGroupsIndex] = useState(0);
-
+  const {signed, user} = useContext(AuthContext);
+  console.log('valor do signed:', signed)
+  console.log('valor do user:', user)
+  
   useEffect(() => {
     PersonService.getPersonById().then(({ status, data, config }) => {
       if (status === 200) {

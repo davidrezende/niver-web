@@ -12,13 +12,14 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Home } from '../Home';
+import { AuthenticationService } from '../../services/AuthenticationService';
+import { useEffect, useState } from 'react';
+import ITokenData from '../../shared/types/Token';
 
 function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Home/>
       <Link color="inherit" href="/">
         Niver
       </Link>
@@ -31,14 +32,23 @@ function Copyright(props: any) {
 const theme = createTheme();
 
 export default function SignIn() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [token, setToken] = useState<ITokenData>();
+  const [emailUser, setEmailUser] = useState('null');
+  const [passUser, setPassUser] = useState('null');
+
+  useEffect(() => {
+    localStorage.clear();
+  }, [])
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    console.log('usuario:', emailUser, ' senha:', passUser)
+    const form = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    let { status, data, headers, request, config } = await AuthenticationService.login({ "email": emailUser, "password": passUser })
+    setToken(data)
+    localStorage.setItem('token', 'Bearer '+token?.accessToken)
+    console.log(' token setado', localStorage.getItem('token')?.toString())
   };
 
   return (
@@ -67,7 +77,9 @@ export default function SignIn() {
               id="email"
               label="Email Address"
               name="email"
+              value={emailUser}
               autoComplete="email"
+              onChange={(e) => setEmailUser(e.target.value)}
               autoFocus
             />
             <TextField
@@ -77,7 +89,9 @@ export default function SignIn() {
               name="password"
               label="Password"
               type="password"
+              value={passUser}
               id="password"
+              onChange={(e) => setPassUser(e.target.value)}
               autoComplete="current-password"
             />
             <FormControlLabel

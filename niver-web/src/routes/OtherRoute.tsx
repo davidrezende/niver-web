@@ -9,7 +9,7 @@ const OtherRoutes: React.FC = () => {
     <Routes>
       <Route path="/groups" element={<GroupDashboard />} />
       <Route path="/profile" element={<ProfileDashboard />} />
-      <Route path="*" element={<Navigate to="/groups" />} />
+      <Route path="*" element={<Navigate to="/groups" replace />} />
     </Routes>
   );
 };

@@ -158,7 +158,7 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
         </ListItem>
       </MuiAccordionSummary >
       <AccordionDetails>
-        <Typography>
+        <Typography component={'span'}>
           Membros do grupo:
           <List>
             {

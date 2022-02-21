@@ -9,7 +9,7 @@ const SignRoutes: React.FC = () => {
       <Routes>
         <Route path="/login" element={<Signin />} />
         <Route path="/register" element={<Register />} />
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
   );
 };

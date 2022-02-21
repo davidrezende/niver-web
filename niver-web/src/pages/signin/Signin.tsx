@@ -16,6 +16,7 @@ import { AuthenticationService } from '../../services/AuthenticationService';
 import { useContext, useEffect, useState } from 'react';
 import ITokenData from '../../shared/types/Token';
 import AuthContext from '../../context/auth';
+import { useSnackbar } from 'notistack';
 
 function Copyright(props: any) {
   return (
@@ -36,10 +37,12 @@ export default function SignIn() {
   const [emailUser, setEmailUser] = useState('null');
   const [passUser, setPassUser] = useState('null');
   const {signed, user, Login} = useContext(AuthContext);
-  console.log('valor do signed:', signed)
-  console.log('valor do user:', user)
+
   useEffect(() => {
     localStorage.clear()
+    sessionStorage.removeItem('@App:userId');
+    sessionStorage.removeItem('App:userName');
+    sessionStorage.removeItem('App:token');
   }, [])
 
 

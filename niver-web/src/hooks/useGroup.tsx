@@ -6,7 +6,7 @@ import IRequestSaveGroup from "../shared/types/RequestSaveGroup";
 export const useGroups = () => {
   const [groups, setGroups] = useState<IGroupData[]>([]);
   const getGroupsByPerson = useCallback(async () => {
-    const { status, data } = await GroupService.getGroupsByPerson();
+    const { status, data } = await GroupService.getGroupsByPerson(1);
 
     if (status != 200) throw new Error();
     setGroups(data)

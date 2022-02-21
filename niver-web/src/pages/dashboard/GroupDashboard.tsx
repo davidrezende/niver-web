@@ -40,28 +40,25 @@ export default function ResponsiveDrawer(props: Props) {
   const [nameGroup, setNameGroup] = useState('');
   const [groups, setGroups] = useState<Array<IGroupData>>([]);
   // const { groups, getGroupsByPerson, createGroup } = useGroups();
-  const idPerson = 12;
   const [groupsIndex, setGroupsIndex] = useState(0);
-  const {signed, user} = useContext(AuthContext);
-  console.log('valor do signed:', signed)
-  console.log('valor do user:', user)
-  
+  const {signed, user, Logout} = useContext(AuthContext);
+   
   useEffect(() => {
-    PersonService.getPersonById().then(({ status, data, config }) => {
+    console.log('buscando dados da pessoa logada')
+    PersonService.getPersonById(user!).then(({ status, data, config }) => {
       if (status === 200) {
         setPerson(data)
       }
-      console.log(JSON.stringify(config))
     })
 
   }, [])
 
   useEffect(() => {
-    GroupService.getGroupsByPerson().then(({ status, data }) => {
+    console.log('buscando dados dos grupos da pessoa logada')
+    GroupService.getGroupsByPerson(user!).then(({ status, data }) => {
       if (status === 200) {
         setGroups(data)
       }
-      console.log(JSON.stringify(data))
     })
   }, [person])
 
@@ -74,14 +71,6 @@ export default function ResponsiveDrawer(props: Props) {
       setGroups([...groups, data])
     }
     setNameGroup('');
-  }
-
-
-  const handleTeste = () => {
-    console.log(localStorage.getItem('token'))
-    PersonService.getPersonById().catch(error => {
-      console.log(error.response)
-  });
   }
 
   const handleDeleteGroup = async (idGroup: number, idPerson: number) => {
@@ -125,6 +114,10 @@ export default function ResponsiveDrawer(props: Props) {
     setOpenDialogNewGroup(false);
   };
 
+  async function handleLogout() {
+    Logout();
+  }
+
   const drawer = (
     <div>
       <Box
@@ -153,7 +146,7 @@ export default function ResponsiveDrawer(props: Props) {
       <Divider />
       <List>
         {['Sair'].map((text, index) => (
-          <ListItem button key={text}>
+          <ListItem onClick={handleLogout} button key={text}>
             <ListItemIcon>
               {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
             </ListItemIcon>
@@ -277,9 +270,6 @@ export default function ResponsiveDrawer(props: Props) {
                 width: '100%',
               }}
             >
-
-              <Button onClick={handleTeste}>Teste</Button>
-
               {
                 groups.map((group, indexGroup) => (
                   <GroupAccordion group={group} key={group.idGroup} idPerson={person?.idPerson} onDelete={handleDeleteGroup} onEdit={handleEditGroup} />

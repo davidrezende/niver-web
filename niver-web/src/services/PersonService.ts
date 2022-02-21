@@ -1,7 +1,7 @@
 import { PersonApi } from "../providers"
 
 
-const getPersonById = () =>  PersonApi.get('/id/12') 
+const getPersonById = (userId: number) =>  PersonApi.get('/id/' + userId) 
 
 export const PersonService = {
   getPersonById,

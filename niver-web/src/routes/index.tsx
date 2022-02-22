@@ -28,13 +28,21 @@ import Signin from '../pages/signin/Signin';
 //   );
 // }
 
-import SignRoute from './SigninRoute';
-import OtherRoute from './OtherRoute';
+import DefaultRoutes from './DefaultRoutes';
+import AuthRoutes from './AuthRoutes';
+import { Navigate, Route } from 'react-router-dom';
 
 const Routes: React.FC = () => {
   const { signed } = useContext(AuthContext);
- 
-  return signed ? <OtherRoute /> : <SignRoute />;
- };
- 
+  const storagedUserId = localStorage.getItem('@App:userId');
+  console.log('defininndo rota - estoulogado? ', signed)
+  return (
+    signed ? 
+    <AuthRoutes />
+    :
+    <DefaultRoutes />
+  )
+
+};
+
 export default Routes;

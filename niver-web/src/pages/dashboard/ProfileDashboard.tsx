@@ -24,6 +24,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import IPersonData from '../../shared/types/Person';
 import { PersonService } from '../../services/PersonService';
 import AuthContext from '../../context/auth';
+import { CommonDrawer } from '../../components';
 
 const drawerWidth = 240;
 
@@ -40,7 +41,6 @@ export default function ResponsiveDrawer(props: Props) {
   const [nameGroup, setNameGroup] = useState('');
   const [groups, setGroups] = useState<Array<IGroupData>>([]);
   const {signed, user} = useContext(AuthContext);
-  // const { groups, getGroupsByPerson, createGroup } = useGroups();
   const idPerson = 12;
   const [groupsIndex, setGroupsIndex] = useState(0);
 
@@ -51,6 +51,8 @@ export default function ResponsiveDrawer(props: Props) {
       }
     })
   }, [])
+
+
 
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -68,45 +70,6 @@ export default function ResponsiveDrawer(props: Props) {
   const handleCloseDialogNewGroup = () => {
     setOpenDialogNewGroup(false);
   };
-
-  const drawer = (
-    <div>
-      <Box
-        sx={{
-          margin: 0.5,
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}
-      >
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}></Avatar>
-        <Typography textAlign="center" sx={{ margin: 1 }}>
-          {person?.name}</Typography>
-      </Box>
-      <Divider />
-      <List>
-        {['Meu perfil', 'Grupos'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['Sair'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-    </div>
-  );
 
   const container = window !== undefined ? () => window().document.body : undefined;
 
@@ -155,7 +118,7 @@ export default function ResponsiveDrawer(props: Props) {
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
         >
-          {drawer}
+          <CommonDrawer namePerson={person?.name}/>
         </Drawer>
         <Drawer
           variant="permanent"
@@ -165,7 +128,7 @@ export default function ResponsiveDrawer(props: Props) {
           }}
           open
         >
-          {drawer}
+          <CommonDrawer namePerson={person?.name}/>
         </Drawer>
       </Box>
       <Box

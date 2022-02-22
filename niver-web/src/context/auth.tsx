@@ -3,7 +3,7 @@ import { GroupApi, MemberApi, PersonApi } from '../providers';
 import { AuthenticationService } from '../services/AuthenticationService';
 import ICredentialsData from '../shared/types/Login';
 import ITokenData from '../shared/types/Token';
-import { useSnackbar, VariantType } from 'notistack';
+import { useSnackbar } from 'notistack';
 
 interface AuthContextData {
   signed: boolean;
@@ -40,7 +40,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     console.log('exp do token:', decodedJwt.exp)
     if (decodedJwt.exp * 1000 < Date.now()) {
       console.log('token expirado')
-      enqueueSnackbar('Sessão expirada! Faça login novamente.');
+      enqueueSnackbar('Sessão expirada! Faça login novamente. 🔐');
       return false
     }
     return true
@@ -56,18 +56,28 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   async function Login(credentials: ICredentialsData) {
     console.log('logando usuario...')
-    const response = await AuthenticationService.login({ "email": credentials.email, "password": credentials.password })
-    console.log('resposta do servico ao logar:', response)
-    var auth = JSON.parse(JSON.stringify(response.data)!) as ITokenData
-    setUser(auth.userId!);
-    console.log('usuario logado:', auth.userId!.toString())
-    localStorage.setItem('@App:userId', auth.userId!.toString());
-    localStorage.setItem('@App:userName', auth.userName);
-    localStorage.setItem('@App:token', auth.accessToken);
-    PersonApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
-    MemberApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
-    GroupApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
-    enqueueSnackbar('Seja bem vindo! :)');
+    // const {data, status} = 
+    await AuthenticationService.login({ "email": credentials.email, "password": credentials.password }).then((response) => {
+      console.log('resposta do servico ao logar:', response)
+      var auth = JSON.parse(JSON.stringify(response.data)!) as ITokenData
+      setUser(auth.userId!);
+      console.log('usuario logado:', auth.userId!.toString())
+      localStorage.setItem('@App:userId', auth.userId!.toString());
+      localStorage.setItem('@App:userName', auth.userName);
+      localStorage.setItem('@App:token', auth.accessToken);
+      PersonApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
+      MemberApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
+      GroupApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
+      enqueueSnackbar('Seja bem vindo! 👋👋👋');
+    }).catch((error) => {
+      if (error.response.status === 401) {
+        enqueueSnackbar('Usuário ou senha incorretos. 😢');
+      }else{
+        enqueueSnackbar('Desculpe, estamos enfrentando problemas 😢');
+      }
+    })
+
+
   }
 
   function Logout() {

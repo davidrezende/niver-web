@@ -24,6 +24,8 @@ import CalendarBirthdays from '../../components/CalendarBirthdays';
 import IPersonData from '../../shared/types/Person';
 import { PersonService } from '../../services/PersonService';
 import AuthContext from '../../context/auth';
+import { useNavigate } from "react-router-dom";
+import { CommonDrawer } from '../../components';
 
 const drawerWidth = 240;
 
@@ -41,8 +43,8 @@ export default function ResponsiveDrawer(props: Props) {
   const [groups, setGroups] = useState<Array<IGroupData>>([]);
   // const { groups, getGroupsByPerson, createGroup } = useGroups();
   const [groupsIndex, setGroupsIndex] = useState(0);
-  const {signed, user, Logout} = useContext(AuthContext);
-   
+  const { signed, user, Logout } = useContext(AuthContext);
+  let navigate = useNavigate();
   useEffect(() => {
     console.log('buscando dados da pessoa logada')
     PersonService.getPersonById(user!).then(({ status, data, config }) => {
@@ -65,7 +67,7 @@ export default function ResponsiveDrawer(props: Props) {
 
   const handleRegisterNewGroup = async () => {
     handleCloseDialogNewGroup();
-    console.log('person:', JSON.stringify(person))
+    console.log('newGroup:', JSON.stringify(person))
     let { status, data } = await GroupService.createGroup({ owner: { idPerson: person?.idPerson }, name: nameGroup })
     if (status === 200) {
       setGroups([...groups, data])
@@ -115,7 +117,8 @@ export default function ResponsiveDrawer(props: Props) {
   };
 
   async function handleLogout() {
-    Logout();
+    Logout()
+    navigate('/login')
   }
 
   const drawer = (
@@ -134,14 +137,18 @@ export default function ResponsiveDrawer(props: Props) {
       </Box>
       <Divider />
       <List>
-        {['Meu perfil', 'Grupos'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
+        <ListItem button key="Meu perfil" onClick={() => navigate('/profile')}>
+          <ListItemIcon>
+            <InboxIcon />
+          </ListItemIcon>
+          <ListItemText primary="Meu perfil" />
+        </ListItem>
+        <ListItem button key="Grupos" onClick={() => navigate('/groups')}>
+          <ListItemIcon>
+            <MailIcon />
+          </ListItemIcon>
+          <ListItemText primary="Grupos" />
+        </ListItem>
       </List>
       <Divider />
       <List>
@@ -203,7 +210,8 @@ export default function ResponsiveDrawer(props: Props) {
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
         >
-          {drawer}
+          {/* {drawer} */}
+          <CommonDrawer namePerson={person?.name} />
         </Drawer>
         <Drawer
           variant="permanent"
@@ -213,7 +221,8 @@ export default function ResponsiveDrawer(props: Props) {
           }}
           open
         >
-          {drawer}
+          {/* {drawer} */}
+          <CommonDrawer namePerson={person?.name} />
         </Drawer>
       </Box>
       <Box

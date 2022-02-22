@@ -70,7 +70,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       GroupApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
       enqueueSnackbar('Seja bem vindo! 👋👋👋');
     }).catch((error) => {
-      if (error.response.status === 401) {
+      if (error.response?.status === 401) {
         enqueueSnackbar('Usuário ou senha incorretos. 😢');
       }else{
         enqueueSnackbar('Desculpe, estamos enfrentando problemas 😢');

@@ -1,10 +1,18 @@
+import { SnackbarProvider } from "notistack";
+import { useState } from "react";
 import { BrowserRouter } from "react-router-dom";
-import { AppRoutes } from './routes';
+import { AuthProvider } from "./context/auth";
+// import { AppRoutes } from './routes';
+import Routes from './routes';
 
 export const App = () => {
   return (
+    <SnackbarProvider maxSnack={3} anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}>
+      <AuthProvider>
         <BrowserRouter>
-          <AppRoutes />
+          <Routes />
         </BrowserRouter>
+      </AuthProvider>
+    </SnackbarProvider>
   );
 }

@@ -15,7 +15,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AddBox from '@mui/icons-material/AddBox';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, TextField } from '@mui/material';
 import IGroupData from '../../shared/types/Group';
 import { GroupService } from '../../services/GroupService';
@@ -23,6 +23,9 @@ import { GroupAccordion } from '../../components/GroupAccordion';
 import CalendarBirthdays from '../../components/CalendarBirthdays';
 import IPersonData from '../../shared/types/Person';
 import { PersonService } from '../../services/PersonService';
+import AuthContext from '../../context/auth';
+import { useNavigate } from "react-router-dom";
+import { CommonDrawer } from '../../components';
 
 const drawerWidth = 240;
 
@@ -39,45 +42,37 @@ export default function ResponsiveDrawer(props: Props) {
   const [nameGroup, setNameGroup] = useState('');
   const [groups, setGroups] = useState<Array<IGroupData>>([]);
   // const { groups, getGroupsByPerson, createGroup } = useGroups();
-  const idPerson = 12;
   const [groupsIndex, setGroupsIndex] = useState(0);
-
+  const { signed, user, Logout } = useContext(AuthContext);
+  let navigate = useNavigate();
   useEffect(() => {
-    PersonService.getPersonById().then(({ status, data, config }) => {
+    console.log('buscando dados da pessoa logada')
+    PersonService.getPersonById(user!).then(({ status, data, config }) => {
       if (status === 200) {
         setPerson(data)
       }
-      console.log(JSON.stringify(config))
     })
 
   }, [])
 
   useEffect(() => {
-    GroupService.getGroupsByPerson().then(({ status, data }) => {
+    console.log('buscando dados dos grupos da pessoa logada')
+    GroupService.getGroupsByPerson(user!).then(({ status, data }) => {
       if (status === 200) {
         setGroups(data)
       }
-      console.log(JSON.stringify(data))
     })
   }, [person])
 
 
   const handleRegisterNewGroup = async () => {
     handleCloseDialogNewGroup();
-    console.log('person:', JSON.stringify(person))
+    console.log('newGroup:', JSON.stringify(person))
     let { status, data } = await GroupService.createGroup({ owner: { idPerson: person?.idPerson }, name: nameGroup })
     if (status === 200) {
       setGroups([...groups, data])
     }
     setNameGroup('');
-  }
-
-
-  const handleTeste = () => {
-    console.log(localStorage.getItem('token'))
-    PersonService.getPersonById().catch(error => {
-      console.log(error.response)
-  });
   }
 
   const handleDeleteGroup = async (idGroup: number, idPerson: number) => {
@@ -121,6 +116,11 @@ export default function ResponsiveDrawer(props: Props) {
     setOpenDialogNewGroup(false);
   };
 
+  async function handleLogout() {
+    Logout()
+    navigate('/login')
+  }
+
   const drawer = (
     <div>
       <Box
@@ -137,19 +137,23 @@ export default function ResponsiveDrawer(props: Props) {
       </Box>
       <Divider />
       <List>
-        {['Meu perfil', 'Grupos'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
+        <ListItem button key="Meu perfil" onClick={() => navigate('/profile')}>
+          <ListItemIcon>
+            <InboxIcon />
+          </ListItemIcon>
+          <ListItemText primary="Meu perfil" />
+        </ListItem>
+        <ListItem button key="Grupos" onClick={() => navigate('/groups')}>
+          <ListItemIcon>
+            <MailIcon />
+          </ListItemIcon>
+          <ListItemText primary="Grupos" />
+        </ListItem>
       </List>
       <Divider />
       <List>
         {['Sair'].map((text, index) => (
-          <ListItem button key={text}>
+          <ListItem onClick={handleLogout} button key={text}>
             <ListItemIcon>
               {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
             </ListItemIcon>
@@ -206,7 +210,8 @@ export default function ResponsiveDrawer(props: Props) {
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
         >
-          {drawer}
+          {/* {drawer} */}
+          <CommonDrawer namePerson={person?.name} />
         </Drawer>
         <Drawer
           variant="permanent"
@@ -216,7 +221,8 @@ export default function ResponsiveDrawer(props: Props) {
           }}
           open
         >
-          {drawer}
+          {/* {drawer} */}
+          <CommonDrawer namePerson={person?.name} />
         </Drawer>
       </Box>
       <Box
@@ -273,9 +279,6 @@ export default function ResponsiveDrawer(props: Props) {
                 width: '100%',
               }}
             >
-
-              <Button onClick={handleTeste}>Teste</Button>
-
               {
                 groups.map((group, indexGroup) => (
                   <GroupAccordion group={group} key={group.idGroup} idPerson={person?.idPerson} onDelete={handleDeleteGroup} onEdit={handleEditGroup} />

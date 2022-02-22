@@ -4,11 +4,9 @@ import TextField from '@mui/material/TextField';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import PickersDay from '@mui/lab/PickersDay';
-import DatePicker from '@mui/lab/DatePicker';
-import CalendarPickerSkeleton from '@mui/lab/CalendarPickerSkeleton';
 import getDaysInMonth from 'date-fns/getDaysInMonth';
 import { CalendarPicker, StaticDatePicker } from '@mui/lab';
-import { Grid } from '@mui/material';
+import { ptBR } from "date-fns/locale";
 
 function getRandomNumber(min: number, max: number) {
   return Math.round(Math.random() * (max - min) + min);
@@ -80,8 +78,7 @@ export default function ServerRequestDatePicker() {
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-
+    <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
         <CalendarPicker 
         date={date}
         onChange={(newDate) => setDate(newDate)}
@@ -100,7 +97,6 @@ export default function ServerRequestDatePicker() {
             </Badge>
           );
         }} />
-
     </LocalizationProvider>
   );
 }

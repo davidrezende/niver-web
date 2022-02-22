@@ -2,7 +2,7 @@ import { MemberApi, GroupApi } from "../providers"
 import IGroupData from "../shared/types/Group"
 import IRequestSaveGroup from "../shared/types/RequestSaveGroup"
 
-const getGroupsByPerson = () => MemberApi.get('/searchGroup/person/12')
+const getGroupsByPerson = (personId: number) => MemberApi.get('/searchGroup/person/' + personId)
 const deleteGroupByGroupId = (groupId: number) => GroupApi.delete('/' + groupId )
 const editGroup = (group: IGroupData) => GroupApi.put('/', group)
 const removeMemberFromGroupId = (personId: number, groupId: number) => MemberApi.delete('/deletePerson/'+ personId + '/group/' + groupId)

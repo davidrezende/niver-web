@@ -8,82 +8,95 @@ export const PersonApi = axios.create({ baseURL: 'http://localhost:8090/person/a
 export const GroupApi = axios.create({ baseURL: 'http://localhost:8090/group/api' });
 export const MemberApi = axios.create({ baseURL: 'http://localhost:8090/member/api' });
 
-PersonApi.interceptors.request.use(function (config) {
-  const token = localStorage.getItem('token');
-  console.log('interceptor token:', token)
-  if (token && config.headers) {
-    config.headers.Authorization = token;
-  }
-  return config
-});
+// PersonApi.interceptors.request.use(function (config) {
+//   const token = localStorage.getItem('@App:token');
+//   const userC = localStorage.getItem('@App:user');
+
+//   console.log('interceptor token:', token)
+//   console.log('interceptor user:', userC)
+
+//   if (token && config.headers) {
+//     config.headers.Authorization = token;
+//   }
+//   return config
+// });
+
+// GroupApi.interceptors.request.use(function (config) {
+//   const token = localStorage.getItem('@App:token');
+//   console.log('interceptor token:', token)
+//   if (token && config.headers) {
+//     config.headers.Authorization = token;
+//   }
+//   return config
+// });
+
+// MemberApi.interceptors.request.use(function (config) {
+//   const token = localStorage.getItem('@App:token');
+//   console.log('interceptor token:', token)
+//   if (token && config.headers) {
+//     config.headers.Authorization = token;
+//   }
+//   return config
+// });
+
+
 
 PersonApi.interceptors.response.use(function (response) {
-  if(response.status === 401){
-    localStorage.clear()
-  }
-  const token = localStorage.getItem('token');
-  console.log('interceptor response token:', token)
+  // if (response.status === 401) {
+  //   localStorage.clear()
+  // }
+  // const token = localStorage.getItem('token');
+  // console.log('interceptor response token:', token)
 
   return response;
 }, function (error) {
-  if(error.response.status === 401){
-    localStorage.clear()
-  }
-  const token = localStorage.getItem('token');
-  console.log('interceptor response token:', token)
+  console.log(error.response)
+  console.log('deslogando usuario por invalidade de token')
+  
+  // if (error.response.status === 401) {
+  //   localStorage.clear()
+  // }
+  // const token = localStorage.getItem('token');
+  // console.log('interceptor response token:', token)
 
   return Promise.reject(error);
 });
 
 GroupApi.interceptors.response.use(function (response) {
-  if(response.status === 401){
-    localStorage.clear()
-  }
-  const token = localStorage.getItem('token');
-  console.log('interceptor response token:', token)
+  // if (response.status === 401) {
+  //   localStorage.clear()
+  // }
+  // const token = localStorage.getItem('token');
+  // console.log('interceptor response token:', token)
 
   return response;
 }, function (error) {
-  if(error.status === 401){
-    localStorage.clear()
-  }
-  const token = localStorage.getItem('token');
-  console.log('interceptor response token:', token)
+  console.log(error.response)
+  console.log('deslogando usuario por invalidade de token')
+  // if (error.status === 401) {
+  //   localStorage.clear()
+  // }
+  // const token = localStorage.getItem('token');
+  // console.log('interceptor response token:', token)
 
   return Promise.reject(error);
 });
 
 MemberApi.interceptors.response.use(function (response) {
-  if(response.status === 401){
-    localStorage.clear()
-  }
-  const token = localStorage.getItem('token');
-  console.log('interceptor response token:', token)
+  // if (response.status === 401) {
+  //   localStorage.clear()
+  // }
+  // const token = localStorage.getItem('token');
+  // console.log('interceptor response token:', token)
 
   return response;
 }, function (error) {
-  if(error.status === 401){
-    localStorage.clear()
-  }
-  const token = localStorage.getItem('token');
-  console.log('interceptor response token:', token)
+  console.log(error.response)
+  console.log('deslogando usuario por invalidade de token')
+  // if (error.status === 401) {
+  //   localStorage.clear()
+  // }
+  // const token = localStorage.getItem('token');
+  // console.log('interceptor response token:', token)
   return Promise.reject(error);
-});
-
-GroupApi.interceptors.request.use(function (config) {
-  const token = localStorage.getItem('token');
-  console.log('interceptor token:', token)
-  if (token && config.headers) {
-    config.headers.Authorization = token;
-  }
-  return config
-});
-
-MemberApi.interceptors.request.use(function (config) {
-  const token = localStorage.getItem('token');
-  console.log('interceptor token:', token)
-  if (token && config.headers) {
-    config.headers.Authorization = token;
-  }
-  return config
 });

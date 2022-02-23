@@ -1,4 +1,5 @@
 export default interface IMemberData {
   idPerson?: any | null,
-  name?: string
+  name?: string,
+  birthday?: Date
 }

@@ -29,7 +29,7 @@ export default function SignUp() {
   const [userName, setUserName] = useState('');
   const [passUser, setPassUser] = useState('');
   const [passUserConfirm, setPassUserConfirm] = useState('');
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
   let navigate = useNavigate();
 
   const handleRegister = async () => {
@@ -101,14 +101,14 @@ export default function SignUp() {
                 <Grid item xs={12} sm={6}>
                   <DatePicker
                     disableFuture
-                    label="Data de Nascimento"
+                    label="Data de nascimento"
                     openTo="year"
                     views={['year', 'month', 'day']}
                     value={birthdayDate}
                     onChange={(newValue) => {
                       setBirthdayDate(newValue);
                     }}
-                    renderInput={(params) => <TextField {...params} />}
+                    renderInput={(params) => <TextField required {...params} />}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -118,7 +118,7 @@ export default function SignUp() {
                     id="email"
                     label="Seu melhor email"
                     value={emailUser}
-                    onChange={(e) => setEmailUser(e.target.value)}
+                    onChange={(e) => setEmailUser(e.target.value?.toLowerCase())}
                     name="email"
                     autoComplete="email"
                   />

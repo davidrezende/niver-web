@@ -45,8 +45,8 @@ export const GroupMemberListItem: React.FC<ListProps> = ({ member, idPerson, idG
         <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}></Avatar>
       </ListItemAvatar>
       <ListItemText
-        primary={member?.idPerson === idPerson ? "Você" : member?.name}
-        secondary={member?.idPerson === idOwner ? "Dono do Grupo" : null}
+        primary={member?.idPerson === idPerson ? 'Você '  : member?.name}
+        secondary={member?.idPerson === idOwner ? 'Dono do Grupo' + '  ( ' + member?.birthday + ' )🎂' : '  ( ' + member?.birthday + ' )🎂'}
       />
 
       <Dialog open={openDialogRemoveMemberGroup} onClose={handleCloseDialogRemoveMemberGroup}>

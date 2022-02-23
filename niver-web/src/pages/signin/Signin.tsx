@@ -16,7 +16,7 @@ import AuthContext from '../../context/auth';
 import { Link, useNavigate } from "react-router-dom";
 import { Copyright } from '../../components';
 import { useSnackbar } from 'notistack';
-
+import CSS from 'csstype';
 
 const theme = createTheme();
 
@@ -43,12 +43,14 @@ export default function SignIn() {
       enqueueSnackbar('Usuário ou senha incorretos. 😢');
     }
   }
+ 
+
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+    <ThemeProvider theme={theme} >
+      <Container component="main" maxWidth="xs" > 
         <CssBaseline />
-        <Box
+        <Box 
           sx={{
             marginTop: 8,
             display: 'flex',
@@ -72,7 +74,7 @@ export default function SignIn() {
               name="email"
               value={emailUser}
               autoComplete="email"
-              onChange={(e) => setEmailUser(e.target.value)}
+              onChange={(e) => setEmailUser(e.target.value?.toLowerCase())}
               autoFocus
             />
             <TextField

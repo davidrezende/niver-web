@@ -16,7 +16,7 @@ import AddBox from '@mui/icons-material/AddBox';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, TextField } from '@mui/material';
+import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Paper, styled, TextField } from '@mui/material';
 import IGroupData from '../../shared/types/Group';
 import { GroupService } from '../../services/GroupService';
 import { GroupAccordion } from '../../components/GroupAccordion';
@@ -26,6 +26,9 @@ import { PersonService } from '../../services/PersonService';
 import AuthContext from '../../context/auth';
 import { useNavigate } from "react-router-dom";
 import { CommonDrawer } from '../../components';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { ptBR } from "date-fns/locale";
+import { LocalizationProvider } from '@mui/lab';
 
 const drawerWidth = 240;
 
@@ -44,7 +47,9 @@ export default function ResponsiveDrawer(props: Props) {
   // const { groups, getGroupsByPerson, createGroup } = useGroups();
   const [groupsIndex, setGroupsIndex] = useState(0);
   const { signed, user, Logout } = useContext(AuthContext);
+
   let navigate = useNavigate();
+
   useEffect(() => {
     console.log('buscando dados da pessoa logada')
     PersonService.getPersonById(user!).then(({ status, data, config }) => {
@@ -121,50 +126,13 @@ export default function ResponsiveDrawer(props: Props) {
     navigate('/login')
   }
 
-  const drawer = (
-    <div>
-      <Box
-        sx={{
-          margin: 0.5,
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}
-      >
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}></Avatar>
-        <Typography textAlign="center" sx={{ margin: 1 }}>
-          {person?.name}</Typography>
-      </Box>
-      <Divider />
-      <List>
-        <ListItem button key="Meu perfil" onClick={() => navigate('/profile')}>
-          <ListItemIcon>
-            <InboxIcon />
-          </ListItemIcon>
-          <ListItemText primary="Meu perfil" />
-        </ListItem>
-        <ListItem button key="Grupos" onClick={() => navigate('/groups')}>
-          <ListItemIcon>
-            <MailIcon />
-          </ListItemIcon>
-          <ListItemText primary="Grupos" />
-        </ListItem>
-      </List>
-      <Divider />
-      <List>
-        {['Sair'].map((text, index) => (
-          <ListItem onClick={handleLogout} button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-    </div>
-  );
-
   const container = window !== undefined ? () => window().document.body : undefined;
+  const Item = styled(Box)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    color: theme.palette.text.secondary,
+  }));
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -232,10 +200,8 @@ export default function ResponsiveDrawer(props: Props) {
         <Toolbar />
 
         <Box
-          sx={{
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}
+          sx={{ flexGrow: 1 }}
+        // sx={{ flexDirection: 'row', alignItems: 'center'}}
         >
           <Button variant="contained" onClick={handleClickOpenDialogNewGroup} size="large" startIcon={<AddBox />}>
             Novo Grupo
@@ -268,35 +234,37 @@ export default function ResponsiveDrawer(props: Props) {
 
           <Divider sx={{ margin: 1 }} />
           <Grid container spacing={2}
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
+            // sx={{
+            //   display: 'flex',
+            //   flexDirection: 'row',
+            //   alignItems: 'center',
+            // }}
           >
-            <Grid item xs={8}
-              sx={{
-                width: '100%',
-              }}
+            <Grid item xs
+              // sx={{
+              //   width: '100%',
+              // }}
             >
-              {
-                groups.map((group, indexGroup) => (
-                  <GroupAccordion group={group} key={group.idGroup} idPerson={person?.idPerson} onDelete={handleDeleteGroup} onEdit={handleEditGroup} />
-                ))
-              }
+              <Item>
+                {
+                  groups.map((group, indexGroup) => (
+                    <GroupAccordion group={group} key={group.idGroup} idPerson={person?.idPerson} onDelete={handleDeleteGroup} onEdit={handleEditGroup} />
+                  ))
+                }
+                </Item>
             </Grid>
-            <Grid item xs={4}
-              sx={{
-                display: 'flex',
-                flexDirection: 'collumn',
-                alignItems: 'center',
-              }}
+            <Grid item xs
+              // sx={{
+              //   display: 'flex',
+              //   flexDirection: 'collumn',
+              //   alignItems: 'center',
+              // }}
             >
+              <Item>
               <CalendarBirthdays />
+              </Item>
             </Grid>
           </Grid>
-
-          {/* <AccordionCp groups={groups} idPerson={idPerson} onDelete={handleDeleteGroup} selectedIndex={groupsIndex} onClick={setGroupsIndex} /> */}
         </Box>
       </Box>
     </Box >

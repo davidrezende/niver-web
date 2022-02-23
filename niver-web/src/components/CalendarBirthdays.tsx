@@ -7,6 +7,11 @@ import PickersDay from '@mui/lab/PickersDay';
 import getDaysInMonth from 'date-fns/getDaysInMonth';
 import { CalendarPicker, StaticDatePicker } from '@mui/lab';
 import { ptBR } from "date-fns/locale";
+import { Tooltip } from '@mui/material';
+import IMemberData from '../shared/types/Member';
+import { CalendarService } from '../services/CalendarService';
+import AuthContext from '../context/auth';
+import ICalendarMemberBirthdayData from '../shared/types/CalendarMemberBirthday';
 
 function getRandomNumber(min: number, max: number) {
   return Math.round(Math.random() * (max - min) + min);
@@ -36,36 +41,66 @@ const initialValue = new Date();
 
 export default function ServerRequestDatePicker() {
   const requestAbortController = React.useRef<AbortController | null>(null);
+  const { user } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [highlightedDays, setHighlightedDays] = React.useState([1, 2, 15]);
+  const [highlightedDays, setHighlightedDays] = React.useState([1, 2, 15, 16]);
+  const [birthdaysMonth, setBirthdaysMonth] = React.useState<ICalendarMemberBirthdayData[]>([]);
+  const [niver2, setNiver2] = React.useState(
+    [
+      {
+        day: 2,
+        name: "aaa"
+      },
+      {
+        day: 4,
+        name: "bbb"
+      },
+      {
+        day: 11,
+        name: "ccc"
+      }
+    ]);
   const [value, setValue] = React.useState<Date | null>(initialValue);
   const [date, setDate] = React.useState<Date | null>(new Date());
-  const fetchHighlightedDays = (date: Date) => {
-    const controller = new AbortController();
-    fakeFetch(date, {
-      signal: controller.signal,
-    })
-      .then(({ daysToHighlight }) => {
-        setHighlightedDays(daysToHighlight);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        // ignore the error if it's caused by `controller.abort`
-        if (error.name !== 'AbortError') {
-          throw error;
-        }
-      });
 
-    requestAbortController.current = controller;
+
+  const fetchHighlightedDays = async (dateParam: Date) => {
+    console.log('procurando aniversariantes da data:', dateParam, ' do mês:', dateParam.getMonth())
+    await CalendarService.getBirthdaysOfMonthFromAllGroupsByPerson(dateParam.getMonth() + 1, user!).then((response) => {
+      console.log(response)
+      setBirthdaysMonth(response.data)
+    }).catch((error) => {
+      console.log(error)
+      setBirthdaysMonth([])
+    })
+    // const controller = new AbortController();
+    // fakeFetch(date, {
+    //   signal: controller.signal,
+    // })
+    //   .then(({ daysToHighlight }) => {
+    //     setHighlightedDays(daysToHighlight);
+    //     setIsLoading(false);
+    //   })
+    //   .catch((error) => {
+    //     // ignore the error if it's caused by `controller.abort`
+    //     if (error.name !== 'AbortError') {
+    //       throw error;
+    //     }
+    // });
+
+    // requestAbortController.current = controller;
   };
 
   React.useEffect(() => {
+
     fetchHighlightedDays(initialValue);
-    // abort request on unmount
-    return () => requestAbortController.current?.abort();
+    // // abort request on unmount
+    // return () => requestAbortController.current?.abort();
   }, []);
 
-  const handleMonthChange = (date: Date) => {
+  const handleMonthChange = (nextMonth: Date) => {
+    console.log('data ao mudar o mes no calendario', nextMonth.getMonth(), 'dataquechegouaomudar:', nextMonth)
+    setBirthdaysMonth([])
     if (requestAbortController.current) {
       // make sure that you are aborting useless requests
       // because it is possible to switch between months pretty quickly
@@ -74,27 +109,41 @@ export default function ServerRequestDatePicker() {
 
     setIsLoading(true);
     setHighlightedDays([]);
-    fetchHighlightedDays(date);
+    fetchHighlightedDays(nextMonth);
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
-        <CalendarPicker 
+      <CalendarPicker
         date={date}
         onChange={(newDate) => setDate(newDate)}
+        onMonthChange={handleMonthChange}
         renderDay={(day, _value, DayComponentProps) => {
           const isSelected =
-            !DayComponentProps.outsideCurrentMonth &&
-            highlightedDays.indexOf(day.getDate()) > 0;
+            !DayComponentProps.outsideCurrentMonth
+            && birthdaysMonth.filter((member) => member.day === day.getDate()).length > 0;
+          // && highlightedDays.indexOf(day.getDate()) > 0;
 
           return (
-            <Badge
-              key={day.toString()}
-              overlap="circular"
-              badgeContent={isSelected ? '🌚' : undefined}
-            >
-              <PickersDay {...DayComponentProps} />
-            </Badge>
+            <Tooltip title={isSelected ?
+              birthdaysMonth!
+                .filter((member) => member.day === day.getDate()).length > 1 ?
+                birthdaysMonth
+                  .map((birthday, index) => index === birthdaysMonth.length - 1 ?
+                    birthday.name : birthday.name + ", "
+                  ) :
+                birthdaysMonth.map((birthday) => birthday.name)
+              : ""}
+              placement="top-start" >
+              <Badge
+                key={day.toString()}
+                overlap="circular"
+                aria-label="teste"
+                badgeContent={isSelected ? '🎉' : undefined}
+              >
+                <PickersDay {...DayComponentProps} />
+              </Badge>
+            </Tooltip>
           );
         }} />
     </LocalizationProvider>

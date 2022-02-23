@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react';
-import { GroupApi, MemberApi, PersonApi } from '../providers';
+import { CalendarApi, GroupApi, MemberApi, PersonApi } from '../providers';
 import { AuthenticationService } from '../services/AuthenticationService';
 import ICredentialsData from '../shared/types/Login';
 import ITokenData from '../shared/types/Token';
@@ -30,6 +30,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       PersonApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
       MemberApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
       GroupApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
+      CalendarApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
     } else {
       Logout()
     }
@@ -68,6 +69,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       PersonApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
       MemberApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
       GroupApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
+      CalendarApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
       enqueueSnackbar('Seja bem vindo! 👋👋👋');
     }).catch((error) => {
       if (error.response?.status === 401) {

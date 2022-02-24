@@ -97,7 +97,12 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
                 {group.owner?.idPerson === idPerson ? <ManageAccountsIcon /> : <Group />} {group.name}
               </Typography>
               :
-              <TextField id="standard-basic" variant="standard" value={groupName} onChange={(e) => setGroupName(e.target.value)} />
+              <TextField
+                id="standard-basic"
+                inputProps={{ maxLength: 15 }}
+                error={groupName!.length <= 0 || groupName!.length > 15}
+                helperText={groupName!.length <= 0 || groupName!.length > 15 ? "Nome do grupo precisa ter entre 1 a 15 caracteres" : ""}
+                variant="standard" value={groupName} onChange={(e) => setGroupName(e.target.value)} />
           }
         </ListItem>
         <ListItem secondaryAction=
@@ -120,6 +125,7 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
                       <IconButton
                         edge="end"
                         aria-label="confirmGroup"
+                        disabled={groupName!.length <= 0 || groupName!.length > 15}
                         onClick={handleEdit}
                       >
                         <CheckCircle />

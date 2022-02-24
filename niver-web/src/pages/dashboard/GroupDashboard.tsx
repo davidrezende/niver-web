@@ -221,13 +221,16 @@ export default function ResponsiveDrawer(props: Props) {
                 label="Nome do grupo"
                 value={nameGroup}
                 fullWidth
+                inputProps={{ maxLength: 15 }}
+                error={nameGroup.length <= 0 || nameGroup.length > 15}
+                helperText={nameGroup.length <= 0 || nameGroup.length > 15 ? "Nome do grupo precisa ter entre 1 a 15 caracteres" : ""}
                 variant="standard"
                 onChange={(e) => setNameGroup(e.target.value)}
               />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleCloseDialogNewGroup}>Cancelar</Button>
-              <Button onClick={handleRegisterNewGroup}>Confirmar</Button>
+              <Button onClick={handleRegisterNewGroup} disabled={nameGroup.length <= 0 || nameGroup.length > 15} >Confirmar</Button>
             </DialogActions>
           </Dialog>
 

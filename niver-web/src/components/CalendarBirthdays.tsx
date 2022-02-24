@@ -7,11 +7,19 @@ import PickersDay from '@mui/lab/PickersDay';
 import getDaysInMonth from 'date-fns/getDaysInMonth';
 import { CalendarPicker, StaticDatePicker } from '@mui/lab';
 import { ptBR } from "date-fns/locale";
-import { Tooltip } from '@mui/material';
+import { Box, Tooltip } from '@mui/material';
 import IMemberData from '../shared/types/Member';
 import { CalendarService } from '../services/CalendarService';
 import AuthContext from '../context/auth';
 import ICalendarMemberBirthdayData from '../shared/types/CalendarMemberBirthday';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+
 
 function getRandomNumber(min: number, max: number) {
   return Math.round(Math.random() * (max - min) + min);
@@ -102,20 +110,23 @@ export default function ServerRequestDatePicker() {
     console.log('data ao mudar o mes no calendario', nextMonth.getMonth(), 'dataquechegouaomudar:', nextMonth)
     setBirthdaysMonth([])
     if (requestAbortController.current) {
+
       // make sure that you are aborting useless requests
       // because it is possible to switch between months pretty quickly
       requestAbortController.current.abort();
     }
-
     setIsLoading(true);
     setHighlightedDays([]);
     fetchHighlightedDays(nextMonth);
+
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
+      <Box sx={{ display:'table', maxWidth: '100%' }}>
       <CalendarPicker
         date={date}
+        readOnly
         onChange={(newDate) => setDate(newDate)}
         onMonthChange={handleMonthChange}
         renderDay={(day, _value, DayComponentProps) => {
@@ -139,13 +150,45 @@ export default function ServerRequestDatePicker() {
                 key={day.toString()}
                 overlap="circular"
                 aria-label="teste"
+                color={isSelected ? 'error' : 'default'}
                 badgeContent={isSelected ? '🎉' : undefined}
+                variant='dot'
               >
                 <PickersDay {...DayComponentProps} />
               </Badge>
             </Tooltip>
           );
         }} />
+      {
+        birthdaysMonth.length !== 0 ?
+          <>
+            
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 100 }} size="small" aria-label="a dense table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="left">Dia</TableCell>
+                      <TableCell align="left">Nome</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {birthdaysMonth.map((row) => (
+                      <TableRow
+                        key={row.idPerson}
+                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                      >
+                        <TableCell align="left">{row.day}</TableCell>
+                        <TableCell align="left">{row.name}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+          </>
+          :
+          ""
+      }
+</Box>
     </LocalizationProvider>
   );
 }

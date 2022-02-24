@@ -198,6 +198,7 @@ export default function ResponsiveDrawer(props: Props) {
                       disabled={!editButton}
                       fullWidth
                       label="Nome"
+                      inputProps={{ maxLength: 25 }}
                       variant="standard"
                       value={userName}
                       onChange={(e) => { setUserName(e.target.value) }}
@@ -235,6 +236,7 @@ export default function ResponsiveDrawer(props: Props) {
                       label="Seu melhor email"
                       name="email"
                       variant="standard"
+                      inputProps={{ maxLength: 50 }}
                       onChange={(e) => { setEmailUser(e.target.value?.toLowerCase()) }}
                       value={emailUser}
                       autoComplete="email"
@@ -257,6 +259,7 @@ export default function ResponsiveDrawer(props: Props) {
                       name="password"
                       label="Confirme sua senha atual"
                       type="password"
+                      inputProps={{ maxLength: 50 }}
                       variant="standard"
                       id="password"
                       onChange={(e) => setPassUser(e.target.value)}

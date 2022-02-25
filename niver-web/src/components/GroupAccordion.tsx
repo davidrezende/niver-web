@@ -6,7 +6,7 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import React, { useCallback, useEffect, useState } from 'react';
-import { IconButton, styled, ListItem, Tooltip, AccordionDetails, TextField, List, DialogTitle, Dialog, DialogContentText, DialogActions, Button, DialogContent } from '@mui/material';
+import { IconButton, styled, ListItem, Tooltip, AccordionDetails, TextField, List, DialogTitle, Dialog, DialogContentText, DialogActions, Button, DialogContent, Box, FilledInput, FormControl, InputLabel } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -19,22 +19,32 @@ import IGroupData from '../shared/types/Group';
 import { GroupMemberListItem } from './GroupMemberListItem';
 import { GroupService } from '../services/GroupService';
 import IMemberData from '../shared/types/Member';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import CopyToClipboard from './CopyToClipboard';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import CachedIcon from '@mui/icons-material/Cached';
+
+
+
 
 type ListProps = {
   group: IGroupData;
   onDelete: (idGroup: number, idPerson: number) => void;
   onEdit: (group: IGroupData) => void;
+  onInvite: (idGroup: number, idPerson: number) => void;
   idPerson: number;
 };
 
 
-export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete, onEdit }) => {
+export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete, onEdit, onInvite }) => {
   const [edit, setEdit] = useState(false)
   const [openAccordion, setOpenAccordion] = useState(false)
   const [groupName, setGroupName] = useState(group.name)
+  const [inviteLink, setInviteLink] = useState('')
   const [members, setMembers] = useState(group.members)
   const [openDialogDeleteGroup, setOpenDialogDeleteGroup] = React.useState(false);
   const [openDialogExitGroup, setOpenDialogExitGroup] = React.useState(false);
+  const [openDialogInviteGroup, setOpenDialogInviteGroup] = React.useState(false);
 
   const handleClickOpenDialogExitGroup = () => {
     setOpenDialogExitGroup(true);
@@ -42,6 +52,14 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
 
   const handleCloseDialogExitGroup = () => {
     setOpenDialogExitGroup(false);
+  };
+
+  const handleClickOpenDialogInviteGroup = () => {
+    setOpenDialogInviteGroup(true);
+  };
+
+  const handleCloseDialogInviteGroup = () => {
+    setOpenDialogInviteGroup(false);
   };
 
   const handleClickOpenDialogDeleteGroup = () => {
@@ -62,6 +80,12 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
     setOpenDialogExitGroup(false);
   };
 
+
+  const handleConfirmDialogInviteGroup = (idGroup: number, idPerson: number) => {
+    onInvite(idGroup, idPerson)
+    setOpenDialogInviteGroup(false);
+  };
+
   const handleRemoveMember = async (idPerson: number, idGroup: number,) => {
     let { status } = await GroupService.removeMemberFromGroupId(idPerson, idGroup)
     if (status === 200) {
@@ -78,7 +102,7 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
 
   return (
 
-    <MuiAccordion sx={{backgroundColor: 'rgb(0 82 151)', color: 'white'}}
+    <MuiAccordion sx={{ backgroundColor: 'rgb(0 82 151)', color: 'white' }}
       expanded={openAccordion}>
       <MuiAccordionSummary
         expandIcon={
@@ -108,9 +132,18 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
         <ListItem secondaryAction=
           {group.owner?.idPerson === idPerson ?
             <>
+              <Tooltip title="Adicionar membros" sx={{ mr: 1 }}>
+                <IconButton
+                  edge="end"
+                  aria-label="addMember"
+                  onClick={handleClickOpenDialogInviteGroup}
+                >
+                  <PersonAddIcon />
+                </IconButton>
+              </Tooltip>
               {
                 !edit ?
-                  <Tooltip title="Editar">
+                  <Tooltip title="Editar" sx={{ mr: 1 }}>
                     <IconButton
                       edge="end"
                       aria-label="editGroup"
@@ -121,7 +154,7 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
                   </Tooltip>
                   :
                   <>
-                    <Tooltip title="Confirmar">
+                    <Tooltip title="Confirmar" >
                       <IconButton
                         edge="end"
                         aria-label="confirmGroup"
@@ -131,7 +164,7 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
                         <CheckCircle />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Cancelar">
+                    <Tooltip title="Cancelar" sx={{ mr: 1 }}>
                       <IconButton
                         edge="end"
                         aria-label="cancelGroup"
@@ -142,7 +175,7 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
                     </Tooltip>
                   </>
               }
-              <Tooltip title="Deletar Grupo">
+              <Tooltip title="Deletar Grupo" >
                 <IconButton
                   edge="end"
                   aria-label="deleteGroup"
@@ -201,6 +234,54 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
         <DialogActions>
           <Button onClick={handleCloseDialogExitGroup}>Cancelar</Button>
           <Button onClick={() => handleConfirmDialogExitGroup(group.idGroup, idPerson)}>Sim</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openDialogInviteGroup} onClose={handleCloseDialogInviteGroup} fullWidth>
+        <DialogTitle>Convide pessoas para o <strong>{group.name}</strong></DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Envie um link de convite para que outras pessoas possam entrar no seu grupo. Os membros do grupo são notitificados mensalmente e no dia do aniversário.
+          </DialogContentText>
+          <Box display='table' sx={{ width: '100%' }}>
+            <FormControl fullWidth sx={{ mt: 2 }} variant="filled">
+              <InputLabel htmlFor="filled-adornment-amount">Seu link de convite para o grupo {group.name}</InputLabel>
+              <FilledInput
+                id="filled-adornment-amount"
+                autoFocus
+                fullWidth
+                value={inviteLink}
+                endAdornment={
+                  <>
+                    <CopyToClipboard TooltipProps={{ title: "Copiado", leaveDelay: 3000 }}>
+                      {({ copy }) => (
+                        <IconButton
+                          color="primary"
+                          onClick={() => copy(inviteLink)}
+                        >
+                          <ContentCopyIcon />
+                        </IconButton>
+
+                      )}
+                    </CopyToClipboard>
+                    <Tooltip title="Recriar link do convite" >
+                      <IconButton
+                        edge="end"
+                        color="primary"
+                        aria-label="renovateInviteLink"
+                        onClick={handleClickOpenDialogDeleteGroup}
+                      >
+                        <CachedIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </>
+                }
+              />
+            </FormControl>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialogInviteGroup}>Fechar</Button>
         </DialogActions>
       </Dialog>
 

@@ -81,6 +81,14 @@ export default function ResponsiveDrawer(props: Props) {
     setNameGroup('');
   }
 
+  const handleGenerateInviteGroup = async (idGroup: number, idPerson: number) => {
+    console.log('group:', idGroup, ' person:', idPerson)
+    // let { status, data } = await GroupService.createGroup({ owner: { idPerson: person?.idPerson }, name: nameGroup })
+    // if (status === 200) {
+    //   setGroups([...groups, data])
+    // }
+  }
+
   const handleDeleteGroup = async (idGroup: number, idPerson: number) => {
     if (groups.filter((group) => group.idGroup === idGroup)[0].owner !== idPerson) {
       let { status } = await GroupService.removeMemberFromGroupId(idPerson, idGroup)
@@ -95,6 +103,7 @@ export default function ResponsiveDrawer(props: Props) {
     }
 
   }
+
 
   const handleEditGroup = async (groupEdit: IGroupData) => {
     console.log('objeto' + JSON.stringify(groupEdit))
@@ -140,7 +149,7 @@ export default function ResponsiveDrawer(props: Props) {
           ml: { sm: `${drawerWidth}px` },
         }}
       >
-        <Toolbar sx={{color: 'white', backgroundColor: 'rgb(1 63 112)'}}>
+        <Toolbar sx={{ color: 'white', backgroundColor: 'rgb(1 63 112)' }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -196,7 +205,7 @@ export default function ResponsiveDrawer(props: Props) {
         <Toolbar />
 
         <Box
-          sx={{ flexGrow: 1}}
+          sx={{ flexGrow: 1 }}
         // sx={{ flexDirection: 'row', alignItems: 'center'}}
         >
           <Button variant="contained" onClick={handleClickOpenDialogNewGroup} size="large" startIcon={<AddBox />}>
@@ -231,7 +240,7 @@ export default function ResponsiveDrawer(props: Props) {
           </Dialog> */}
 
 
-          <DialogNewGroup nameGroup={nameGroup} setNameGroup={setNameGroup} handleCloseDialogNewGroup={handleCloseDialogNewGroup} handleRegisterNewGroup={handleRegisterNewGroup} openDialogNewGroup={openDialogNewGroup}/>
+          <DialogNewGroup nameGroup={nameGroup} setNameGroup={setNameGroup} handleCloseDialogNewGroup={handleCloseDialogNewGroup} handleRegisterNewGroup={handleRegisterNewGroup} openDialogNewGroup={openDialogNewGroup} />
 
           <Divider sx={{ margin: 1 }} />
           <Grid container spacing={2}
@@ -246,10 +255,16 @@ export default function ResponsiveDrawer(props: Props) {
             //   width: '100%',
             // }}
             >
-              <Item sx={{ backgroundColor: 'transparent'}}>
+              <Item sx={{ backgroundColor: 'transparent' }}>
                 {
                   groups.map((group, indexGroup) => (
-                    <GroupAccordion  group={group} key={group.idGroup} idPerson={person?.idPerson} onDelete={handleDeleteGroup} onEdit={handleEditGroup} />
+                    <GroupAccordion
+                      group={group}
+                      key={group.idGroup}
+                      idPerson={person?.idPerson}
+                      onDelete={handleDeleteGroup}
+                      onEdit={handleEditGroup}
+                      onInvite={handleGenerateInviteGroup} />
                   ))
                 }
               </Item>
@@ -262,9 +277,9 @@ export default function ResponsiveDrawer(props: Props) {
             // }}
             >
               <Stack direction="row" justifyContent="center">
-              <Item sx={{ backgroundColor: 'transparent'}}>
-                <CalendarBirthdays />
-              </Item>
+                <Item sx={{ backgroundColor: 'transparent' }}>
+                  <CalendarBirthdays />
+                </Item>
               </Stack>
             </Grid>
           </Grid>

@@ -5,22 +5,11 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import MailIcon from '@mui/icons-material/Mail';
 import MenuIcon from '@mui/icons-material/Menu';
-import AddBox from '@mui/icons-material/AddBox';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { Avatar, Button, Checkbox, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Grid, Hidden, InputAdornment, Link, TextField } from '@mui/material';
-import IGroupData from '../../shared/types/Group';
-import { GroupService } from '../../services/GroupService';
-import { GroupAccordion } from '../../components/GroupAccordion';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { useContext, useEffect, useState } from 'react';
+import { Avatar, Button, Grid, InputAdornment, Link, TextField } from '@mui/material';
 import IPersonData from '../../shared/types/Person';
 import { PersonService } from '../../services/PersonService';
 import AuthContext from '../../context/auth';
@@ -29,8 +18,9 @@ import { DatePicker, LocalizationProvider } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { ptBR } from "date-fns/locale";
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import { AuthenticationService } from '../../services/AuthenticationService';
 import { useSnackbar } from 'notistack';
+import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
 
 const drawerWidth = 240;
 
@@ -141,315 +131,308 @@ export default function ResponsiveDrawer(props: Props) {
           enqueueSnackbar('Serviço indisponível, tente novamente mais tarde 😨')
         }
       })
-};
+  };
 
-const container = window !== undefined ? () => window().document.body : undefined;
+  const container = window !== undefined ? () => window().document.body : undefined;
 
-return (
-  <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-        }}
-      >
-        <Toolbar
+  const randColor = (param: number) =>  {
+    return "#" + Math.floor(param *1675).toString(16).padStart(6, '0').toUpperCase();
+}
+
+
+
+  return (
+    <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
+        <AppBar
+          position="fixed"
+          sx={{
+            width: { sm: `calc(100% - ${drawerWidth}px)` },
+            ml: { sm: `${drawerWidth}px` },
+          }}
         >
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+          <Toolbar
           >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Seus dados
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        aria-label="mailbox folders"
-      >
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Drawer
-          container={container}
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
-          }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-          }}
-        >
-          <CommonDrawer namePerson={person?.name} />
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-          }}
-          open
-        >
-          <CommonDrawer namePerson={person?.name} />
-        </Drawer>
-      </Box>
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
-      >
-        <Toolbar />
-
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { sm: 'none' } }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              Seus dados
+            </Typography>
+          </Toolbar>
+        </AppBar>
         <Box
-          sx={{
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}
+          component="nav"
+          sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+          aria-label="mailbox folders"
         >
+          {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+          <Drawer
+            container={container}
+            variant="temporary"
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
+            sx={{
+              display: { xs: 'block', sm: 'none' },
+              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            }}
+          >
+            <CommonDrawer namePerson={person?.name} />
+          </Drawer>
+          <Drawer
+            variant="permanent"
+            sx={{
+              display: { xs: 'none', sm: 'block' },
+              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            }}
+            open
+          >
+            <CommonDrawer namePerson={person?.name} />
+          </Drawer>
+        </Box>
+        <Box
+          component="main"
+          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+        >
+          <Toolbar />
+
           <Box
             sx={{
-              marginTop: 2,
-              display: 'flex',
-              flexDirection: 'column',
+              flexDirection: 'row',
               alignItems: 'center',
             }}
           >
-            <Box sx={{ mt: 3 }}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    autoComplete="given-name"
-                    name="name"
-                    required
-                    disabled={!editButton}
+            <Box
+              sx={{
+                marginTop: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+
+              <Avatar sx={{ fontSize: '100%', width: 100, height: 100, m: 1, bgcolor: () => randColor(person?.name?.length!) }}>{person?.name?.split(" ")[0].charAt(0).concat(person?.name?.split(" ")[0].charAt(person?.name.length - 1)).toUpperCase()}</Avatar>
+
+              <Box sx={{ mt: 3 }}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      autoComplete="given-name"
+                      name="name"
+                      required
+                      disabled={!editButton}
+                      fullWidth
+                      inputProps={{ maxLength: 25 }}
+                      label="Nome"
+                      variant="standard"
+                      value={userName}
+                      onChange={(e) => { setUserName(e.target.value) }}
+                      id="name"
+                      autoFocus
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <AccountCircle />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <DatePicker
+                      disableFuture
+                      disabled={!editButton}
+                      label="Data de Nascimento"
+                      openTo="year"
+                      views={['year', 'month', 'day']}
+                      value={birthdayDate}
+                      onChange={(newValue) => {
+                        setBirthdayDate(newValue!);
+                      }}
+                      renderInput={(params) => <TextField required variant='standard' {...params} />}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      disabled={!editButton}
+                      fullWidth
+                      id="email"
+                      label="Seu melhor email"
+                      name="email"
+                      inputProps={{ maxLength: 50 }}
+                      variant="standard"
+                      onChange={(e) => { setEmailUser(e.target.value?.toLowerCase()) }}
+                      value={emailUser}
+                      autoComplete="email"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <AlternateEmailIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      disabled={!editButton}
+                      error={passUser.length < 6}
+                      fullWidth
+                      sx={{ display: editButton ? 'block' : 'none' }}
+                      name="password"
+                      label="Confirme sua senha atual"
+                      inputProps={{ maxLength: 50 }}
+                      type="password"
+                      variant="standard"
+                      id="password"
+                      onChange={(e) => setPassUser(e.target.value)}
+                      value={passUser}
+                      autoComplete="new-password"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <VpnKeyIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+                <Button
+                  type="button"
+                  fullWidth
+                  onClick={handleEdit}
+                  variant="contained"
+                  sx={{ mt: 1, mb: 2 }}
+                >
+                  {!editButton ? 'Alterar' : 'Cancelar'}
+                </Button>
+                <Button
+                  type="button"
+                  color="success"
+                  disabled={person?.name === userName && person?.email === emailUser && person?.birthday === birthdayDate}
+                  fullWidth
+                  sx={{ mb: 2, display: editButton ? 'block' : 'none' }}
+                  onClick={handleConfirm}
+                  variant="contained"
+                >
+                  Confirmar
+                </Button>
+
+                <Divider />
+                <Box>
+                  <Grid container spacing={2} sx={{ mt: 5, display: editPasswordButton ? 'block' : 'none' }}>
+                    <Grid item xs={12} >
+                      <TextField
+                        required
+                        disabled={!editPasswordButton}
+                        error={oldPassUser.length < 6}
+                        fullWidth
+                        name="passwordCurrent"
+                        label="Confirme sua senha atual"
+                        type="password"
+                        inputProps={{ maxLength: 50 }}
+                        variant="standard"
+                        id="passwordCurrent"
+                        onChange={(e) => setOldPassUser(e.target.value)}
+                        value={oldPassUser}
+                        autoComplete="new-password"
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <VpnKeyIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        required
+                        disabled={!editPasswordButton}
+                        error={newPassUser.length < 6}
+                        fullWidth
+                        name="passwordNew"
+                        label="Sua nova senha"
+                        type="password"
+                        variant="standard"
+                        inputProps={{ maxLength: 50 }}
+                        id="passwordNew"
+                        onChange={(e) => setNewPassUser(e.target.value)}
+                        value={newPassUser}
+                        autoComplete="new-password"
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <VpnKeyIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        required
+                        disabled={!editPasswordButton}
+                        error={newConfirmPassUser.length < 6}
+                        fullWidth
+                        name="passwordNewConfirm"
+                        label="Confirme sua nova senha"
+                        type="password"
+                        inputProps={{ maxLength: 50 }}
+                        variant="standard"
+                        id="passwordNewConfirm"
+                        onChange={(e) => setNewConfirmPassUser(e.target.value)}
+                        value={newConfirmPassUser}
+                        autoComplete="new-password"
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <VpnKeyIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
+                  <Button
+                    type="button"
                     fullWidth
-                    label="Nome"
-                    variant="standard"
-                    value={userName}
-                    onChange={(e) => { setUserName(e.target.value) }}
-                    id="name"
-                    autoFocus
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AccountCircle />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <DatePicker
-                    disableFuture
-                    disabled={!editButton}
-                    label="Data de Nascimento"
-                    openTo="year"
-                    views={['year', 'month', 'day']}
-                    value={birthdayDate}
-                    onChange={(newValue) => {
-                      setBirthdayDate(newValue!);
-                    }}
-                    renderInput={(params) => <TextField required variant='standard' {...params} />}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    disabled={!editButton}
+                    onClick={handleEditPassword}
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                  >
+                    {!editPasswordButton ? 'Alterar Senha' : 'Cancelar'}
+                  </Button>
+                  <Button
+                    type="button"
+                    color="success"
+                    disabled={oldPassUser.length < 6 || newPassUser.length < 6 || newConfirmPassUser.length < 6 || (oldPassUser === newPassUser && newPassUser === newConfirmPassUser)}
                     fullWidth
-                    id="email"
-                    label="Seu melhor email"
-                    name="email"
-                    variant="standard"
-                    onChange={(e) => { setEmailUser(e.target.value?.toLowerCase()) }}
-                    value={emailUser}
-                    autoComplete="email"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AccountCircle />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    disabled={!editButton}
-                    error={passUser.length < 6}
-                    fullWidth
-                    sx={{ visibility: editButton ? 'visible' : 'hidden' }}
-                    name="password"
-                    label="Confirme sua senha atual"
-                    type="password"
-                    variant="standard"
-                    id="password"
-                    onChange={(e) => setPassUser(e.target.value)}
-                    value={passUser}
-                    autoComplete="new-password"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AccountCircle />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-              </Grid>
-              <Button
-                type="button"
-                fullWidth
-                onClick={handleEdit}
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                {!editButton ? 'Alterar' : 'Cancelar'}
-              </Button>
-              <Button
-                type="button"
-                color="success"
-                disabled={person?.name === userName && person?.email === emailUser && person?.birthday === birthdayDate}
-                fullWidth
-                sx={{ mt: 3, mb: 2, visibility: editButton ? 'visible' : 'hidden' }}
-                onClick={handleConfirm}
-                variant="contained"
-              >
-                Confirmar
-              </Button>
-            </Box>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <Box sx={{ mt: 3 }}>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    disabled={!editPasswordButton}
-                    error={passUser.length < 6}
-                    fullWidth
-                    sx={{ visibility: editPasswordButton ? 'visible' : 'hidden' }}
-                    name="passwordCurrent"
-                    label="Confirme sua senha atual"
-                    type="password"
-                    variant="standard"
-                    id="passwordCurrent"
-                    onChange={(e) => setOldPassUser(e.target.value)}
-                    value={oldPassUser}
-                    autoComplete="new-password"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AccountCircle />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    disabled={!editPasswordButton}
-                    error={passUser.length < 6}
-                    fullWidth
-                    sx={{ visibility: editPasswordButton ? 'visible' : 'hidden' }}
-                    name="passwordNew"
-                    label="Sua nova senha"
-                    type="password"
-                    variant="standard"
-                    id="passwordNew"
-                    onChange={(e) => setNewPassUser(e.target.value)}
-                    value={newPassUser}
-                    autoComplete="new-password"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AccountCircle />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    disabled={!editPasswordButton}
-                    error={passUser.length < 6}
-                    fullWidth
-                    sx={{ visibility: editPasswordButton ? 'visible' : 'hidden' }}
-                    name="passwordNewConfirm"
-                    label="Confirme sua nova senha"
-                    type="password"
-                    variant="standard"
-                    id="passwordNewConfirm"
-                    onChange={(e) => setNewConfirmPassUser(e.target.value)}
-                    value={newConfirmPassUser}
-                    autoComplete="new-password"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AccountCircle />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-              </Grid>
-              <Button
-                type="button"
-                fullWidth
-                onClick={handleEditPassword}
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                {!editPasswordButton ? 'Alterar' : 'Cancelar'}
-              </Button>
-              <Button
-                type="button"
-                color="success"
-                disabled={oldPassUser.length < 6 && newPassUser.length < 6 && newConfirmPassUser.length < 6}
-                fullWidth
-                sx={{ mt: 3, mb: 2, visibility: editPasswordButton ? 'visible' : 'hidden' }}
-                onClick={handleConfirmPasswordChange}
-                variant="contained"
-              >
-                Confirmar
-              </Button>
+                    sx={{ mb: 2, visibility: editPasswordButton ? 'visible' : 'hidden' }}
+                    onClick={handleConfirmPasswordChange}
+                    variant="contained"
+                  >
+                    Confirmar
+                  </Button>
+                </Box>
+              </Box>
             </Box>
           </Box>
         </Box>
-      </Box>
-    </Box >
-  </LocalizationProvider>
-);
+      </Box >
+    </LocalizationProvider>
+  );
 }

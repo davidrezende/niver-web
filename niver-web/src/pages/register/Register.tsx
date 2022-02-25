@@ -95,6 +95,7 @@ export default function SignUp() {
                     onChange={(e) => setUserName(e.target.value)}
                     id="name"
                     label="Seu nick/nome"
+                    inputProps={{ maxLength: 25 }}
                     autoFocus
                   />
                 </Grid>
@@ -118,6 +119,7 @@ export default function SignUp() {
                     id="email"
                     label="Seu melhor email"
                     value={emailUser}
+                    inputProps={{ maxLength: 50 }}
                     onChange={(e) => setEmailUser(e.target.value?.toLowerCase())}
                     name="email"
                     autoComplete="email"
@@ -130,6 +132,7 @@ export default function SignUp() {
                     name="password"
                     label="Senha"
                     value={passUser}
+                    inputProps={{ maxLength: 50 }}
                     type="password"
                     onChange={(e) => setPassUser(e.target.value)}
                     id="password"
@@ -141,6 +144,7 @@ export default function SignUp() {
                     required
                     fullWidth
                     name="passwordConfirm"
+                    inputProps={{ maxLength: 50 }}
                     value={passUserConfirm}
                     onChange={(e) => setPassUserConfirm(e.target.value)}
                     label="Confirme sua senha"

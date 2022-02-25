@@ -5,6 +5,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* background-image: url('https://img.wallpapersafari.com/desktop/1920/1080/47/71/v3rB6p.jpg'); */
+  background-color: rgb(1 61 111);
 }
 
 code {

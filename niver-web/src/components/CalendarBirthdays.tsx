@@ -100,8 +100,7 @@ export default function ServerRequestDatePicker() {
   };
 
   React.useEffect(() => {
-
-    fetchHighlightedDays(initialValue);
+    fetchHighlightedDays(new Date());
     // // abort request on unmount
     // return () => requestAbortController.current?.abort();
   }, []);
@@ -123,8 +122,9 @@ export default function ServerRequestDatePicker() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
-      <Box sx={{ display:'table', maxWidth: '100%' }}>
+      <Box sx={{ display:'table', maxWidth: '100%', color: 'white', backgroundColor: 'rgb(0 82 151)'}}>
       <CalendarPicker
+        key={1}
         date={date}
         readOnly
         onChange={(newDate) => setDate(newDate)}
@@ -145,6 +145,7 @@ export default function ServerRequestDatePicker() {
                   ) :
                 birthdaysMonth.map((birthday) => birthday.name)
               : ""}
+              key={day.getDay()}
               placement="top-start" >
               <Badge
                 key={day.toString()}
@@ -163,8 +164,8 @@ export default function ServerRequestDatePicker() {
         birthdaysMonth.length !== 0 ?
           <>
             
-              <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 100 }} size="small" aria-label="a dense table">
+              <TableContainer component={Paper} >
+                <Table sx={{ minWidth: 100, backgroundColor: 'rgb(000 000 007%)' }} size="small" aria-label="a dense table">
                   <TableHead>
                     <TableRow>
                       <TableCell align="left">Dia</TableCell>

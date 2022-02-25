@@ -23,7 +23,7 @@ const theme = createTheme();
 export default function SignIn() {
   const [emailUser, setEmailUser] = useState('');
   const [passUser, setPassUser] = useState('');
-  const {signed, user, Login, Logout} = useContext(AuthContext);
+  const { signed, user, Login, Logout } = useContext(AuthContext);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   let navigate = useNavigate();
 
@@ -37,20 +37,20 @@ export default function SignIn() {
 
   const handleSubmit = async () => {
     const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
-    if(regexpEmail.test(emailUser) && passUser.length >= 6){
+    if (regexpEmail.test(emailUser) && passUser.length >= 6) {
       await Login({ "email": emailUser, "password": passUser })
-    }else{
+    } else {
       enqueueSnackbar('Usuário ou senha incorretos. 😢');
     }
   }
- 
+
 
 
   return (
     <ThemeProvider theme={theme} >
-      <Container component="main" maxWidth="xs" > 
+      <Container component="main" maxWidth="xs" >
         <CssBaseline />
-        <Box 
+        <Box
           sx={{
             marginTop: 8,
             display: 'flex',
@@ -61,10 +61,14 @@ export default function SignIn() {
           {/* <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar> */}
-          <Typography component="h2" variant="h5">
-          😱 Quem eh <strong>você?!</strong> 🕵️‍♀️
+          <Box sx={{ mb: 5 }} alignContent='center' >
+            <img width="90%" src={require('./../../shared/images/logo_niver.png')} />
+          </Box>
+          
+          <Box sx={{ mt: 10 }}>
+          <Typography component="h2" variant="h5" align='center'>
+            😱 Quem eh <strong>você?!</strong> 🕵️‍♀️
           </Typography>
-          <Box sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required

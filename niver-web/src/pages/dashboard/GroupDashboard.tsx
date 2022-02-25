@@ -16,7 +16,7 @@ import AddBox from '@mui/icons-material/AddBox';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Paper, styled, TextField } from '@mui/material';
+import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Paper, Stack, styled, TextField } from '@mui/material';
 import IGroupData from '../../shared/types/Group';
 import { GroupService } from '../../services/GroupService';
 import { GroupAccordion } from '../../components/GroupAccordion';
@@ -25,7 +25,7 @@ import IPersonData from '../../shared/types/Person';
 import { PersonService } from '../../services/PersonService';
 import AuthContext from '../../context/auth';
 import { useNavigate } from "react-router-dom";
-import { CommonDrawer } from '../../components';
+import { CommonDrawer, DialogNewGroup } from '../../components';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { ptBR } from "date-fns/locale";
 import { LocalizationProvider } from '@mui/lab';
@@ -39,6 +39,7 @@ interface Props {
    */
   window?: () => Window;
 }
+
 
 export default function ResponsiveDrawer(props: Props) {
   const [person, setPerson] = useState<IPersonData>();
@@ -80,6 +81,14 @@ export default function ResponsiveDrawer(props: Props) {
     setNameGroup('');
   }
 
+  const handleGenerateInviteGroup = async (idGroup: number, idPerson: number) => {
+    console.log('group:', idGroup, ' person:', idPerson)
+    // let { status, data } = await GroupService.createGroup({ owner: { idPerson: person?.idPerson }, name: nameGroup })
+    // if (status === 200) {
+    //   setGroups([...groups, data])
+    // }
+  }
+
   const handleDeleteGroup = async (idGroup: number, idPerson: number) => {
     if (groups.filter((group) => group.idGroup === idGroup)[0].owner !== idPerson) {
       let { status } = await GroupService.removeMemberFromGroupId(idPerson, idGroup)
@@ -94,6 +103,7 @@ export default function ResponsiveDrawer(props: Props) {
     }
 
   }
+
 
   const handleEditGroup = async (groupEdit: IGroupData) => {
     console.log('objeto' + JSON.stringify(groupEdit))
@@ -121,11 +131,6 @@ export default function ResponsiveDrawer(props: Props) {
     setOpenDialogNewGroup(false);
   };
 
-  async function handleLogout() {
-    Logout()
-    navigate('/login')
-  }
-
   const container = window !== undefined ? () => window().document.body : undefined;
   const Item = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -135,7 +140,7 @@ export default function ResponsiveDrawer(props: Props) {
   }));
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', backgroundColor: 'rgb(1 63 122)', height: 1000 }}>
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -144,7 +149,7 @@ export default function ResponsiveDrawer(props: Props) {
           ml: { sm: `${drawerWidth}px` },
         }}
       >
-        <Toolbar>
+        <Toolbar sx={{ color: 'white', backgroundColor: 'rgb(1 63 112)' }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -185,7 +190,7 @@ export default function ResponsiveDrawer(props: Props) {
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, backgroundColor: 'rgb(1 61 111)', color: 'white' },
           }}
           open
         >
@@ -206,7 +211,7 @@ export default function ResponsiveDrawer(props: Props) {
           <Button variant="contained" onClick={handleClickOpenDialogNewGroup} size="large" startIcon={<AddBox />}>
             Novo Grupo
           </Button>
-
+          {/* 
           <Dialog open={openDialogNewGroup} onClose={handleCloseDialogNewGroup}>
             <DialogTitle>Novo Grupo</DialogTitle>
             <DialogContent>
@@ -232,40 +237,50 @@ export default function ResponsiveDrawer(props: Props) {
               <Button onClick={handleCloseDialogNewGroup}>Cancelar</Button>
               <Button onClick={handleRegisterNewGroup} disabled={nameGroup.length <= 0 || nameGroup.length > 15} >Confirmar</Button>
             </DialogActions>
-          </Dialog>
+          </Dialog> */}
 
+
+          <DialogNewGroup nameGroup={nameGroup} setNameGroup={setNameGroup} handleCloseDialogNewGroup={handleCloseDialogNewGroup} handleRegisterNewGroup={handleRegisterNewGroup} openDialogNewGroup={openDialogNewGroup} />
 
           <Divider sx={{ margin: 1 }} />
           <Grid container spacing={2}
-            // sx={{
-            //   display: 'flex',
-            //   flexDirection: 'row',
-            //   alignItems: 'center',
-            // }}
+          // sx={{
+          //   display: 'flex',
+          //   flexDirection: 'row',
+          //   alignItems: 'center',
+          // }}
           >
             <Grid item xs
-              // sx={{
-              //   width: '100%',
-              // }}
+            // sx={{
+            //   width: '100%',
+            // }}
             >
-              <Item>
+              <Item sx={{ backgroundColor: 'transparent' }}>
                 {
                   groups.map((group, indexGroup) => (
-                    <GroupAccordion group={group} key={group.idGroup} idPerson={person?.idPerson} onDelete={handleDeleteGroup} onEdit={handleEditGroup} />
+                    <GroupAccordion
+                      group={group}
+                      key={group.idGroup}
+                      idPerson={person?.idPerson}
+                      onDelete={handleDeleteGroup}
+                      onEdit={handleEditGroup}
+                      onInvite={handleGenerateInviteGroup} />
                   ))
                 }
-                </Item>
+              </Item>
             </Grid>
             <Grid item xs
-              // sx={{
-              //   display: 'flex',
-              //   flexDirection: 'collumn',
-              //   alignItems: 'center',
-              // }}
+            // sx={{
+            //   display: 'flex',
+            //   flexDirection: 'collumn',
+            //   alignItems: 'center',
+            // }}
             >
-              <Item>
-              <CalendarBirthdays />
-              </Item>
+              <Stack direction="row" justifyContent="center">
+                <Item sx={{ backgroundColor: 'transparent' }}>
+                  <CalendarBirthdays />
+                </Item>
+              </Stack>
             </Grid>
           </Grid>
         </Box>

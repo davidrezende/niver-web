@@ -1,18 +1,19 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
-import { useMemo } from "react";
-
+import { useMemo, useState } from "react";
 
 type ListProps = {
-  nameGroup: string;
   openDialogNewGroup: boolean,
   handleCloseDialogNewGroup(): void,
-  handleRegisterNewGroup(): void,
-  setNameGroup(nameGroup: string): void
+  handleRegisterNewGroup(nameGroup: string): void,
 };
 
-
-
-export const DialogNewGroup: React.FC<ListProps> = ({ nameGroup, openDialogNewGroup, handleCloseDialogNewGroup, handleRegisterNewGroup, setNameGroup }) => {
+export const DialogNewGroup: React.FC<ListProps> = ({ openDialogNewGroup, handleCloseDialogNewGroup, handleRegisterNewGroup }) => {
+  
+const [nameGroup, setNameGroup] = useState('');
+const handlePrepareRegisterNewGroup = (nameGroup: string) =>{
+  handleRegisterNewGroup(nameGroup)
+  setNameGroup('')
+}
   return (
     <Dialog open={openDialogNewGroup} onClose={handleCloseDialogNewGroup}>
       <DialogTitle>Novo Grupo</DialogTitle>
@@ -37,7 +38,7 @@ export const DialogNewGroup: React.FC<ListProps> = ({ nameGroup, openDialogNewGr
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCloseDialogNewGroup}>Cancelar</Button>
-        <Button onClick={handleRegisterNewGroup} disabled={nameGroup.length <= 0 || nameGroup.length > 15} >Confirmar</Button>
+        <Button onClick={() => handlePrepareRegisterNewGroup(nameGroup)} disabled={nameGroup.length <= 0 || nameGroup.length > 15} >Confirmar</Button>
       </DialogActions>
     </Dialog>
   )

@@ -17,34 +17,45 @@ import { Link, useNavigate } from "react-router-dom";
 import { Copyright } from '../../components';
 import { useSnackbar } from 'notistack';
 import CSS from 'csstype';
+import { CircularProgress } from '@mui/material';
 
 const theme = createTheme();
 
 export default function SignIn() {
   const [emailUser, setEmailUser] = useState('');
   const [passUser, setPassUser] = useState('');
+  const [loading, setLoading] = useState(false);
   const { signed, user, Login, Logout } = useContext(AuthContext);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   let navigate = useNavigate();
 
   useEffect(() => {
+    if(!!!user){
     localStorage.clear()
     sessionStorage.removeItem('@App:userId');
     sessionStorage.removeItem('App:userName');
     sessionStorage.removeItem('App:token');
+  }else{
+    navigate(-1)
+  }
   }, [])
 
 
   const handleSubmit = async () => {
     const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
     if (regexpEmail.test(emailUser) && passUser.length >= 6) {
-      await Login({ "email": emailUser, "password": passUser })
+      setLoading(true)
+      await delay(2000)
+      Login({ "email": emailUser, "password": passUser })
+      setLoading(false)
     } else {
       enqueueSnackbar('Usuário ou senha incorretos. 😢');
     }
   }
 
-
+  function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   return (
     <ThemeProvider theme={theme} >
@@ -64,11 +75,11 @@ export default function SignIn() {
           <Box sx={{ mb: 5 }} alignContent='center' >
             <img width="90%" src={require('./../../shared/images/logo_niver.png')} />
           </Box>
-          
+
           <Box sx={{ mt: 10 }}>
-          <Typography component="h2" variant="h5" align='center'>
-            😱 Quem eh <strong>você?!</strong> 🕵️‍♀️
-          </Typography>
+            <Typography component="h2" variant="h5" align='center'>
+              😱 Quem eh <strong>você?!</strong> 🕵️‍♀️
+            </Typography>
             <TextField
               margin="normal"
               required
@@ -97,16 +108,30 @@ export default function SignIn() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             /> */}
-            <Button
-              type="button"
-              onClick={() => handleSubmit()}
-              fullWidth
-              disabled={!(emailUser && passUser)}
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              ENTRAR
-            </Button>
+
+            {
+              loading ?
+
+                <Box sx={{ m: 5, display: 'flex', justifyContent: 'center' }}>
+                  <CircularProgress />
+                </Box>
+
+                :
+
+                <Button
+                  type="button"
+                  onClick={() => handleSubmit()}
+                  fullWidth
+                  disabled={!(emailUser && passUser)}
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  ENTRAR
+                </Button>
+
+            }
+
+
             <Grid container>
               <Grid item xs>
                 <Link to="#">

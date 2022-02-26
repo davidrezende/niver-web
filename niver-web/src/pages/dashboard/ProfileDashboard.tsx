@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useContext, useEffect, useState } from 'react';
-import { Avatar, Button, Grid, InputAdornment, Link, TextField } from '@mui/material';
+import { Avatar, Button, CircularProgress, Grid, InputAdornment, Link, TextField } from '@mui/material';
 import IPersonData from '../../shared/types/Person';
 import { PersonService } from '../../services/PersonService';
 import AuthContext from '../../context/auth';
@@ -21,6 +21,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useSnackbar } from 'notistack';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -37,6 +38,7 @@ export default function ResponsiveDrawer(props: Props) {
   const [person, setPerson] = useState<IPersonData>();
   const [editButton, setEditButton] = useState(false);
   const [editPasswordButton, setEditPasswordButton] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { user } = useContext(AuthContext);
   const [birthdayDate, setBirthdayDate] = useState<Date | undefined>(person?.birthday);
   const [emailUser, setEmailUser] = useState(person?.email);
@@ -46,11 +48,18 @@ export default function ResponsiveDrawer(props: Props) {
   const [newPassUser, setNewPassUser] = useState('');
   const [newConfirmPassUser, setNewConfirmPassUser] = useState('');
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (!!!user) {
+      return navigate('/login')
+    }
+    setLoading(true)
+    delay(2000)
     PersonService.getPersonById(user!).then(({ status, data }) => {
       if (status === 200) {
         setPerson(data)
+        setLoading(false)
       }
     })
   }, [])
@@ -90,12 +99,15 @@ export default function ResponsiveDrawer(props: Props) {
 
   const handleConfirm = async () => {
     if (passUser && passUser.length >= 6) {
+      setLoading(true)
+      await delay(2000)
       await PersonService.updatePerson({ "idPerson": user, "name": userName, "birthday": birthdayDate!, "email": emailUser, "confirmPassword": passUser })
         .then((response) => {
           console.log(response)
           enqueueSnackbar('Alterações realizadas ✔️')
           setPerson({ idPerson: user, name: userName, email: emailUser, birthday: birthdayDate })
           setEditButton(false)
+          setLoading(false)
         }).catch((error) => {
           console.log(error)
           if (error.response?.status === 401) {
@@ -118,9 +130,12 @@ export default function ResponsiveDrawer(props: Props) {
       return enqueueSnackbar('As senhas digitadas não coincidem 😨')
     }
 
+    setLoading(true)
+    await delay(2000)
     await PersonService.updatePasswordPerson({ "idPerson": user, "password": oldPassUser, "newPassword": newPassUser })
       .then((response) => {
         console.log(response)
+        setLoading(false)
         enqueueSnackbar('Senha alterada ✔️')
         setEditPasswordButton(false)
       }).catch((error) => {
@@ -135,11 +150,13 @@ export default function ResponsiveDrawer(props: Props) {
 
   const container = window !== undefined ? () => window().document.body : undefined;
 
-  const randColor = (param: number) =>  {
-    return "#" + Math.floor(param *1675).toString(16).padStart(6, '0').toUpperCase();
-}
+  const randColor = (param: number) => {
+    return "#" + Math.floor(param * 1675).toString(16).padStart(6, '0').toUpperCase();
+  }
 
-
+  function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
@@ -221,8 +238,17 @@ export default function ResponsiveDrawer(props: Props) {
               }}
             >
 
-              <Avatar sx={{ fontSize: '100%', width: 100, height: 100, m: 1, bgcolor: () => randColor(person?.name?.length!) }}>{person?.name?.split(" ")[0].charAt(0).concat(person?.name?.split(" ")[0].charAt(person?.name.length - 1)).toUpperCase()}</Avatar>
+              {
 
+                loading ?
+
+                  <Box sx={{ m: 5, display: 'flex', justifyContent: 'center' }}>
+                    <CircularProgress color='secondary' disableShrink />
+                  </Box>
+
+                  :
+              <Avatar sx={{ fontSize: '100%', width: 100, height: 100, m: 1, bgcolor: () => randColor(person?.name?.length!) }}>{person?.name?.split(" ")[0].charAt(0).concat(person?.name?.split(" ")[0].charAt(person?.name.length - 1)).toUpperCase()}</Avatar>
+              }
               <Box sx={{ mt: 3 }}>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>

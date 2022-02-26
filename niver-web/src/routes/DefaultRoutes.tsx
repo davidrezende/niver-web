@@ -12,9 +12,9 @@ const DefaultRoutes: React.FC = () => {
         <Route index element={<Signin />} />
         <Route path="login" element={<Signin />} />
       </Route>
-      {/* //Protegendo rotas que necessitam de autenticacao */}
-      <Route path="/register" element={<Register />} />
       <Route path="/invite/:inviteId" element={<Invite />} />
+      <Route path="/register" element={<Register />} />
+      {/* //Protegendo rotas que necessitam de autenticacao */}
       <Route path="/groups" element={<Navigate to="/login" />} />
       <Route path="/profile" element={<Navigate to="/login" />} />
       <Route path="*" element={<p>not found</p>} />

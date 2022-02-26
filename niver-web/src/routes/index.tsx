@@ -1,6 +1,6 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 // import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import AuthContext from '../context/auth';
+import AuthContext, { AuthProvider } from '../context/auth';
 import GroupDashboard from '../pages/dashboard/GroupDashboard';
 import ProfileDashboard from '../pages/dashboard/ProfileDashboard';
 import Register from '../pages/register/Register';
@@ -30,19 +30,36 @@ import Signin from '../pages/signin/Signin';
 
 import DefaultRoutes from './DefaultRoutes';
 import AuthRoutes from './AuthRoutes';
-import { Navigate, Route } from 'react-router-dom';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
+import Invite from '../pages/invite/Invite';
+import React from 'react';
 
-const Routes: React.FC = () => {
-  const { signed } = useContext(AuthContext);
+const RoutesCustom: React.FC = () => {
+  const { signed, user } = useContext(AuthContext);
   const storagedUserId = localStorage.getItem('@App:userId');
   console.log('defininndo rota - estoulogado? ', signed)
+
+  // return (
+  //   !!signed ?
+  //     <AuthRoutes />
+  //     :
+  //     <DefaultRoutes />
+  // )
+
   return (
-    signed ? 
-    <AuthRoutes />
-    :
-    <DefaultRoutes />
+    <Routes>
+      <Route path="/" element={<p>tela inicial</p>} />
+      <Route path="/invite/:inviteId" element={<Invite />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<Signin />} />
+
+      <Route path="/profile" element={<ProfileDashboard />} />
+      <Route path="/groups" element={<GroupDashboard />} />
+
+      <Route path="*" element={<p>not found</p>} />
+    </Routes>
   )
 
 };
 
-export default Routes;
+export default RoutesCustom;

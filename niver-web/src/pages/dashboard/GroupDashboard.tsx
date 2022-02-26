@@ -16,7 +16,7 @@ import AddBox from '@mui/icons-material/AddBox';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Paper, Stack, styled, TextField } from '@mui/material';
+import { Avatar, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Paper, Stack, styled, TextField } from '@mui/material';
 import IGroupData from '../../shared/types/Group';
 import { GroupService } from '../../services/GroupService';
 import { GroupAccordion } from '../../components/GroupAccordion';
@@ -42,8 +42,10 @@ interface Props {
 
 
 export default function ResponsiveDrawer(props: Props) {
+
   const [person, setPerson] = useState<IPersonData>();
   const [nameGroup, setNameGroup] = useState('');
+  const [loadingGroups, setLoadingGroups] = useState(false);
   const [groups, setGroups] = useState<Array<IGroupData>>([]);
   // const { groups, getGroupsByPerson, createGroup } = useGroups();
   const [groupsIndex, setGroupsIndex] = useState(0);
@@ -52,33 +54,41 @@ export default function ResponsiveDrawer(props: Props) {
   let navigate = useNavigate();
 
   useEffect(() => {
-    console.log('buscando dados da pessoa logada')
-    PersonService.getPersonById(user!).then(({ status, data, config }) => {
-      if (status === 200) {
-        setPerson(data)
-      }
-    })
-
+    if (!!!user) {
+      console.log('usuario n esta logado na tela de grupo, vai pro login')
+      return navigate('/login')
+    }else{
+      console.log('buscando dados da pessoa logada na tela de group:', user!)
+      PersonService.getPersonById(user!).then(({ status, data, config }) => {
+        if (status === 200) {
+          setPerson(data)
+        }
+      })
+    }
   }, [])
 
   useEffect(() => {
     console.log('buscando dados dos grupos da pessoa logada')
+    setLoadingGroups(true)
+    delay(2000)
     GroupService.getGroupsByPerson(user!).then(({ status, data }) => {
       if (status === 200) {
+        setLoadingGroups(false)
         setGroups(data)
       }
     })
   }, [person])
 
+  function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
-  const handleRegisterNewGroup = async () => {
+  const handleRegisterNewGroup = async (nameGroup: string) => {
     handleCloseDialogNewGroup();
-    console.log('newGroup:', JSON.stringify(person))
     let { status, data } = await GroupService.createGroup({ owner: { idPerson: person?.idPerson }, name: nameGroup })
     if (status === 200) {
       setGroups([...groups, data])
     }
-    setNameGroup('');
   }
 
   const handleGenerateInviteGroup = async (idGroup: number, idPerson: number) => {
@@ -240,7 +250,7 @@ export default function ResponsiveDrawer(props: Props) {
           </Dialog> */}
 
 
-          <DialogNewGroup nameGroup={nameGroup} setNameGroup={setNameGroup} handleCloseDialogNewGroup={handleCloseDialogNewGroup} handleRegisterNewGroup={handleRegisterNewGroup} openDialogNewGroup={openDialogNewGroup} />
+          <DialogNewGroup handleCloseDialogNewGroup={handleCloseDialogNewGroup} handleRegisterNewGroup={handleRegisterNewGroup} openDialogNewGroup={openDialogNewGroup} />
 
           <Divider sx={{ margin: 1 }} />
           <Grid container spacing={2}
@@ -257,15 +267,24 @@ export default function ResponsiveDrawer(props: Props) {
             >
               <Item sx={{ backgroundColor: 'transparent' }}>
                 {
-                  groups.map((group, indexGroup) => (
-                    <GroupAccordion
-                      group={group}
-                      key={group.idGroup}
-                      idPerson={person?.idPerson}
-                      onDelete={handleDeleteGroup}
-                      onEdit={handleEditGroup}
-                      onInvite={handleGenerateInviteGroup} />
-                  ))
+
+                  loadingGroups ?
+
+                    <Box sx={{ m: 5, display: 'flex', justifyContent: 'center' }}>
+                      <CircularProgress color='secondary' disableShrink />
+                    </Box>
+
+                    :
+
+                    groups.map((group, indexGroup) => (
+                      <GroupAccordion
+                        group={group}
+                        key={group.idGroup}
+                        idPerson={person?.idPerson}
+                        onDelete={handleDeleteGroup}
+                        onEdit={handleEditGroup}
+                        onInvite={handleGenerateInviteGroup} />
+                    ))
                 }
               </Item>
             </Grid>
@@ -276,11 +295,21 @@ export default function ResponsiveDrawer(props: Props) {
             //   alignItems: 'center',
             // }}
             >
-              <Stack direction="row" justifyContent="center">
-                <Item sx={{ backgroundColor: 'transparent' }}>
-                  <CalendarBirthdays />
-                </Item>
-              </Stack>
+              {
+                groups.length > 0 ?
+
+                  <Stack direction="row" justifyContent="center">
+                    <Item sx={{ backgroundColor: 'transparent' }}>
+                      <CalendarBirthdays />
+                    </Item>
+                  </Stack>
+
+                  :
+
+              <div></div>
+
+              }
+
             </Grid>
           </Grid>
         </Box>

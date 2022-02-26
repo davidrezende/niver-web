@@ -74,11 +74,12 @@ export default function ServerRequestDatePicker() {
 
   const fetchHighlightedDays = async (dateParam: Date) => {
     console.log('procurando aniversariantes da data:', dateParam, ' do mês:', dateParam.getMonth())
+    setIsLoading(true)
     await delay(2000)
     await CalendarService.getBirthdaysOfMonthFromAllGroupsByPerson(dateParam.getMonth() + 1, user!).then((response) => {
       console.log(response)
       setBirthdaysMonth(response.data)
-      
+      setIsLoading(false)
     }).catch((error) => {
       console.log(error)
       setBirthdaysMonth([])
@@ -102,7 +103,7 @@ export default function ServerRequestDatePicker() {
   };
 
   React.useEffect(() => {
-      fetchHighlightedDays(new Date());
+    fetchHighlightedDays(new Date());
     // // abort request on unmount
     // return () => requestAbortController.current?.abort();
   }, []);
@@ -141,46 +142,47 @@ export default function ServerRequestDatePicker() {
 
             :
 
-
-            <CalendarPicker
-              key={1}
-              date={date}
-              readOnly
-              onChange={(newDate) => setDate(newDate)}
-              onMonthChange={handleMonthChange}
-              renderDay={(day, _value, DayComponentProps) => {
-                const isSelected =
-                  !DayComponentProps.outsideCurrentMonth
-                  && birthdaysMonth.filter((member) => member.day === day.getDate()).length > 0;
-                // && highlightedDays.indexOf(day.getDate()) > 0;
-
-                return (
-                  <Tooltip title={isSelected ?
-                    birthdaysMonth!
-                      .filter((member) => member.day === day.getDate()).length > 1 ?
-                      birthdaysMonth
-                        .map((birthday, index) => index === birthdaysMonth.length - 1 ?
-                          birthday.name : birthday.name + ", "
-                        ) :
-                      birthdaysMonth.map((birthday) => birthday.name)
-                    : ""}
-                    key={day.getDay()}
-                    placement="top-start" >
-                    <Badge
-                      key={day.toString()}
-                      overlap="circular"
-                      aria-label="teste"
-                      color={isSelected ? 'error' : 'default'}
-                      badgeContent={isSelected ? '🎉' : undefined}
-                      variant='dot'
-                    >
-                      <PickersDay {...DayComponentProps} />
-                    </Badge>
-                  </Tooltip>
-                );
-              }} />
-
+            ""
         }
+        <CalendarPicker
+          disabled={isLoading}
+          key={1}
+          date={date}
+          readOnly
+          onChange={(newDate) => setDate(newDate)}
+          onMonthChange={handleMonthChange}
+          renderDay={(day, _value, DayComponentProps) => {
+            const isSelected =
+              !DayComponentProps.outsideCurrentMonth
+              && birthdaysMonth.filter((member) => member.day === day.getDate()).length > 0;
+            // && highlightedDays.indexOf(day.getDate()) > 0;
+
+            return (
+              <Tooltip title={isSelected ?
+                birthdaysMonth!
+                  .filter((member) => member.day === day.getDate()).length > 1 ?
+                  birthdaysMonth
+                    .map((birthday, index) => index === birthdaysMonth.length - 1 ?
+                      birthday.name : birthday.name + ", "
+                    ) :
+                  birthdaysMonth.map((birthday) => birthday.name)
+                : ""}
+                key={day.getDay()}
+                placement="top-start" >
+                <Badge
+                  key={day.toString()}
+                  overlap="circular"
+                  aria-label="teste"
+                  color={isSelected ? 'error' : 'default'}
+                  badgeContent={isSelected ? '🎉' : undefined}
+                  variant='dot'
+                >
+                  <PickersDay {...DayComponentProps} />
+                </Badge>
+              </Tooltip>
+            );
+          }} />
+
         {
           birthdaysMonth.length !== 0 ?
             <>

@@ -6,7 +6,7 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import React, { useCallback, useEffect, useState } from 'react';
-import { IconButton, styled, ListItem, Tooltip, AccordionDetails, TextField, List, DialogTitle, Dialog, DialogContentText, DialogActions, Button, DialogContent, Box, FilledInput, FormControl, InputLabel } from '@mui/material';
+import { IconButton, styled, ListItem, Tooltip, AccordionDetails, TextField, List, DialogTitle, Dialog, DialogContentText, DialogActions, Button, DialogContent, Box, FilledInput, FormControl, InputLabel, Menu, MenuItem, Popper, MenuList, ClickAwayListener, Paper, Grow } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -23,7 +23,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import CopyToClipboard from './CopyToClipboard';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CachedIcon from '@mui/icons-material/Cached';
-
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 
 
@@ -46,7 +46,17 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
   const [openDialogExitGroup, setOpenDialogExitGroup] = React.useState(false);
   const [openDialogInviteGroup, setOpenDialogInviteGroup] = React.useState(false);
 
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
   const handleClickOpenDialogExitGroup = () => {
+    handleCloseUserMenu()
     setOpenDialogExitGroup(true);
   };
 
@@ -55,6 +65,7 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
   };
 
   const handleClickOpenDialogInviteGroup = () => {
+    handleCloseUserMenu()
     setOpenDialogInviteGroup(true);
   };
 
@@ -63,10 +74,12 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
   };
 
   const handleClickOpenDialogDeleteGroup = () => {
+    handleCloseUserMenu()
     setOpenDialogDeleteGroup(true);
   };
 
   const handleCloseDialogDeleteGroup = () => {
+    handleCloseUserMenu()
     setOpenDialogDeleteGroup(false);
   };
 
@@ -100,6 +113,16 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
     }
   }
 
+  const handleCancelEdit = () => {
+    handleCloseUserMenu()
+    setEdit(false)
+  }
+
+  const handleCanEdit = () => {
+    handleCloseUserMenu()
+    setEdit(true)
+  }
+
   return (
 
     <MuiAccordion sx={{ backgroundColor: 'rgb(0 82 151)', color: 'white' }}
@@ -113,15 +136,16 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
         }
         aria-controls="panel1a-content"
         id="panel1a-header">
-        <ListItem >
+        <ListItem>
           {
             !edit ?
-              <Typography sx={{ margin: 0.5, display: 'flex', fontWeight: 'lighter', alignItems: 'center' }}
+              <Typography sx={{ margin: 0.5, display: 'flex', fontWeight: 'lighter', alignItems: 'center', fontSize: '100%' }}
                 onClick={() => setOpenAccordion(!openAccordion)}>
-                {group.owner?.idPerson === idPerson ? <ManageAccountsIcon /> : <Group />} {group.name}
+                {group.owner?.idPerson === idPerson ? <ManageAccountsIcon sx={{ mr: 1 }} /> : <Group />} {group.name}
               </Typography>
               :
               <TextField
+                fullWidth
                 id="standard-basic"
                 inputProps={{ maxLength: 15 }}
                 error={groupName!.length <= 0 || groupName!.length > 15}
@@ -129,7 +153,88 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
                 variant="standard" value={groupName} onChange={(e) => setGroupName(e.target.value)} />
           }
         </ListItem>
-        <ListItem secondaryAction=
+
+
+        <Menu
+          id="menu-appbar"
+          anchorEl={anchorElUser}
+          keepMounted
+          open={Boolean(anchorElUser)}
+          onClose={handleCloseUserMenu}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        >
+          {group.owner?.idPerson === idPerson ?
+            <>
+              <MenuItem key={1} onClick={handleClickOpenDialogInviteGroup}>
+                <PersonAddIcon sx={{mr: 1}}/> <Typography textAlign="center">Adicionar membros</Typography>
+              </MenuItem>
+
+              <MenuItem key={2} onClick={handleCanEdit}>
+                <ModeEdit sx={{mr: 1}}/> <Typography textAlign="center">Editar</Typography>
+              </MenuItem>
+
+              <MenuItem key={3} onClick={handleClickOpenDialogDeleteGroup}>
+                <DeleteIcon sx={{mr: 1}}/> <Typography textAlign="center">Deletar</Typography>
+              </MenuItem>
+            </>
+            :
+            <>
+              <MenuItem key={4} onClick={handleClickOpenDialogExitGroup}>
+                <GroupRemoveIcon sx={{mr: 1}}/> <Typography textAlign="center">Sair</Typography>
+              </MenuItem>
+            </>
+          }
+
+        </Menu>
+
+
+
+        <ListItem secondaryAction sx={{justifyContent: 'flex-end' }}>
+
+          {
+            edit ?
+              <>
+                <Tooltip title="Confirmar" >
+                  <IconButton
+                    edge="end"
+                    aria-label="confirmGroup"
+                    disabled={groupName!.length <= 0 || groupName!.length > 15}
+                    onClick={handleEdit}
+                  >
+                    <CheckCircle />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Cancelar" sx={{ mr: 1 }}>
+                  <IconButton
+                    edge="end"
+                    aria-label="cancelGroup"
+                    onClick={handleCancelEdit}
+                  >
+                    <ClearIcon />
+                  </IconButton>
+                </Tooltip>
+              </>
+              :
+              <Tooltip title="Opções"
+          aria-controls={anchorElUser ? 'account-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={anchorElUser ? 'true' : undefined}>
+            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              <MoreHorizIcon />
+            </IconButton>
+          </Tooltip>
+          }
+          
+        </ListItem>
+{/* 
+
+        <ListItem >
+          <Tooltip title="Opções">
+            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              <MoreHorizIcon />
+            </IconButton>
+          </Tooltip>
           {group.owner?.idPerson === idPerson ?
             <>
               <Tooltip title="Adicionar membros" sx={{ mr: 1 }}>
@@ -193,8 +298,10 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
                 onClick={handleClickOpenDialogExitGroup}>
                 <GroupRemoveIcon />
               </IconButton>
-            </Tooltip>}>
-        </ListItem>
+            </Tooltip>}
+        </ListItem> */}
+
+
       </MuiAccordionSummary >
       <AccordionDetails>
         <Typography component={'span'}>

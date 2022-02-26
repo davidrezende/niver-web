@@ -3,15 +3,13 @@ import { useState } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/auth";
 // import { AppRoutes } from './routes';
-import Routes from './routes';
+import RoutesCustom from './routes';
 
 export const App = () => {
   return (
-    <SnackbarProvider maxSnack={3} anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}>
+    <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}>
       <AuthProvider>
-        <BrowserRouter>
-          <Routes />
-        </BrowserRouter>
+          <RoutesCustom />
       </AuthProvider>
     </SnackbarProvider>
   );

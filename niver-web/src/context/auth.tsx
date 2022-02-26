@@ -4,11 +4,12 @@ import { AuthenticationService } from '../services/AuthenticationService';
 import ICredentialsData from '../shared/types/Login';
 import ITokenData from '../shared/types/Token';
 import { useSnackbar } from 'notistack';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthContextData {
   signed: boolean;
   user: number | null;
-  Login(credentials: ICredentialsData): Promise<void>;
+  Login(credentials: ICredentialsData): void;
   Logout(): void;
 }
 
@@ -17,6 +18,7 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 export const AuthProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<number | null>(null);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storagedUserId = localStorage.getItem('@App:userId');
@@ -24,21 +26,22 @@ export const AuthProvider: React.FC = ({ children }) => {
     // console.log('valor guardado para o token:', storagedToken, ' \n valor guardado para o user:', storagedUser)
     console.log('verificando se usuario esta logado... \n userId:', storagedUserId, '\n token:', storagedToken)
     if (storagedToken && storagedUserId && validateTokenExpiration(storagedToken)) {
-      console.log('valor ja guardado para o token:', storagedToken, ' \n valor guardado para o user:', storagedUserId)
       setUser(+storagedUserId);
-      console.log('usuario ja logado:', user)
+      console.log('setei o usuario logado:', storagedUserId)
       PersonApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
       MemberApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
       GroupApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
       CalendarApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
     } else {
-      Logout()
+      if(!!!user){
+        console.log('nenhum usuario logado identificado, deslogando:', user)
+        Logout()
+      }
     }
-  }, []);
+  }, [user]);
 
   function validateTokenExpiration(token: string): Boolean {
     const decodedJwt = parseJwt(token);
-    console.log('exp do token:', decodedJwt.exp)
     if (decodedJwt.exp * 1000 < Date.now()) {
       console.log('token expirado')
       enqueueSnackbar('Sessão expirada! Faça login novamente. 🔐');
@@ -55,14 +58,13 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
   };
 
-  async function Login(credentials: ICredentialsData) {
+  function Login(credentials: ICredentialsData) {
     console.log('logando usuario...')
     // const {data, status} = 
-    await AuthenticationService.login({ "email": credentials.email, "password": credentials.password }).then((response) => {
-      console.log('resposta do servico ao logar:', response)
+    AuthenticationService.login({ "email": credentials.email, "password": credentials.password }).then((response) => {
       var auth = JSON.parse(JSON.stringify(response.data)!) as ITokenData
       setUser(auth.userId!);
-      console.log('usuario logado:', auth.userId!.toString())
+      console.log('loguei o usuario:', auth.userId!.toString())
       localStorage.setItem('@App:userId', auth.userId!.toString());
       localStorage.setItem('@App:userName', auth.userName);
       localStorage.setItem('@App:token', auth.accessToken);
@@ -71,6 +73,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       GroupApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
       CalendarApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
       enqueueSnackbar('Seja bem vindo! 👋👋👋');
+      navigate('groups')
     }).catch((error) => {
       if (error.response?.status === 401) {
         enqueueSnackbar('Usuário ou senha incorretos. 😢');

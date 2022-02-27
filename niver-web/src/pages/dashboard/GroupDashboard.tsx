@@ -29,8 +29,8 @@ import { CommonDrawer, DialogNewGroup } from '../../components';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { ptBR } from "date-fns/locale";
 import { LocalizationProvider } from '@mui/lab';
+import { AppBarDashboard } from '../../components/AppBarDashboard';
 
-const drawerWidth = 240;
 
 interface Props {
   /**
@@ -57,7 +57,7 @@ export default function ResponsiveDrawer(props: Props) {
     if (!!!user) {
       console.log('usuario n esta logado na tela de grupo, vai pro login')
       return navigate('/login')
-    }else{
+    } else {
       console.log('buscando dados da pessoa logada na tela de group:', user!)
       PersonService.getPersonById(user!).then(({ status, data, config }) => {
         if (status === 200) {
@@ -125,11 +125,6 @@ export default function ResponsiveDrawer(props: Props) {
   }
 
   const { window } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
 
   const [openDialogNewGroup, setOpenDialogNewGroup] = React.useState(false);
 
@@ -140,7 +135,7 @@ export default function ResponsiveDrawer(props: Props) {
   const handleCloseDialogNewGroup = () => {
     setOpenDialogNewGroup(false);
   };
-
+  const drawerWidth = 240;
   const container = window !== undefined ? () => window().document.body : undefined;
   const Item = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -150,78 +145,27 @@ export default function ResponsiveDrawer(props: Props) {
   }));
 
   return (
-    <Box sx={{ display: 'flex', backgroundColor: 'rgb(1 63 122)', height: 1000 }}>
-      <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-        }}
-      >
-        <Toolbar sx={{ color: 'white', backgroundColor: 'rgb(1 63 112)' }}>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Grupos
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        aria-label="mailbox folders"
-      >
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Drawer
-          container={container}
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
-          }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-          }}
-        >
-          {/* {drawer} */}
-          <CommonDrawer namePerson={person?.name} />
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, backgroundColor: 'rgb(1 61 111)', color: 'white' },
-          }}
-          open
-        >
-          {/* {drawer} */}
-          <CommonDrawer namePerson={person?.name} />
-        </Drawer>
-      </Box>
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
-      >
-        <Toolbar />
+    <>
+      <Box sx={{display: 'flex'}}>
+        <AppBarDashboard namePerson={person?.name} />
+      
+      <Box sx={{ display: 'flex', backgroundColor: 'rgb(1 63 122)', height: 1000, flexGrow: 1}}>
+        <CssBaseline />
 
         <Box
-          sx={{ flexGrow: 1 }}
-        // sx={{ flexDirection: 'row', alignItems: 'center'}}
+          component="main"
+          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
         >
-          <Button variant="contained" onClick={handleClickOpenDialogNewGroup} size="large" startIcon={<AddBox />}>
-            Novo Grupo
-          </Button>
-          {/* 
+          <Toolbar />
+
+          <Box
+            sx={{ flexGrow: 1 }}
+          // sx={{ flexDirection: 'row', alignItems: 'center'}}
+          >
+            <Button variant="contained" onClick={handleClickOpenDialogNewGroup} size="large" startIcon={<AddBox />}>
+              Novo Grupo
+            </Button>
+            {/* 
           <Dialog open={openDialogNewGroup} onClose={handleCloseDialogNewGroup}>
             <DialogTitle>Novo Grupo</DialogTitle>
             <DialogContent>
@@ -250,70 +194,72 @@ export default function ResponsiveDrawer(props: Props) {
           </Dialog> */}
 
 
-          <DialogNewGroup handleCloseDialogNewGroup={handleCloseDialogNewGroup} handleRegisterNewGroup={handleRegisterNewGroup} openDialogNewGroup={openDialogNewGroup} />
+            <DialogNewGroup handleCloseDialogNewGroup={handleCloseDialogNewGroup} handleRegisterNewGroup={handleRegisterNewGroup} openDialogNewGroup={openDialogNewGroup} />
 
-          <Divider sx={{ margin: 1 }} />
-          <Grid container spacing={2}
-          // sx={{
-          //   display: 'flex',
-          //   flexDirection: 'row',
-          //   alignItems: 'center',
-          // }}
-          >
-            <Grid item xs
-            // sx={{
-            //   width: '100%',
-            // }}
-            >
-              <Item sx={{ backgroundColor: 'transparent' }}>
-                {
-
-                  loadingGroups ?
-
-                    <Box sx={{ m: 5, display: 'flex', justifyContent: 'center' }}>
-                      <CircularProgress color='secondary' disableShrink />
-                    </Box>
-
-                    :
-
-                    groups.map((group, indexGroup) => (
-                      <GroupAccordion
-                        group={group}
-                        key={group.idGroup}
-                        idPerson={person?.idPerson}
-                        onDelete={handleDeleteGroup}
-                        onEdit={handleEditGroup}
-                        onInvite={handleGenerateInviteGroup} />
-                    ))
-                }
-              </Item>
-            </Grid>
-            <Grid item xs
+            <Divider sx={{ margin: 1 }} />
+            <Grid container spacing={2}
             // sx={{
             //   display: 'flex',
-            //   flexDirection: 'collumn',
+            //   flexDirection: 'row',
             //   alignItems: 'center',
             // }}
             >
-              {
-                groups.length > 0 ?
+              <Grid item xs
+              // sx={{
+              //   width: '100%',
+              // }}
+              >
+                <Item sx={{ backgroundColor: 'transparent' }}>
+                  {
 
-                  <Stack direction="row" justifyContent="center">
-                    <Item sx={{ backgroundColor: 'transparent' }}>
-                      <CalendarBirthdays />
-                    </Item>
-                  </Stack>
+                    loadingGroups ?
 
-                  :
+                      <Box sx={{ m: 5, display: 'flex', justifyContent: 'center' }}>
+                        <CircularProgress color='secondary' disableShrink />
+                      </Box>
 
-              <div></div>
+                      :
 
-              }
+                      groups.map((group, indexGroup) => (
+                        <GroupAccordion
+                          group={group}
+                          key={group.idGroup}
+                          idPerson={person?.idPerson}
+                          onDelete={handleDeleteGroup}
+                          onEdit={handleEditGroup}
+                          onInvite={handleGenerateInviteGroup} />
+                      ))
+                  }
+                </Item>
+              </Grid>
+              <Grid item xs
+              // sx={{
+              //   display: 'flex',
+              //   flexDirection: 'collumn',
+              //   alignItems: 'center',
+              // }}
+              >
+                {
+                  groups.length > 0 ?
 
+                    <Stack direction="row" justifyContent="center">
+                      <Item sx={{ backgroundColor: 'transparent' }}>
+                        <CalendarBirthdays />
+                      </Item>
+                    </Stack>
+
+                    :
+
+                    <div></div>
+
+                }
+
+              </Grid>
             </Grid>
-          </Grid>
+          </Box>
         </Box>
+      </Box >
       </Box>
-    </Box >
+    </>
   );
 }

@@ -33,6 +33,7 @@ import AuthRoutes from './AuthRoutes';
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import Invite from '../pages/invite/Invite';
 import React from 'react';
+import Home from '../pages/home/Home';
 
 const RoutesCustom: React.FC = () => {
   const { signed, user } = useContext(AuthContext);
@@ -48,7 +49,7 @@ const RoutesCustom: React.FC = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<p>tela inicial</p>} />
+      <Route path="/" element={<Home />} />
       <Route path="/invite/:inviteId" element={<Invite />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Signin />} />

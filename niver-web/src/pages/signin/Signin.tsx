@@ -36,7 +36,8 @@ export default function SignIn() {
     sessionStorage.removeItem('App:userName');
     sessionStorage.removeItem('App:token');
   }else{
-    navigate(-1)
+    // navigate(-1)
+    navigate('/groups')
   }
   }, [])
 

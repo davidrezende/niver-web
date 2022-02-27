@@ -8,12 +8,12 @@ type ListProps = {
 };
 
 export const DialogNewGroup: React.FC<ListProps> = ({ openDialogNewGroup, handleCloseDialogNewGroup, handleRegisterNewGroup }) => {
-  
-const [nameGroup, setNameGroup] = useState('');
-const handlePrepareRegisterNewGroup = (nameGroup: string) =>{
-  handleRegisterNewGroup(nameGroup)
-  setNameGroup('')
-}
+
+  const [nameGroup, setNameGroup] = useState('');
+  const handlePrepareRegisterNewGroup = (nameGroup: string) => {
+    handleRegisterNewGroup(nameGroup)
+    setNameGroup('')
+  }
   return (
     <Dialog open={openDialogNewGroup} onClose={handleCloseDialogNewGroup}>
       <DialogTitle>Novo Grupo</DialogTitle>
@@ -35,6 +35,9 @@ const handlePrepareRegisterNewGroup = (nameGroup: string) =>{
           variant="standard"
           onChange={(e) => setNameGroup(e.target.value)}
         />
+        <DialogContentText sx={{ fontSize: 12}}>
+          *Nós enviamos um email para todos do grupo caso algum membro faça aniversário no mês, além de avisarmos no dia do aniversário.
+        </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCloseDialogNewGroup}>Cancelar</Button>

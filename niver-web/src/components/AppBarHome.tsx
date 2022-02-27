@@ -42,7 +42,7 @@ const ResponsiveAppBar = () => {
 
 
   return (
-    <AppBar position="sticky" sx={{ backgroundColor: 'rgb(0 0 0 / 33%)' }}>
+    <AppBar position="sticky" sx={{ backgroundColor: 'rgb(255 255 255 / 10%)' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
@@ -51,7 +51,7 @@ const ResponsiveAppBar = () => {
             component="div"
             sx={{ mr: 2, display: { xs: 'none', md: 'flex', fontFamily: 'Roboto' } }}
           >
-            NiverDeQuem?
+            🎈NiverDeQuem?
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -96,7 +96,7 @@ const ResponsiveAppBar = () => {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
           >
-            NiverDeQuem?
+            NiverDeQuem
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (

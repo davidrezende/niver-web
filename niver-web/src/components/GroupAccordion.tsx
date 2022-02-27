@@ -6,7 +6,7 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import React, { useCallback, useEffect, useState } from 'react';
-import { IconButton, styled, ListItem, Tooltip, AccordionDetails, TextField, List, DialogTitle, Dialog, DialogContentText, DialogActions, Button, DialogContent, Box, FilledInput, FormControl, InputLabel, Menu, MenuItem, Popper, MenuList, ClickAwayListener, Paper, Grow } from '@mui/material';
+import { IconButton, styled, ListItem, Tooltip, AccordionDetails, TextField, List, DialogTitle, Dialog, DialogContentText, DialogActions, Button, DialogContent, Box, FilledInput, FormControl, InputLabel, Menu, MenuItem, Popper, MenuList, ClickAwayListener, Paper, Grow, Divider } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -139,7 +139,7 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
         <ListItem>
           {
             !edit ?
-              <Typography sx={{ margin: 0.5, display: 'flex', fontWeight: 'lighter', alignItems: 'center', fontSize: '100%' }}
+              <Typography component="h2" variant="h6" sx={{ margin: 0.5, display: 'flex', fontWeight: 'lighter', alignItems: 'center', fontSize: '100%' }}
                 onClick={() => setOpenAccordion(!openAccordion)}>
                 {group.owner?.idPerson === idPerson ? <ManageAccountsIcon sx={{ mr: 1 }} /> : <Group />} {group.name}
               </Typography>
@@ -167,21 +167,21 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
           {group.owner?.idPerson === idPerson ?
             <>
               <MenuItem key={1} onClick={handleClickOpenDialogInviteGroup}>
-                <PersonAddIcon sx={{mr: 1}}/> <Typography textAlign="center">Adicionar membros</Typography>
+                <PersonAddIcon sx={{ mr: 1 }} /> <Typography textAlign="center">Adicionar membros</Typography>
               </MenuItem>
 
               <MenuItem key={2} onClick={handleCanEdit}>
-                <ModeEdit sx={{mr: 1}}/> <Typography textAlign="center">Editar</Typography>
+                <ModeEdit sx={{ mr: 1 }} /> <Typography textAlign="center">Editar</Typography>
               </MenuItem>
 
               <MenuItem key={3} onClick={handleClickOpenDialogDeleteGroup}>
-                <DeleteIcon sx={{mr: 1}}/> <Typography textAlign="center">Deletar</Typography>
+                <DeleteIcon sx={{ mr: 1 }} /> <Typography textAlign="center">Deletar</Typography>
               </MenuItem>
             </>
             :
             <>
               <MenuItem key={4} onClick={handleClickOpenDialogExitGroup}>
-                <GroupRemoveIcon sx={{mr: 1}}/> <Typography textAlign="center">Sair</Typography>
+                <GroupRemoveIcon sx={{ mr: 1 }} /> <Typography textAlign="center">Sair</Typography>
               </MenuItem>
             </>
           }
@@ -190,7 +190,7 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
 
 
 
-        <ListItem secondaryAction sx={{justifyContent: 'flex-end' }}>
+        <ListItem secondaryAction sx={{ justifyContent: 'flex-end' }}>
 
           {
             edit ?
@@ -217,17 +217,17 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
               </>
               :
               <Tooltip title="Opções"
-          aria-controls={anchorElUser ? 'account-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={anchorElUser ? 'true' : undefined}>
-            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <MoreHorizIcon />
-            </IconButton>
-          </Tooltip>
+                aria-controls={anchorElUser ? 'account-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={anchorElUser ? 'true' : undefined}>
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <MoreHorizIcon />
+                </IconButton>
+              </Tooltip>
           }
-          
+
         </ListItem>
-{/* 
+        {/* 
 
         <ListItem >
           <Tooltip title="Opções">
@@ -303,17 +303,21 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
 
 
       </MuiAccordionSummary >
-      <AccordionDetails>
-        <Typography component={'span'}>
-          Membros do grupo:
-          <List>
-            {
-              members?.map((member, indexGroup) => (
-                <GroupMemberListItem member={member} key={member.idPerson} idPerson={idPerson} idOwner={group.owner?.idPerson} idGroup={group.idGroup} onDeleteMember={handleRemoveMember} />
-              ))
-            }
-          </List>
-        </Typography>
+      <AccordionDetails sx={{ backgroundColor: 'rgb(0 0 0 / 10%)' }}>
+        <Box sx={{ display: 'flex' }}>
+          <Typography component={'span'} sx={{ ml: 4, mt: 4, fontSize: '100%', }}>
+            <Typography component={'span'} sx={{ fontSize: '100%', color: 'white'}}><strong>Membros do grupo ({members?.length})</strong></Typography>
+            <List>
+              {
+                members?.map((member, indexGroup) => (
+                  <>
+                    <GroupMemberListItem member={member} key={member.idPerson} idPerson={idPerson} idOwner={group.owner?.idPerson} idGroup={group.idGroup} onDeleteMember={handleRemoveMember} />
+                  </>
+                ))
+              }
+            </List>
+          </Typography>
+        </Box>
       </AccordionDetails>
 
       <Dialog open={openDialogDeleteGroup} onClose={handleCloseDialogDeleteGroup}>

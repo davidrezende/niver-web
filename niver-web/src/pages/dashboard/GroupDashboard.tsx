@@ -16,7 +16,7 @@ import AddBox from '@mui/icons-material/AddBox';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { Avatar, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Paper, Stack, styled, TextField } from '@mui/material';
+import { Avatar, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Paper, Stack, styled, TextField, Zoom } from '@mui/material';
 import IGroupData from '../../shared/types/Group';
 import { GroupService } from '../../services/GroupService';
 import { GroupAccordion } from '../../components/GroupAccordion';
@@ -146,26 +146,26 @@ export default function ResponsiveDrawer(props: Props) {
 
   return (
     <>
-      <Box sx={{display: 'flex'}}>
+      <Box sx={{ display: 'flex' }}>
         <AppBarDashboard namePerson={person?.name} />
-      
-      <Box sx={{ display: 'flex', backgroundColor: 'rgb(1 63 122)', height: 1000, flexGrow: 1}}>
-        <CssBaseline />
 
-        <Box
-          component="main"
-          sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
-        >
-          <Toolbar />
+        <Box sx={{ display: 'flex', backgroundColor: 'rgb(1 63 122)', height: 1000, flexGrow: 1 }}>
+          <CssBaseline />
 
           <Box
-            sx={{ flexGrow: 1 }}
-          // sx={{ flexDirection: 'row', alignItems: 'center'}}
+            component="main"
+            sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
           >
-            <Button variant="contained" onClick={handleClickOpenDialogNewGroup} size="large" startIcon={<AddBox />}>
-              Novo Grupo
-            </Button>
-            {/* 
+            <Toolbar />
+
+            <Box
+              sx={{ flexGrow: 1 }}
+            // sx={{ flexDirection: 'row', alignItems: 'center'}}
+            >
+              <Button variant="contained" onClick={handleClickOpenDialogNewGroup} size="large" startIcon={<AddBox />}>
+                Novo Grupo
+              </Button>
+              {/* 
           <Dialog open={openDialogNewGroup} onClose={handleCloseDialogNewGroup}>
             <DialogTitle>Novo Grupo</DialogTitle>
             <DialogContent>
@@ -194,71 +194,97 @@ export default function ResponsiveDrawer(props: Props) {
           </Dialog> */}
 
 
-            <DialogNewGroup handleCloseDialogNewGroup={handleCloseDialogNewGroup} handleRegisterNewGroup={handleRegisterNewGroup} openDialogNewGroup={openDialogNewGroup} />
+              <DialogNewGroup handleCloseDialogNewGroup={handleCloseDialogNewGroup} handleRegisterNewGroup={handleRegisterNewGroup} openDialogNewGroup={openDialogNewGroup} />
 
-            <Divider sx={{ margin: 1 }} />
-            <Grid container spacing={2}
-            // sx={{
-            //   display: 'flex',
-            //   flexDirection: 'row',
-            //   alignItems: 'center',
-            // }}
-            >
-              <Grid item xs
-              // sx={{
-              //   width: '100%',
-              // }}
-              >
-                <Item sx={{ backgroundColor: 'transparent' }}>
-                  {
-
-                    loadingGroups ?
-
-                      <Box sx={{ m: 5, display: 'flex', justifyContent: 'center' }}>
-                        <CircularProgress color='secondary' disableShrink />
-                      </Box>
-
-                      :
-
-                      groups.map((group, indexGroup) => (
-                        <GroupAccordion
-                          group={group}
-                          key={group.idGroup}
-                          idPerson={person?.idPerson}
-                          onDelete={handleDeleteGroup}
-                          onEdit={handleEditGroup}
-                          onInvite={handleGenerateInviteGroup} />
-                      ))
-                  }
-                </Item>
-              </Grid>
-              <Grid item xs
+              <Divider sx={{ margin: 1 }} />
+              <Grid container spacing={2}
               // sx={{
               //   display: 'flex',
-              //   flexDirection: 'collumn',
+              //   flexDirection: 'row',
               //   alignItems: 'center',
               // }}
               >
-                {
-                  groups.length > 0 ?
+                <Grid item xs
+                // sx={{
+                //   width: '100%',
+                // }}
+                >
+                  <Item sx={{ backgroundColor: 'transparent' }}>
+                    {
 
-                    <Stack direction="row" justifyContent="center">
-                      <Item sx={{ backgroundColor: 'transparent' }}>
-                        <CalendarBirthdays />
-                      </Item>
-                    </Stack>
+                      loadingGroups ?
 
+                        <Box sx={{ m: 5, display: 'flex', justifyContent: 'center' }}>
+                          <CircularProgress color='secondary' disableShrink />
+                        </Box>
+
+                        :
+
+                        groups.length > 0 ?
+
+                          groups.map((group, indexGroup) => (
+                            <GroupAccordion
+                              group={group}
+                              key={group.idGroup}
+                              idPerson={person?.idPerson}
+                              onDelete={handleDeleteGroup}
+                              onEdit={handleEditGroup}
+                              onInvite={handleGenerateInviteGroup} />
+                          ))
                     :
+                    <Box>
+                      <Zoom in={groups.length <= 0} style={{ transitionDelay: groups.length <= 0 ? '500ms' : '0ms' }}>
+                        <Box sx={{ mt: 2, display: 'flex', p: 1, borderRadius: 6, color: 'white', width: '100%', backgroundColor: 'rgb(0 0 0 / 10%)' }}>
+                          <Typography component="h2" variant="h6">
+                            <Typography color="yellow" component="div">Estagiário 🤖:</Typography> Olá!  Que bom te ver por aqui <Typography color="pink" component="span" variant="h6">{person?.name!.split(" ")[0]}</Typography> ! 🖖
+                          </Typography>
+                        </Box>
+                      </Zoom>
+                      <Zoom in={groups.length <= 0} style={{ transitionDelay: groups.length <= 0 ? '1500ms' : '0ms' }}>
+                        <Box sx={{ mt: 2, display: 'flex', p: 1, borderRadius: 6, color: 'white', width: '100%', backgroundColor: 'rgb(0 0 0 / 10%)' }}>
+                          <Typography component="h2" variant="h6">
+                            <Typography color="yellow" component="div">Estagiário 🤖:</Typography> Já vi aqui que você ainda não tem nenhum grupo criado ainda.
+                          </Typography>
+                        </Box>
+                      </Zoom>
+                      <Zoom in={groups.length <= 0} style={{ transitionDelay: groups.length <= 0 ? '2500ms' : '0ms' }}>
+                        <Box sx={{ mt: 2, display: 'flex', p: 1, borderRadius: 6, color: 'white', width: '100%', backgroundColor: 'rgb(0 0 0 / 10%)' }}>
+                          <Typography component="h2" variant="h6">
+                            <Typography color="yellow" component="div">Estagiário 🤖:</Typography> Comece criando seu primeiro grupo no botão <Typography color="pink" component="span" variant="h6">"Novo Grupo"</Typography> acima.
+                          </Typography>
+                        </Box>
+                      </Zoom>
+                    </Box>
+                    }
+                  </Item>
+                </Grid>
+                <Grid item xs
+                // sx={{
+                //   display: 'flex',
+                //   flexDirection: 'collumn',
+                //   alignItems: 'center',
+                // }}
+                >
+                  {
+                    groups.length > 0 ?
 
-                    <div></div>
+                      <Stack direction="row" justifyContent="center">
+                        <Item sx={{ backgroundColor: 'transparent' }}>
+                          <CalendarBirthdays />
+                        </Item>
+                      </Stack>
 
-                }
+                      :
 
+                      <div></div>
+
+                  }
+
+                </Grid>
               </Grid>
-            </Grid>
+            </Box>
           </Box>
-        </Box>
-      </Box >
+        </Box >
       </Box>
     </>
   );

@@ -20,6 +20,7 @@ type ListProps = {
 
 interface Props {
   namePerson?: string;
+  title?: string;
   /**
    * Injected by the documentation to work in an iframe.
    * You won't need it on your project.
@@ -46,7 +47,7 @@ export const AppBarDashboard: React.FC<Props> = (props: Props) => {
           ml: { sm: `${drawerWidth}px` },
         }}
       >
-        <Toolbar sx={{ color: 'white', backgroundColor: 'rgb(1 63 112)' }}>
+        <Toolbar sx={{ color: 'white' }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -57,7 +58,7 @@ export const AppBarDashboard: React.FC<Props> = (props: Props) => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Grupos
+            {props.title}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -87,7 +88,7 @@ export const AppBarDashboard: React.FC<Props> = (props: Props) => {
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, backgroundColor: 'rgb(1 61 111)', color: 'white' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, color: 'white' },
           }}
           open
         >

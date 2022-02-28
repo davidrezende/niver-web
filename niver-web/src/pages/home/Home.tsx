@@ -29,8 +29,7 @@ export default function Home() {
     [
       { title: 'Esqueceu do aniversário de alguém importante pra você? 🙊😿', subtitle: 'Não se preocupe, estamos aqui para garantir que isso não irá se repetir. Cadastre-se, crie seu grupo e convide seus amigos. É simples e rápido. Avisamos vocês com antecedência para não esquecerem nenhuma data de aniversário.' },
       { title: 'Não é bom com datas? 😥', subtitle: 'Deixe com a gente. Cadastre-se, crie seu grupo e convide seus amigos. É simples e rápido. Avisamos vocês com antecedência para não esquecerem nenhuma data de aniversário.' },
-      { title: 'Avise de forma simples e prática seu grupo de trabalho dos aniversários 🎉', subtitle: 'Avisamos vocês quando alguém do grupo estiver próximo de fazer aniversário!' },
-      { title: 'Precisa de alguém para te ajudar?', subtitle: 'Crie seu grupo da família, do trabalho ou dos amigos. Convide a galera e deixe que a gente lembre vocês dos aniversários!' }
+      { title: 'Avise de forma simples e prática seu grupo dos aniversários 🎉', subtitle: 'Avisamos vocês quando alguém do grupo estiver próximo de fazer aniversário!' },
     ];
 
     const banners = 
@@ -113,7 +112,7 @@ export default function Home() {
                   flexGrow: 1,
                   display: 'flex'
                 }}>
-                  <Button color="inherit" onClick={() => navigate('/register')}>Gostei quero me cadastrar e começar a usar! 👌</Button>  <Typography></Typography>
+                  <Button color="info" sx={{backgroundColor: 'orange', color:'black'}} variant="contained" onClick={() => navigate('/register')}>Quero me cadastrar e começar a usar! 👌</Button>  <Typography></Typography>
                 </Box>
               </Grid>
             </Box>

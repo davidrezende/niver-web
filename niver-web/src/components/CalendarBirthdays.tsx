@@ -27,21 +27,6 @@ export default function ServerRequestDatePicker() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [highlightedDays, setHighlightedDays] = React.useState([1, 2, 15, 16]);
   const [birthdaysMonth, setBirthdaysMonth] = React.useState<ICalendarMemberBirthdayData[]>([]);
-  const [niver2, setNiver2] = React.useState(
-    [
-      {
-        day: 2,
-        name: "aaa"
-      },
-      {
-        day: 4,
-        name: "bbb"
-      },
-      {
-        day: 11,
-        name: "ccc"
-      }
-    ]);
   const [value, setValue] = React.useState<Date | null>(initialValue);
   const [date, setDate] = React.useState<Date | null>(new Date());
 

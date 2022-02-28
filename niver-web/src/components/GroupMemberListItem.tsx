@@ -56,11 +56,11 @@ export const GroupMemberListItem: React.FC<ListProps> = ({ member, idPerson, idG
             </Tooltip> : null
       }>
       <ListItemAvatar>
-        <Avatar sx={{ m: 1, bgcolor: () => randColor(member?.name?.length!) }}>{member?.name?.split(" ")[0].charAt(0).concat(member?.name?.split(" ")[0].charAt(member?.name.length - 1)).toUpperCase()}</Avatar>
+        <Avatar sx={{ color: 'white', m: 1, bgcolor: () => randColor(member?.name?.length!) }}>{member?.name?.split(" ")[0].charAt(0).concat(member?.name?.split(" ")[0].charAt(member?.name.length - 1)).toUpperCase()}</Avatar>
 
         {/* <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}></Avatar> */}
       </ListItemAvatar>
-      <Tooltip title={member?.idPerson === idOwner ? 'Criador 👑' : ''} placement='right-end' >
+      <Tooltip title={member?.idPerson === idOwner ? 'Criador 👑 ( Apenas o criador pode gerar um convite para o grupo )' : ''} placement='right-end' >
       <ListItemText
         primaryTypographyProps={{
           color: 'white',

@@ -35,7 +35,7 @@ export const CommonDrawer: React.FC<ListProps> = ({ namePerson }) => {
           alignItems: 'center',
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: () => randColor(namePerson?.length!) }}>{ namePerson?.split(" ")[0].charAt(0).concat(namePerson?.split(" ")[0].charAt(namePerson.length -1)).toUpperCase()}</Avatar>
+        <Avatar sx={{ color: 'white', m: 1, bgcolor: () => randColor(namePerson?.length!) }}>{ namePerson?.split(" ")[0].charAt(0).concat(namePerson?.split(" ")[0].charAt(namePerson.length -1)).toUpperCase()}</Avatar>
           {/* {person?.name} */}
         <Typography variant="subtitle2" textAlign="center" sx={{ margin: 1 }}>
           {namePerson?.split(" ")[0]}

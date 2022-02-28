@@ -42,7 +42,7 @@ const ResponsiveAppBar = () => {
 
 
   return (
-    <AppBar position="sticky" sx={{ backgroundColor: 'rgb(255 255 255 / 10%)' }}>
+    <AppBar position="sticky" sx={{ backgroundColor: 'rgb(214 138 0)' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography

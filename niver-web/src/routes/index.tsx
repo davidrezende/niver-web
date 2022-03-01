@@ -50,7 +50,7 @@ const RoutesCustom: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/invite/:inviteId" element={<Invite />} />
+      <Route path="/groups/invite/:inviteId" element={<Invite />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Signin />} />
 

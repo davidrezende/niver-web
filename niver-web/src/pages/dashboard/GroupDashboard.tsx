@@ -19,6 +19,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { Avatar, Button, CircularProgress, CustomTheme, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, PaletteMode, Paper, Stack, styled, Switch, TextField, ThemeProvider, useTheme, Zoom } from '@mui/material';
 import IGroupData from '../../shared/types/Group';
 import { GroupService } from '../../services/GroupService';
+import { InviteService } from '../../services/InviteService';
 import { GroupAccordion } from '../../components/GroupAccordion';
 import CalendarBirthdays from '../../components/CalendarBirthdays';
 import IPersonData from '../../shared/types/Person';
@@ -119,14 +120,6 @@ export default function ResponsiveDrawer(props: Props) {
     if (status === 200) {
       setGroups([...groups, data])
     }
-  }
-
-  const handleGenerateInviteGroup = async (idGroup: number, idPerson: number) => {
-    console.log('group:', idGroup, ' person:', idPerson)
-    // let { status, data } = await GroupService.createGroup({ owner: { idPerson: person?.idPerson }, name: nameGroup })
-    // if (status === 200) {
-    //   setGroups([...groups, data])
-    // }
   }
 
   const handleDeleteGroup = async (idGroup: number, idPerson: number) => {
@@ -272,7 +265,7 @@ export default function ResponsiveDrawer(props: Props) {
                               idPerson={person?.idPerson}
                               onDelete={handleDeleteGroup}
                               onEdit={handleEditGroup}
-                              onInvite={handleGenerateInviteGroup} />
+                            />
                           ))
                           :
                           <Box>

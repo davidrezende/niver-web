@@ -17,7 +17,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Copyright } from '../../components';
 import { useSnackbar } from 'notistack';
 import CSS from 'csstype';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, useMediaQuery } from '@mui/material';
 import BG_1 from '../../shared/images/bg_1.jpg';
 import BG_2 from '../../shared/images/bg_2.jpg';
 import BG_3 from '../../shared/images/bg_3.jpg';
@@ -42,6 +42,8 @@ export default function SignIn() {
 
 
   useEffect(() => {
+    sessionStorage.removeItem('themeDefault');
+    console.log('tema preferido pela pessoa:', localStorage.getItem('themeDefault'))
     setRandomBanner(banners.length)
     if (!!!user) {
       localStorage.clear()

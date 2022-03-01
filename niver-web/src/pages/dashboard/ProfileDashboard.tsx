@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useContext, useEffect, useState } from 'react';
-import { Avatar, Button, CircularProgress, Grid, InputAdornment, Link, TextField, ThemeProvider } from '@mui/material';
+import { Avatar, Button, CircularProgress, Grid, InputAdornment, Link, TextField, ThemeProvider, useMediaQuery } from '@mui/material';
 import IPersonData from '../../shared/types/Person';
 import { PersonService } from '../../services/PersonService';
 import AuthContext from '../../context/auth';
@@ -24,6 +24,7 @@ import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { useNavigate } from 'react-router-dom';
 import { AppBarDashboard } from '../../components/AppBarDashboard';
 import { DarkTheme } from '../../shared/themes/Dark';
+import { DarkClariTheme } from '../../shared/themes/DarkClari';
 const drawerWidth = 240;
 
 interface Props {
@@ -39,6 +40,7 @@ export default function ResponsiveDrawer(props: Props) {
   const [person, setPerson] = useState<IPersonData>();
   const [editButton, setEditButton] = useState(false);
   const [editPasswordButton, setEditPasswordButton] = useState(false);
+  const [themeSwitch, setThemeSwitch] = useState(localStorage.getItem('themeDefault') === 'true' ? true : false );
   const [loading, setLoading] = useState(false);
   const { user } = useContext(AuthContext);
   const [birthdayDate, setBirthdayDate] = useState<Date | undefined>(person?.birthday);
@@ -51,8 +53,11 @@ export default function ResponsiveDrawer(props: Props) {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
-
-  const theme = DarkTheme;
+  const themePrefer = React.useMemo(
+    () =>
+      DarkClariTheme(themeSwitch ? 'dark' : 'light'),
+    [themeSwitch],
+  );
 
   useEffect(() => {
     if (!!!user) {
@@ -165,7 +170,7 @@ export default function ResponsiveDrawer(props: Props) {
   return (
 
     <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={themePrefer}>
         <CssBaseline /> 
         <Box sx={{ display: 'flex' }}>
           <AppBarDashboard title="Seus dados" namePerson={person?.name} />

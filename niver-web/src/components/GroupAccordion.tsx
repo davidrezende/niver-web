@@ -125,7 +125,7 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
 
   return (
 
-    <MuiAccordion sx={{ backgroundColor: 'rgb(0 82 151)', color: 'white' }}
+    <MuiAccordion
       expanded={openAccordion}>
       <MuiAccordionSummary
         expandIcon={
@@ -303,10 +303,10 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
 
 
       </MuiAccordionSummary >
-      <AccordionDetails sx={{ backgroundColor: 'rgb(0 0 0 / 10%)' }}>
+      <AccordionDetails>
         <Box sx={{ display: 'flex' }}>
           <Typography component={'span'} sx={{ ml: 4, mt: 4, fontSize: '100%', }}>
-            <Typography component={'span'} sx={{ fontSize: '100%', color: 'white'}}><strong>Membros do grupo ({members?.length})</strong></Typography>
+            <Typography component={'span'} sx={{ fontSize: '100%', }}><strong>Membros do grupo ({members?.length})</strong></Typography>
             <List>
               {
                 members?.map((member, indexGroup) => (

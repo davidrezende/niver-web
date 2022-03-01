@@ -57,7 +57,7 @@ export const AppBarDashboard: React.FC<Props> = (props: Props) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" sx={{ color: 'white' }}>
             {props.title}
           </Typography>
         </Toolbar>

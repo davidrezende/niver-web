@@ -63,13 +63,11 @@ export const GroupMemberListItem: React.FC<ListProps> = ({ member, idPerson, idG
       <Tooltip title={member?.idPerson === idOwner ? 'Criador 👑 ( Apenas o criador pode gerar um convite para o grupo )' : ''} placement='right-end' >
       <ListItemText
         primaryTypographyProps={{
-          color: 'white',
           fontFamily: 'Roboto',
           fontWeight: 'bold',
           variant: 'body2',
         }}
         secondaryTypographyProps={{
-          color: 'rgb(233, 233, 233 )',
           fontFamily: 'Roboto',
           fontSize: 12,
           variant: 'body2',

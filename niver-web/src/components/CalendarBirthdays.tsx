@@ -64,7 +64,7 @@ export default function ServerRequestDatePicker() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
-      <Box sx={{ display: 'table', maxWidth: '100%', color: 'white', backgroundColor: 'rgb(0 82 151)' }}>
+      <Box sx={{ display: 'table', maxWidth: '100%', color: 'white',}}>
 
         {
           isLoading ?

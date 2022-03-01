@@ -15,8 +15,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AddBox from '@mui/icons-material/AddBox';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { Avatar, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Paper, Stack, styled, TextField, ThemeProvider, Zoom } from '@mui/material';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Avatar, Button, CircularProgress, CustomTheme, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, PaletteMode, Paper, Stack, styled, Switch, TextField, ThemeProvider, useTheme, Zoom } from '@mui/material';
 import IGroupData from '../../shared/types/Group';
 import { GroupService } from '../../services/GroupService';
 import { GroupAccordion } from '../../components/GroupAccordion';
@@ -31,6 +31,10 @@ import { ptBR } from "date-fns/locale";
 import { LocalizationProvider } from '@mui/lab';
 import { AppBarDashboard } from '../../components/AppBarDashboard';
 import { DarkTheme } from '../../shared/themes/Dark';
+import { DarkClariTheme } from '../../shared/themes/DarkClari';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
   /**
@@ -42,19 +46,28 @@ interface Props {
 
 
 export default function ResponsiveDrawer(props: Props) {
-
   const [person, setPerson] = useState<IPersonData>();
   const [nameGroup, setNameGroup] = useState('');
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const [themeSwitch, setThemeSwitch] = useState(prefersDarkMode);
   const [loadingGroups, setLoadingGroups] = useState(false);
   const [groups, setGroups] = useState<Array<IGroupData>>([]);
   // const { groups, getGroupsByPerson, createGroup } = useGroups();
   const [groupsIndex, setGroupsIndex] = useState(0);
   const { signed, user, Logout } = useContext(AuthContext);
-  const theme = DarkTheme;
 
+  console.log('prefeeers escolhidooooooooo:', prefersDarkMode)
+  // const theme = DarkTheme;
   let navigate = useNavigate();
-
   useEffect(() => {
+    if(!!localStorage.getItem('themeDefault') && localStorage.getItem('themeDefault') !== null && localStorage.getItem('themeDefault') !== undefined){
+      console.log('ta guardaod no storage o tema:', localStorage.getItem('themeDefault'))
+      setThemeSwitch(localStorage.getItem('themeDefault') === 'true' ? true : false)
+    }else{
+      console.log('setando o thema precerido do navegador:', prefersDarkMode)
+      localStorage.setItem('themeDefault', prefersDarkMode.toString())
+      setThemeSwitch(prefersDarkMode)
+    }
     if (!!!user) {
       console.log('usuario n esta logado na tela de grupo, vai pro login')
       return navigate('/login')
@@ -69,6 +82,14 @@ export default function ResponsiveDrawer(props: Props) {
   }, [])
 
   useEffect(() => {
+    if(!!localStorage.getItem('themeDefault') && localStorage.getItem('themeDefault') !== null && localStorage.getItem('themeDefault') !== undefined){
+      console.log('ta guardaod no storage o tema:', localStorage.getItem('themeDefault'))
+      setThemeSwitch(localStorage.getItem('themeDefault') === 'true' ? true : false)
+    }else{
+      console.log('setando o thema precerido do navegador:', prefersDarkMode)
+      localStorage.setItem('themeDefault', prefersDarkMode.toString())
+      setThemeSwitch(prefersDarkMode)
+    }
     console.log('buscando dados dos grupos da pessoa logada')
     setLoadingGroups(true)
     delay(2000)
@@ -79,6 +100,14 @@ export default function ResponsiveDrawer(props: Props) {
       }
     })
   }, [person])
+
+
+  const themePrefer = React.useMemo(
+    () =>
+      DarkClariTheme(themeSwitch ? 'dark' : 'light'),
+    [themeSwitch],
+  );
+
 
   function delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -136,6 +165,14 @@ export default function ResponsiveDrawer(props: Props) {
   const handleCloseDialogNewGroup = () => {
     setOpenDialogNewGroup(false);
   };
+
+  const handleChangeToggleTheme = () => {
+    const themeAlt = !themeSwitch
+    localStorage.setItem('themeDefault', themeAlt.toString())
+    setThemeSwitch(themeAlt)
+  }
+
+
   const drawerWidth = 240;
   const container = window !== undefined ? () => window().document.body : undefined;
   const Item = styled(Box)(({ theme }) => ({
@@ -144,29 +181,34 @@ export default function ResponsiveDrawer(props: Props) {
     padding: theme.spacing(1),
     color: theme.palette.text.secondary,
   }));
-
+  
   return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Box sx={{ display: 'flex' }}>
-          <AppBarDashboard title="Seus grupos"namePerson={person?.name} />
+    <ThemeProvider theme={themePrefer}>
+      <CssBaseline />
+      <Box sx={{ display: 'flex' }}>
+        <AppBarDashboard title="Seus grupos" namePerson={person?.name} />
 
-          <Box sx={{ display: 'flex', flexGrow: 1 }}>
+        <Box sx={{ display: 'flex', flexGrow: 1 }}>
+
+          <Box
+            component="main"
+            sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+          >
+            <Toolbar />
 
             <Box
-              component="main"
-              sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+              sx={{ flexGrow: 1 }}
+            // sx={{ flexDirection: 'row', alignItems: 'center'}}
             >
-              <Toolbar />
-
-              <Box
-                sx={{ flexGrow: 1 }}
-              // sx={{ flexDirection: 'row', alignItems: 'center'}}
-              >
-                <Button variant="contained" onClick={handleClickOpenDialogNewGroup} size="large" startIcon={<AddBox />}>
-                  Novo Grupo
-                </Button>
-                {/* 
+              <Button variant="contained" onClick={handleClickOpenDialogNewGroup} size="large" startIcon={<AddBox />}>
+                Novo Grupo
+              </Button>
+              
+              <IconButton sx={{ ml: 1 }} onClick={handleChangeToggleTheme} color="inherit">
+              {themePrefer.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+              </IconButton>
+              <Button onClick={handleChangeToggleTheme}>{themePrefer.palette.mode === 'dark' ? 'Modo claro' : 'Modo escuro' }</Button>
+              {/* 
           <Dialog open={openDialogNewGroup} onClose={handleCloseDialogNewGroup}>
             <DialogTitle>Novo Grupo</DialogTitle>
             <DialogContent>
@@ -195,98 +237,98 @@ export default function ResponsiveDrawer(props: Props) {
           </Dialog> */}
 
 
-                <DialogNewGroup handleCloseDialogNewGroup={handleCloseDialogNewGroup} handleRegisterNewGroup={handleRegisterNewGroup} openDialogNewGroup={openDialogNewGroup} />
+              <DialogNewGroup handleCloseDialogNewGroup={handleCloseDialogNewGroup} handleRegisterNewGroup={handleRegisterNewGroup} openDialogNewGroup={openDialogNewGroup} />
 
-                <Divider sx={{ margin: 1 }} />
-                <Grid container spacing={2}
+              <Divider sx={{ margin: 1 }} />
+              <Grid container spacing={2}
+              // sx={{
+              //   display: 'flex',
+              //   flexDirection: 'row',
+              //   alignItems: 'center',
+              // }}
+              >
+                <Grid item xs
                 // sx={{
-                //   display: 'flex',
-                //   flexDirection: 'row',
-                //   alignItems: 'center',
+                //   width: '100%',
                 // }}
                 >
-                  <Grid item xs
-                  // sx={{
-                  //   width: '100%',
-                  // }}
-                  >
-                    <Item sx={{ backgroundColor: 'transparent' }}>
-                      {
-
-                        loadingGroups ?
-
-                          <Box sx={{ m: 5, display: 'flex', justifyContent: 'center' }}>
-                            <CircularProgress color='secondary' disableShrink />
-                          </Box>
-
-                          :
-
-                          groups.length > 0 ?
-
-                            groups.map((group, indexGroup) => (
-                              <GroupAccordion
-                                group={group}
-                                key={group.idGroup}
-                                idPerson={person?.idPerson}
-                                onDelete={handleDeleteGroup}
-                                onEdit={handleEditGroup}
-                                onInvite={handleGenerateInviteGroup} />
-                            ))
-                            :
-                            <Box>
-                              <Zoom in={groups.length <= 0} style={{ transitionDelay: groups.length <= 0 ? '500ms' : '0ms' }}>
-                                <Box sx={{ mt: 2, display: 'flex', p: 1, borderRadius: 6, color: 'white', width: '100%', backgroundColor: 'rgb(0 0 0 / 10%)' }}>
-                                  <Typography component="h2" variant="h6">
-                                    <Typography color="yellow" component="div">Estagiário 🤖:</Typography> Olá!  Que bom te ver por aqui <Typography color="pink" component="span" variant="h6">{person?.name!.split(" ")[0]}</Typography> ! 🖖
-                                  </Typography>
-                                </Box>
-                              </Zoom>
-                              <Zoom in={groups.length <= 0} style={{ transitionDelay: groups.length <= 0 ? '1500ms' : '0ms' }}>
-                                <Box sx={{ mt: 2, display: 'flex', p: 1, borderRadius: 6, color: 'white', width: '100%', backgroundColor: 'rgb(0 0 0 / 10%)' }}>
-                                  <Typography component="h2" variant="h6">
-                                    <Typography color="yellow" component="div">Estagiário 🤖:</Typography> Já vi aqui que você ainda não tem nenhum grupo criado ainda.
-                                  </Typography>
-                                </Box>
-                              </Zoom>
-                              <Zoom in={groups.length <= 0} style={{ transitionDelay: groups.length <= 0 ? '2500ms' : '0ms' }}>
-                                <Box sx={{ mt: 2, display: 'flex', p: 1, borderRadius: 6, color: 'white', width: '100%', backgroundColor: 'rgb(0 0 0 / 10%)' }}>
-                                  <Typography component="h2" variant="h6">
-                                    <Typography color="yellow" component="div">Estagiário 🤖:</Typography> Comece criando seu primeiro grupo no botão <Typography color="pink" component="span" variant="h6">"Novo Grupo"</Typography> acima.
-                                  </Typography>
-                                </Box>
-                              </Zoom>
-                            </Box>
-                      }
-                    </Item>
-                  </Grid>
-                  <Grid item xs
-                  // sx={{
-                  //   display: 'flex',
-                  //   flexDirection: 'collumn',
-                  //   alignItems: 'center',
-                  // }}
-                  >
+                  <Item sx={{ backgroundColor: 'transparent' }}>
                     {
-                      groups.length > 0 ?
 
-                        <Stack direction="row" justifyContent="center">
-                          <Item sx={{ backgroundColor: 'transparent' }}>
-                            <CalendarBirthdays />
-                          </Item>
-                        </Stack>
+                      loadingGroups ?
+
+                        <Box sx={{ m: 5, display: 'flex', justifyContent: 'center' }}>
+                          <CircularProgress color='secondary' disableShrink />
+                        </Box>
 
                         :
 
-                        <div></div>
+                        groups.length > 0 ?
 
+                          groups.map((group, indexGroup) => (
+                            <GroupAccordion
+                              group={group}
+                              key={group.idGroup}
+                              idPerson={person?.idPerson}
+                              onDelete={handleDeleteGroup}
+                              onEdit={handleEditGroup}
+                              onInvite={handleGenerateInviteGroup} />
+                          ))
+                          :
+                          <Box>
+                            <Zoom in={groups.length <= 0} style={{ transitionDelay: groups.length <= 0 ? '500ms' : '0ms' }}>
+                              <Box sx={{ mt: 2, display: 'flex', p: 1, borderRadius: 6, color: 'white', width: '100%', backgroundColor: 'rgb(0 0 0 / 10%)' }}>
+                                <Typography component="h2" variant="h6">
+                                  <Typography sx={{ fontWeight: 'bold' }} color="rgb(0 121 217)" component="div">Estagiário 🤖:</Typography> Olá!  Que bom te ver por aqui <Typography color="orange" component="span" variant="h6">{person?.name!.split(" ")[0]}</Typography> ! 🖖
+                                </Typography>
+                              </Box>
+                            </Zoom>
+                            <Zoom in={groups.length <= 0} style={{ transitionDelay: groups.length <= 0 ? '1500ms' : '0ms' }}>
+                              <Box sx={{ mt: 2, display: 'flex', p: 1, borderRadius: 6, color: 'white', width: '100%', backgroundColor: 'rgb(0 0 0 / 10%)' }}>
+                                <Typography component="h2" variant="h6">
+                                  <Typography sx={{ fontWeight: 'bold' }} color="rgb(0 121 217)" component="div">Estagiário 🤖:</Typography> Já vi aqui que você ainda não tem nenhum grupo criado ainda.
+                                </Typography>
+                              </Box>
+                            </Zoom>
+                            <Zoom in={groups.length <= 0} style={{ transitionDelay: groups.length <= 0 ? '2500ms' : '0ms' }}>
+                              <Box sx={{ mt: 2, display: 'flex', p: 1, borderRadius: 6, color: 'white', width: '100%', backgroundColor: 'rgb(0 0 0 / 10%)' }}>
+                                <Typography component="h2" variant="h6">
+                                  <Typography sx={{ fontWeight: 'bold' }} color="rgb(0 121 217)" component="div"><strong>Estagiário 🤖:</strong></Typography> Comece criando seu primeiro grupo no botão <Typography color="orange" component="span" variant="h6">"Novo Grupo"</Typography> acima.
+                                </Typography>
+                              </Box>
+                            </Zoom>
+                          </Box>
                     }
-
-                  </Grid>
+                  </Item>
                 </Grid>
-              </Box>
+                <Grid item xs
+                // sx={{
+                //   display: 'flex',
+                //   flexDirection: 'collumn',
+                //   alignItems: 'center',
+                // }}
+                >
+                  {
+                    groups.length > 0 ?
+
+                      <Stack direction="row" justifyContent="center">
+                        <Item sx={{ backgroundColor: 'transparent' }}>
+                          <CalendarBirthdays />
+                        </Item>
+                      </Stack>
+
+                      :
+
+                      <div></div>
+
+                  }
+
+                </Grid>
+              </Grid>
             </Box>
-          </Box >
-        </Box>
-      </ThemeProvider>
+          </Box>
+        </Box >
+      </Box>
+    </ThemeProvider>
   );
 }

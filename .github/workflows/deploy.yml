@@ -24,8 +24,6 @@ jobs:
         CI: true
     - name: Publish to Github Packages Registry
       uses: elgohr/Publish-Docker-Github-Action@master
-      run: |
-        cd niver-web
       with:
         name: my_github_username/my_repository_name/my_image_name/my_image_name
         registry: docker.pkg.github.com

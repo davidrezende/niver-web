@@ -4,16 +4,17 @@ on:
   push:
     branches: 
       - master
+      - develop
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Use Node.js 13.10
+    - name: Use Node.js 16.14
       uses: actions/setup-node@v1
       with:
-        node-version: '13.10'
+        node-version: '16.14'
     - name: Install yarn and run unittest
       run: |
         yarn
@@ -25,7 +26,7 @@ jobs:
       with:
         name: my_github_username/my_repository_name/my_image_name
         registry: docker.pkg.github.com
-        username: ${{ secrets.GITHUB_USERNAME }}
+        username: ${{ secrets.USER_NAME_GITHUB }}
         password: ${{ secrets.GITHUB_TOKEN }}
         dockerfile: Dockerfile-prod
         tags: latest

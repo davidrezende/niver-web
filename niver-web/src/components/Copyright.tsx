@@ -12,7 +12,7 @@ export const Copyright: React.FC<any> = (props) => {
       <br />
       {'Copyright © '}
       <Link color="inherit" to="/">
-        Niver
+        NiverDeQuem™️
       </Link>
       {' ' + new Date().getFullYear() + '.'}
     </Typography>

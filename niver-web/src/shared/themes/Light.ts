@@ -1,9 +1,9 @@
 import { createTheme } from '@mui/material';
 import { cyan, blue } from '@mui/material/colors';
 
-export const DarkTheme = createTheme({
+export const LightTheme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: 'light',
     primary: {
       main: blue[700],
       dark: blue[800],
@@ -52,5 +52,12 @@ export const DarkTheme = createTheme({
         },
       },
     },
+    MuiButtonBase: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'rgb(1 61 111)',
+        },
+      },
+    }
   }
 });

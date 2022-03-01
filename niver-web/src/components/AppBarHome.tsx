@@ -15,8 +15,10 @@ import { Divider, Grid, styled } from '@mui/material';
 import { purple } from '@mui/material/colors';
 import { useNavigate } from 'react-router-dom';
 
-const pages = ['Sobre', 'Quem somos'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const pages: any[] =
+  [
+    // 'Sobre', 'Quem somos'
+  ];
 
 
 const ResponsiveAppBar = () => {
@@ -42,7 +44,7 @@ const ResponsiveAppBar = () => {
 
 
   return (
-    <AppBar position="sticky" sx={{ backgroundColor: 'rgb(0 0 0 / 33%)' }}>
+    <AppBar position="sticky" sx={{ backgroundColor: 'rgb(214 138 0)' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
@@ -51,55 +53,63 @@ const ResponsiveAppBar = () => {
             component="div"
             sx={{ mr: 2, display: { xs: 'none', md: 'flex', fontFamily: 'Roboto' } }}
           >
-            NiverDeQuem?
+            🎈NiverDeQuem?
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+          {
+            pages.length > 0 ?
+
+              <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                <IconButton
+                  size="large"
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={handleOpenNavMenu}
+                  color="inherit"
+                >
+                  <MenuIcon />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorElNav}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                  open={Boolean(anchorElNav)}
+                  onClose={handleCloseNavMenu}
+                  sx={{
+                    display: { xs: 'block', md: 'none' },
+                  }}
+                >
+                  {pages?.map((page) => (
+                    <MenuItem key={page} onClick={handleCloseNavMenu}>
+                      <Typography textAlign="center">{page}</Typography>
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Box>
+
+              :
+
+              ''
+          }
           <Typography
             variant="h6"
             noWrap
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
           >
-            NiverDeQuem?
+            NiverDeQuem
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
+            {pages?.map((page) => (
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}

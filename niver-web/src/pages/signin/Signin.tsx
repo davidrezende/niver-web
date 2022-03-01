@@ -17,28 +17,48 @@ import { Link, useNavigate } from "react-router-dom";
 import { Copyright } from '../../components';
 import { useSnackbar } from 'notistack';
 import CSS from 'csstype';
-import { CircularProgress } from '@mui/material';
-
-const theme = createTheme();
+import { CircularProgress, useMediaQuery } from '@mui/material';
+import BG_1 from '../../shared/images/bg_1.jpg';
+import BG_2 from '../../shared/images/bg_2.jpg';
+import BG_3 from '../../shared/images/bg_3.jpg';
+import { DarkTheme } from '../../shared/themes/Dark';
+const theme = DarkTheme;
 
 export default function SignIn() {
   const [emailUser, setEmailUser] = useState('');
   const [passUser, setPassUser] = useState('');
   const [loading, setLoading] = useState(false);
   const { signed, user, Login, Logout } = useContext(AuthContext);
+  const [banner, setBanner] = useState<{ url: number}>()
+
+  const banners = 
+  [
+    { url: 1},
+    { url: 2},
+    { url: 3},
+  ]
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   let navigate = useNavigate();
 
+
   useEffect(() => {
-    if(!!!user){
-    localStorage.clear()
-    sessionStorage.removeItem('@App:userId');
-    sessionStorage.removeItem('App:userName');
-    sessionStorage.removeItem('App:token');
-  }else{
-    navigate(-1)
-  }
+    sessionStorage.removeItem('themeDefault');
+    console.log('tema preferido pela pessoa:', localStorage.getItem('themeDefault'))
+    setRandomBanner(banners.length)
+    if (!!!user) {
+      localStorage.clear()
+      sessionStorage.removeItem('@App:userId');
+      sessionStorage.removeItem('App:userName');
+      sessionStorage.removeItem('App:token');
+    } else {
+      // navigate(-1)
+      navigate('/groups')
+    }
   }, [])
+
+  function setRandomBanner(max: number) {
+    return setBanner(banners[(Math.floor(Math.random() * max))]);
+  }
 
 
   const handleSubmit = async () => {
@@ -59,95 +79,107 @@ export default function SignIn() {
 
   return (
     <ThemeProvider theme={theme} >
-      <Container component="main" maxWidth="xs" >
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          {/* <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+      <CssBaseline />
+      <Grid container component="main" justifyContent="flex-end" sx={{
+        height: '100vh',
+        backgroundImage: `url(${banner?.url === 1 ? BG_1 : banner?.url === 2 ? BG_2 : BG_3})`,
+        // backgroundImage: 'url(https://source.unsplash.com/random)',
+        backgroundRepeat: 'no-repeat',
+        backgroundColor: (t) =>
+          t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}>
+        <Container component="main" maxWidth="xs" sx={{bgcolor: 'rgb(0 0 0 / 80%)',}}>
+          
+          <Box
+            sx={{
+              marginTop: 8,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            {/* <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar> */}
-          <Box sx={{ mb: 5 }} alignContent='center' >
-            <img width="90%" src={require('./../../shared/images/logo_niver.png')} />
-          </Box>
+            <Box sx={{ mb: 5 }} alignContent='center' >
+              <img width="90%" src={require('./../../shared/images/logo_niver.png')} />
+            </Box>
 
-          <Box sx={{ mt: 10 }}>
-            <Typography component="h2" variant="h5" align='center'>
-              😱 Quem eh <strong>você?!</strong> 🕵️‍♀️
-            </Typography>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email"
-              name="email"
-              value={emailUser}
-              autoComplete="email"
-              onChange={(e) => setEmailUser(e.target.value?.toLowerCase())}
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Senha"
-              type="password"
-              value={passUser}
-              id="password"
-              onChange={(e) => setPassUser(e.target.value)}
-              autoComplete="current-password"
-            />
-            {/* <FormControlLabel
+            <Box sx={{ mt: 10 }}>
+              <Typography component="h2" variant="h5" align='center'>
+                😱 Quem eh <strong>você?!</strong> 🕵️‍♀️
+              </Typography>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email"
+                name="email"
+                value={emailUser}
+                autoComplete="email"
+                onChange={(e) => setEmailUser(e.target.value?.toLowerCase())}
+                autoFocus
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Senha"
+                type="password"
+                value={passUser}
+                id="password"
+                onChange={(e) => setPassUser(e.target.value)}
+                autoComplete="current-password"
+              />
+              {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             /> */}
 
-            {
-              loading ?
+              {
+                loading ?
 
-                <Box sx={{ m: 5, display: 'flex', justifyContent: 'center' }}>
-                  <CircularProgress />
-                </Box>
+                  <Box sx={{ m: 5, display: 'flex', justifyContent: 'center' }}>
+                    <CircularProgress />
+                  </Box>
 
-                :
+                  :
 
-                <Button
-                  type="button"
-                  onClick={() => handleSubmit()}
-                  fullWidth
-                  disabled={!(emailUser && passUser)}
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
-                >
-                  ENTRAR
-                </Button>
+                  <Button
+                    type="button"
+                    onClick={() => handleSubmit()}
+                    fullWidth
+                    disabled={!(emailUser && passUser)}
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                  >
+                    ENTRAR
+                  </Button>
 
-            }
+              }
 
 
-            <Grid container>
-              <Grid item xs>
-                <Link to="#">
-                  Esqueceu a senha?
-                </Link>
+              <Grid container>
+                <Grid item xs>
+                  <Link to="#">
+                    Esqueceu a senha?
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link to="/register">
+                    Quero criar minha conta
+                  </Link>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Link to="/register">
-                  Quero criar minha conta
-                </Link>
-              </Grid>
-            </Grid>
+            </Box>
           </Box>
-        </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Container>
+          <Copyright sx={{ mt: 8, mb: 4 }} />
+        </Container>
+      </Grid>
     </ThemeProvider>
   );
 }

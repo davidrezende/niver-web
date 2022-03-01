@@ -6,6 +6,9 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { useNavigate } from "react-router-dom";
 import AuthContext from '../context/auth';
+import LogoutIcon from '@mui/icons-material/Logout';
+import GroupsIcon from '@mui/icons-material/Groups';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 
 
 type ListProps = {
@@ -24,7 +27,7 @@ export const CommonDrawer: React.FC<ListProps> = ({ namePerson }) => {
   const randColor = (param: number) => {
     return "#" + Math.floor(param * 1675).toString(16).padStart(6, '0').toUpperCase();
   }
-  
+
   return (
     <div>
       <Box
@@ -33,25 +36,28 @@ export const CommonDrawer: React.FC<ListProps> = ({ namePerson }) => {
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
+          justifyContent: 'center'
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: () => randColor(namePerson?.length!) }}>{ namePerson?.split(" ")[0].charAt(0).concat(namePerson?.split(" ")[0].charAt(namePerson.length -1)).toUpperCase()}</Avatar>
-          {/* {person?.name} */}
+        <Button onClick={() => navigate('/profile') }>
+        <Avatar sx={{ color: 'white', m: 1, bgcolor: () => randColor(namePerson?.length!) }}>{namePerson?.split(" ")[0].charAt(0).concat(namePerson?.split(" ")[0].charAt(namePerson.length - 1)).toUpperCase()}</Avatar>
+        {/* {person?.name} */}
         <Typography variant="subtitle2" textAlign="center" sx={{ margin: 1 }}>
-          {namePerson?.split(" ")[0]}
+          {namePerson?.split(" ")[0].substring(0, 15)}
         </Typography>
+        </Button>
       </Box>
       <Divider />
       <List>
         <ListItem button key="Meu perfil" onClick={() => navigate('/profile')}>
           <ListItemIcon>
-            <InboxIcon />
+            <AssignmentIndIcon />
           </ListItemIcon>
           <ListItemText primary="Meu perfil" />
         </ListItem>
         <ListItem button key="Grupos" onClick={() => navigate('/groups')}>
           <ListItemIcon>
-            <MailIcon />
+            <GroupsIcon />
           </ListItemIcon>
           <ListItemText primary="Grupos" />
         </ListItem>
@@ -61,7 +67,7 @@ export const CommonDrawer: React.FC<ListProps> = ({ namePerson }) => {
         {['Sair'].map((text, index) => (
           <ListItem onClick={handleLogout} button key={text}>
             <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+              <LogoutIcon />
             </ListItemIcon>
             <ListItemText primary={text} />
           </ListItem>

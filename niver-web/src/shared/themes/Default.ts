@@ -2,7 +2,7 @@ import { createTheme, CustomTheme, PaletteMode } from '@mui/material';
 import { cyan, yellow, blue, orange } from '@mui/material/colors';
 
 
-export const DarkClariTheme = (mode: PaletteMode) => {
+export const DefaultTheme = (mode: PaletteMode) => {
   return (createTheme(
     {
       palette: {

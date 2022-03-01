@@ -31,7 +31,7 @@ import { ptBR } from "date-fns/locale";
 import { LocalizationProvider } from '@mui/lab';
 import { AppBarDashboard } from '../../components/AppBarDashboard';
 import { DarkTheme } from '../../shared/themes/Dark';
-import { DarkClariTheme } from '../../shared/themes/DarkClari';
+import { DefaultTheme } from '../../shared/themes/Default';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -60,10 +60,10 @@ export default function ResponsiveDrawer(props: Props) {
   // const theme = DarkTheme;
   let navigate = useNavigate();
   useEffect(() => {
-    if(!!localStorage.getItem('themeDefault') && localStorage.getItem('themeDefault') !== null && localStorage.getItem('themeDefault') !== undefined){
+    if (!!localStorage.getItem('themeDefault') && localStorage.getItem('themeDefault') !== null && localStorage.getItem('themeDefault') !== undefined) {
       console.log('ta guardaod no storage o tema:', localStorage.getItem('themeDefault'))
       setThemeSwitch(localStorage.getItem('themeDefault') === 'true' ? true : false)
-    }else{
+    } else {
       console.log('setando o thema precerido do navegador:', prefersDarkMode)
       localStorage.setItem('themeDefault', prefersDarkMode.toString())
       setThemeSwitch(prefersDarkMode)
@@ -82,10 +82,10 @@ export default function ResponsiveDrawer(props: Props) {
   }, [])
 
   useEffect(() => {
-    if(!!localStorage.getItem('themeDefault') && localStorage.getItem('themeDefault') !== null && localStorage.getItem('themeDefault') !== undefined){
+    if (!!localStorage.getItem('themeDefault') && localStorage.getItem('themeDefault') !== null && localStorage.getItem('themeDefault') !== undefined) {
       console.log('ta guardaod no storage o tema:', localStorage.getItem('themeDefault'))
       setThemeSwitch(localStorage.getItem('themeDefault') === 'true' ? true : false)
-    }else{
+    } else {
       console.log('setando o thema precerido do navegador:', prefersDarkMode)
       localStorage.setItem('themeDefault', prefersDarkMode.toString())
       setThemeSwitch(prefersDarkMode)
@@ -104,7 +104,7 @@ export default function ResponsiveDrawer(props: Props) {
 
   const themePrefer = React.useMemo(
     () =>
-      DarkClariTheme(themeSwitch ? 'dark' : 'light'),
+      DefaultTheme(themeSwitch ? 'dark' : 'light'),
     [themeSwitch],
   );
 
@@ -181,7 +181,7 @@ export default function ResponsiveDrawer(props: Props) {
     padding: theme.spacing(1),
     color: theme.palette.text.secondary,
   }));
-  
+
   return (
     <ThemeProvider theme={themePrefer}>
       <CssBaseline />
@@ -203,11 +203,11 @@ export default function ResponsiveDrawer(props: Props) {
               <Button variant="contained" onClick={handleClickOpenDialogNewGroup} size="large" startIcon={<AddBox />}>
                 Novo Grupo
               </Button>
-              
+
               <IconButton sx={{ ml: 1 }} onClick={handleChangeToggleTheme} color="inherit">
-              {themePrefer.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+                {themePrefer.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
               </IconButton>
-              <Button onClick={handleChangeToggleTheme}>{themePrefer.palette.mode === 'dark' ? 'Modo claro' : 'Modo escuro' }</Button>
+              <Button onClick={handleChangeToggleTheme}>{themePrefer.palette.mode === 'dark' ? 'Modo claro' : 'Modo escuro'}</Button>
               {/* 
           <Dialog open={openDialogNewGroup} onClose={handleCloseDialogNewGroup}>
             <DialogTitle>Novo Grupo</DialogTitle>

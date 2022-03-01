@@ -17,7 +17,7 @@ import Container from '@mui/material/Container';
 import { useContext, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Avatar, CircularProgress, createTheme, IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
+import { Avatar, CircularProgress, createTheme, IconButton, Menu, MenuItem, ThemeProvider, Tooltip } from '@mui/material';
 import { Copyright } from '../../components/Copyright';
 import AuthContext from '../../context/auth';
 import { GroupService } from '../../services/GroupService';
@@ -26,10 +26,9 @@ import IInviteInfoData from '../../shared/types/ResponseInviteInfo';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { LoadingButton } from '@mui/lab';
 import GroupsIcon from '@mui/icons-material/Groups';
+import { DefaultTheme } from '../../shared/themes/Default';
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
-
-const theme = createTheme();
 
 export default function Invite() {
   let { inviteId } = useParams();
@@ -55,7 +54,7 @@ export default function Invite() {
 
     if (!!inviteId && checkIfValidUUID(inviteId)) {
       console.log("codigo do convite valido, procurando info do convite")
-      setInviteInfo({"idGroup": 15, "idOwner": 2, "nameGroup": 'Sekai', "nameOwner": 'Haru'})
+      setInviteInfo({ "idGroup": 15, "idOwner": 2, "nameGroup": 'Sekai', "nameOwner": 'Haru' })
       setLoading(false)
       // InviteService.getInfoFromInvite(inviteId).then((response) => {
       //   setLoading(false)
@@ -72,13 +71,13 @@ export default function Invite() {
   }, [])
 
 
-  const handleAddMember = async() => {
+  const handleAddMember = async () => {
     if (!!user && !!inviteInfo) {
       console.log('user logado e infos do convite recuperadas')
       setLoadingAddMember(true)
       await delay(2000)
       GroupService.addPersonInGroup({ idPerson: user, idGroup: inviteInfo!.idGroup, hashInvite: inviteId }).then(async (response) => {
-        if(response.status === 200){
+        if (response.status === 200) {
           setLoadingAddMember(false)
           setSucessInvited(true)
           await delay(3000)
@@ -89,7 +88,7 @@ export default function Invite() {
         console.log(error)
         setSucessInvited(true)
       })
-      
+
     } else {
       console.log('add member')
       navigate('/register')
@@ -100,71 +99,78 @@ export default function Invite() {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  
-  const tier = 
-    {
-      title: !!inviteInfo ? inviteInfo!.nameGroup : null,
-      subheader: 'Grupo',
-      buttonText: sucessInvited ? 'Redirecionando...' : 'Entrar no grupo',
-      buttonVariant: 'contained'
-    }
-  ;
+
+  const tier =
+  {
+    title: !!inviteInfo ? inviteInfo!.nameGroup : null,
+    subheader: 'Grupo',
+    buttonText: sucessInvited ? 'Redirecionando...' : 'Entrar no grupo',
+    buttonVariant: 'contained'
+  }
+    ;
+
+  const themePrefer = React.useMemo(
+    () =>
+      DefaultTheme('dark'),
+    [],
+  );
 
   return (
     <React.Fragment>
-      <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
-      <CssBaseline />
-      <AppBar
-        position="static"
-        color="default"
-        elevation={0}
-        sx={{ borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}
-      >
-        <Toolbar sx={{
-          justifyContent: 'center'
-        }}>
-          <img width='180' height='100' src={require('./../../shared/images/logo_niver.png')} />
-        </Toolbar>
-      </AppBar>
-      {/* Hero unit */}
+      <ThemeProvider theme={themePrefer}>
+        <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
+        <CssBaseline />
+        <AppBar
+          position="static"
+          color="default"
+          elevation={0}
+          sx={{ borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}
+        >
+          <Toolbar sx={{
+            justifyContent: 'center'
+          }}>
+            <img width='180' height='100' src={require('./../../shared/images/logo_niver.png')} />
+          </Toolbar>
+        </AppBar>
+        {/* Hero unit */}
 
-      {
+        {
 
-        loading ?
+          loading ?
 
-          <Box sx={{ m: 5, display: 'flex', justifyContent: 'center' }}>
-            <CircularProgress color='secondary' disableShrink />
-          </Box>
-
-          :
-
-          !!!inviteInfo ?
-
-            navigate('/')
+            <Box sx={{ m: 5, display: 'flex', justifyContent: 'center' }}>
+              <CircularProgress color='secondary' disableShrink />
+            </Box>
 
             :
 
-            <>
-              <Container disableGutters maxWidth="sm" component="main" sx={{ pt: 8, pb: 6 }}>
+            !!!inviteInfo ?
 
-                <Typography
-                  component="h3"
-                  variant="h4"
-                  align="center"
-                  color="text.primary"
-                  gutterBottom
-                >
-                  {inviteInfo!.nameOwner?.split(" ")[0]} te enviou um convite
-                </Typography>
-                <Typography variant="h5" align="center" color="text.secondary" component="p">
-                  Você está a um passo de nunca mais esquecer de celebrar os aniversários de seus amigos!
-                </Typography>
+              navigate('/')
+
+              :
+
+              <>
+                <Container disableGutters maxWidth="sm" component="main" sx={{ pt: 8, pb: 6 }}>
+
+                  <Typography
+                    component="h3"
+                    variant="h4"
+                    align="center"
+                    color="text.primary"
+                    gutterBottom
+                  >
+                    {inviteInfo!.nameOwner?.split(" ")[0]} te enviou um convite
+                  </Typography>
+                  <Typography variant="h5" align="center" color="text.secondary" component="p">
+                    Você está a um passo de nunca mais esquecer de celebrar os aniversários de seus amigos!
+                  </Typography>
 
 
-              </Container>
+                </Container>
 
-              <Container maxWidth="md" component="main">
-                <Grid container spacing={5} sx={{ justifyContent: 'center' }}>
+                <Container maxWidth="md" component="main">
+                  <Grid container spacing={5} sx={{ justifyContent: 'center' }}>
                     <Grid
                       item
                       key={tier.title}
@@ -195,7 +201,7 @@ export default function Invite() {
                             loading={loadingAddMember}
                             color={sucessInvited ? 'success' : 'info'}
                             variant={tier.buttonVariant as 'outlined' | 'contained'}
-                            startIcon={sucessInvited ? <CheckCircleIcon /> : <GroupsIcon/>}
+                            startIcon={sucessInvited ? <CheckCircleIcon /> : <GroupsIcon />}
                           >
                             {tier.buttonText}
                           </LoadingButton>
@@ -205,24 +211,25 @@ export default function Invite() {
                         É necessário ter um cadastro para conseguir aceitar o convite.
                       </Typography>
                     </Grid>
-                </Grid>
-              </Container>
-            </>
-      }
+                  </Grid>
+                </Container>
+              </>
+        }
 
-      {/* Footer */}
-      <Container
-        maxWidth="md"
-        component="footer"
-        sx={{
-          borderTop: (theme) => `1px solid ${theme.palette.divider}`,
-          mt: 8,
-          py: [3, 6],
-        }}
-      >
-        <Copyright />
-      </Container>
-      {/* End footer */}
+        {/* Footer */}
+        <Container
+          maxWidth="md"
+          component="footer"
+          sx={{
+            borderTop: (theme) => `1px solid ${theme.palette.divider}`,
+            mt: 8,
+            py: [3, 6],
+          }}
+        >
+          <Copyright />
+        </Container>
+        {/* End footer */}
+      </ThemeProvider>
     </React.Fragment>
   );
 }

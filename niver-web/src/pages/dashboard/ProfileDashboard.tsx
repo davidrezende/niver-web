@@ -23,8 +23,7 @@ import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { useNavigate } from 'react-router-dom';
 import { AppBarDashboard } from '../../components/AppBarDashboard';
-import { DarkTheme } from '../../shared/themes/Dark';
-import { DarkClariTheme } from '../../shared/themes/DarkClari';
+import { DefaultTheme } from '../../shared/themes/Default';
 const drawerWidth = 240;
 
 interface Props {
@@ -40,7 +39,7 @@ export default function ResponsiveDrawer(props: Props) {
   const [person, setPerson] = useState<IPersonData>();
   const [editButton, setEditButton] = useState(false);
   const [editPasswordButton, setEditPasswordButton] = useState(false);
-  const [themeSwitch, setThemeSwitch] = useState(localStorage.getItem('themeDefault') === 'true' ? true : false );
+  const [themeSwitch, setThemeSwitch] = useState(localStorage.getItem('themeDefault') === 'true' ? true : false);
   const [loading, setLoading] = useState(false);
   const { user } = useContext(AuthContext);
   const [birthdayDate, setBirthdayDate] = useState<Date | undefined>(person?.birthday);
@@ -55,7 +54,7 @@ export default function ResponsiveDrawer(props: Props) {
 
   const themePrefer = React.useMemo(
     () =>
-      DarkClariTheme(themeSwitch ? 'dark' : 'light'),
+      DefaultTheme(themeSwitch ? 'dark' : 'light'),
     [themeSwitch],
   );
 
@@ -171,7 +170,7 @@ export default function ResponsiveDrawer(props: Props) {
 
     <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
       <ThemeProvider theme={themePrefer}>
-        <CssBaseline /> 
+        <CssBaseline />
         <Box sx={{ display: 'flex' }}>
           <AppBarDashboard title="Seus dados" namePerson={person?.name} />
           <Box

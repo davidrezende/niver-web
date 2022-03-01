@@ -28,5 +28,7 @@ jobs:
         registry: docker.pkg.github.com
         username: ${{ secrets.USER_NAME_GITHUB }}
         password: ${{ secrets.GITHUB_TOKEN }}
-        dockerfile: Dockerfile-prod
+        dockerfile: |
+          cd niver-web
+          Dockerfile-prod
         tags: latest

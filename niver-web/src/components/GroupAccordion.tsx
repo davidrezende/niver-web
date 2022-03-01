@@ -6,7 +6,7 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import React, { useCallback, useEffect, useState } from 'react';
-import { IconButton, styled, ListItem, Tooltip, AccordionDetails, TextField, List, DialogTitle, Dialog, DialogContentText, DialogActions, Button, DialogContent, Box, FilledInput, FormControl, InputLabel, Menu, MenuItem, Popper, MenuList, ClickAwayListener, Paper, Grow, Divider } from '@mui/material';
+import { IconButton, styled, ListItem, Tooltip, AccordionDetails, TextField, List, DialogTitle, Dialog, DialogContentText, DialogActions, Button, DialogContent, Box, FilledInput, FormControl, InputLabel, Menu, MenuItem, Popper, MenuList, ClickAwayListener, Paper, Grow, Divider, CircularProgress, LinearProgress } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -24,6 +24,8 @@ import CopyToClipboard from './CopyToClipboard';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CachedIcon from '@mui/icons-material/Cached';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { InviteService } from '../services/InviteService';
+import { useSnackbar } from 'notistack';
 
 
 
@@ -31,21 +33,21 @@ type ListProps = {
   group: IGroupData;
   onDelete: (idGroup: number, idPerson: number) => void;
   onEdit: (group: IGroupData) => void;
-  onInvite: (idGroup: number, idPerson: number) => void;
   idPerson: number;
 };
 
 
-export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete, onEdit, onInvite }) => {
+export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete, onEdit }) => {
   const [edit, setEdit] = useState(false)
   const [openAccordion, setOpenAccordion] = useState(false)
   const [groupName, setGroupName] = useState(group.name)
   const [inviteLink, setInviteLink] = useState('')
+  const [loadingInviteCreate, setLoadingInviteCreate] = useState(false)
   const [members, setMembers] = useState(group.members)
   const [openDialogDeleteGroup, setOpenDialogDeleteGroup] = React.useState(false);
   const [openDialogExitGroup, setOpenDialogExitGroup] = React.useState(false);
   const [openDialogInviteGroup, setOpenDialogInviteGroup] = React.useState(false);
-
+  const { enqueueSnackbar } = useSnackbar();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -66,6 +68,10 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
 
   const handleClickOpenDialogInviteGroup = () => {
     handleCloseUserMenu()
+    console.log('carregando accordion: criador do Grupo:', group.owner, ' pessoa logada:', idPerson)
+    if (group.owner?.idPerson === idPerson) {
+      handleGetInviteGroup(group.idGroup, idPerson)
+    }
     setOpenDialogInviteGroup(true);
   };
 
@@ -93,11 +99,65 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
     setOpenDialogExitGroup(false);
   };
 
+  const handleGetInviteGroup = async (idGroup: number, idPerson: number) => {
+    setLoadingInviteCreate(false)
+    await delay(2000)
+    console.log('group:', idGroup, ' person:', idPerson)
+    await InviteService.getInviteExistsFromGroup(idGroup, idPerson)
+      .then(({ status, data, config }) => {
+        if (status === 200) {
+          console.log('achei um convite para esse grupo', data.inviteHash)
+          setInviteLink(data.inviteHash)
+          setLoadingInviteCreate(true)
+          enqueueSnackbar('Setei o invite la no campo pq ja existia');
+        }
+      }).catch(async ex => {
+        if (ex.response.status === 400) {
+          console.log('nao achei convite para esse grupo, criando um')
+          await InviteService.generateOrRecreateInvite({ idGroup: idGroup, owner: idPerson })
+            .then((response) => {
+              if (response.status === 200) {
+                setInviteLink(response.data.inviteHash)
+                setLoadingInviteCreate(true)
+                enqueueSnackbar('Setei o invite la no campo pq tive q criar');
+              } else {
+                console.log('erro ao tentar criar convite')
+              }
+            }).catch((response) => {
+              enqueueSnackbar('Desculpe! Não estamos conseguimos criar um convite para o seu grupo. Tente novamente mais tarde. 😢');
+              console.log('erro desconhecido ao criar um convite para um grupo pela primeira vez')
+              console.log(response)
+            })
+        } else {
+          enqueueSnackbar('Desculpe! Estamos passando por problemas. Tente novamente mais tarde. 😢');
+          console.log('erro desconhecido ao buscar um convite para o grupo')
+        }
+      })
+  }
 
-  const handleConfirmDialogInviteGroup = (idGroup: number, idPerson: number) => {
-    onInvite(idGroup, idPerson)
-    setOpenDialogInviteGroup(false);
-  };
+  function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  const handleGenerateInviteGroup = async (idGroup: number, idPerson: number) => {
+    setLoadingInviteCreate(false)
+    await delay(3000)
+    console.log('recriando convite para o grupo:', idGroup, ' person:', idPerson)
+    await InviteService.generateOrRecreateInvite({ idGroup: idGroup, owner: idPerson })
+      .then((response) => {
+        if (response.status === 200) {
+          setInviteLink(response.data.inviteHash)
+          enqueueSnackbar('Tudo certo! Seu convite foi recriado 🥳');
+          setLoadingInviteCreate(true)
+        } else {
+          console.log('erro ao tentar recriar convite')
+        }
+      }).catch((response) => {
+        enqueueSnackbar('Desculpe! Estamos passando por problemas. Tente novamente mais tarde. 🙀');
+        console.log('erro desconhecido ao tentar recriar um convite para um grupo')
+        console.log(response)
+      })
+  }
 
   const handleRemoveMember = async (idPerson: number, idGroup: number,) => {
     let { status } = await GroupService.removeMemberFromGroupId(idPerson, idGroup)
@@ -360,15 +420,17 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
               <FilledInput
                 id="filled-adornment-amount"
                 autoFocus
+                disabled={!loadingInviteCreate}
+                
                 fullWidth
-                value={inviteLink}
+                value={loadingInviteCreate? window.location.href.toString() + '/invite/' + inviteLink : '🤖 Calma aí, tô pegando seu convite...'}
                 endAdornment={
                   <>
                     <CopyToClipboard TooltipProps={{ title: "Copiado", leaveDelay: 3000 }}>
                       {({ copy }) => (
                         <IconButton
                           color="primary"
-                          onClick={() => copy(inviteLink)}
+                          onClick={() => copy(window.location.href.toString() + '/invite/' + inviteLink)}
                         >
                           <ContentCopyIcon />
                         </IconButton>
@@ -377,12 +439,13 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
                     </CopyToClipboard>
                     <Tooltip title="Recriar link do convite" >
                       <IconButton
+                        disabled={!loadingInviteCreate}
                         edge="end"
                         color="primary"
                         aria-label="renovateInviteLink"
-                        onClick={handleClickOpenDialogDeleteGroup}
+                        onClick={() => handleGenerateInviteGroup(group.idGroup, idPerson)}
                       >
-                        <CachedIcon />
+                        {loadingInviteCreate? <CachedIcon /> : <><CircularProgress size= '1rem' /></> }
                       </IconButton>
                     </Tooltip>
                   </>

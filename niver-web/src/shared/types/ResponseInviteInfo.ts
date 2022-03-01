@@ -1,6 +1,7 @@
 export default interface IInviteInfoData {
-  idOwner?: number,
-  idGroup?: number,
-  nameOwner?: string,
-  nameGroup?: string,
+  ownerId?: number,
+  groupId?: number,
+  ownerName?: string,
+  groupName?: string,
+  inviteHash?: string
 }

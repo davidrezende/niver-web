@@ -36,38 +36,43 @@ export default function Invite() {
   const [loading, setLoading] = useState(false)
   const [loadingAddMember, setLoadingAddMember] = useState(false)
   const [sucessInvited, setSucessInvited] = useState(false)
+  const [notRegistered, setNotRegistered] = useState(false)
   const { user } = useContext(AuthContext);
   let navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   function checkIfValidUUID(str: string): Boolean {
     const regexExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
     return regexExp.test(str);
   }
 
-  useEffect(() => {
+
+  const handleGetInfoFromInviteGroup = async (hashInvite: string) => {
     setLoading(true)
-    setInviteInfo(null)
+    await delay(3000)
+    console.log('procurando info do convite:', hashInvite)
+    await InviteService.getInfoFromInvite(hashInvite)
+      .then((response) => {
+        if (response.status === 200) {
+          console.log('achei o convite:', response)
+          setLoading(false)
+          setInviteInfo(response.data)
+        } else {
+          console.log('erro ao tentar recriar convite')
+        }
+      }).catch((response) => {
+        console.log('erro desconhecido ao tentar recuperar infos do convite')
+        console.log(response)
+        setLoading(false)
+      })
+  }
 
-    // this will clear Timeout
-    // when component unmount like in willComponentUnmount
-    // and show will not change to true
-
+  useEffect(() => {
     if (!!inviteId && checkIfValidUUID(inviteId)) {
       console.log("codigo do convite valido, procurando info do convite")
-      setInviteInfo({ "idGroup": 15, "idOwner": 2, "nameGroup": 'Sekai', "nameOwner": 'Haru' })
-      setLoading(false)
-      // InviteService.getInfoFromInvite(inviteId).then((response) => {
-      //   setLoading(false)
-      //   if (response.status === 200) {
-      //     setInviteInfo(response.data)
-      //   }
-      // }).catch((error) => {
-      //   setLoading(false)
-      // })
-    } else {
-      setLoading(false)
+      // setInviteInfo({ "groupId": 15, "ownerId": 2, "groupName": 'Sekai', "ownerName": 'Haru' })
+      handleGetInfoFromInviteGroup(inviteId)
     }
-
   }, [])
 
 
@@ -76,7 +81,7 @@ export default function Invite() {
       console.log('user logado e infos do convite recuperadas')
       setLoadingAddMember(true)
       await delay(2000)
-      GroupService.addPersonInGroup({ idPerson: user, idGroup: inviteInfo!.idGroup, hashInvite: inviteId }).then(async (response) => {
+      GroupService.addPersonInGroup({ idPerson: user, idGroup: inviteInfo!.groupId, hash: inviteId }).then(async (response) => {
         if (response.status === 200) {
           setLoadingAddMember(false)
           setSucessInvited(true)
@@ -87,10 +92,18 @@ export default function Invite() {
         setLoadingAddMember(false)
         console.log(error)
         setSucessInvited(true)
+        navigate('/groups')
       })
 
     } else {
-      console.log('add member')
+      enqueueSnackbar('🤖 Opa! Para aceitar um convite, você precisa estar logado. Vamos redirecionar você ao cadastro.')
+      setLoadingAddMember(true)
+      await delay(2000)
+      setLoadingAddMember(false)
+      setNotRegistered(true)
+      await delay(2000)
+      setLoadingAddMember(true)
+      console.log('redirecionndo usuario nao logado para a tela de registro')
       navigate('/register')
     }
   };
@@ -102,9 +115,9 @@ export default function Invite() {
 
   const tier =
   {
-    title: !!inviteInfo ? inviteInfo!.nameGroup : null,
+    title: !!inviteInfo ? inviteInfo!.groupName : null,
     subheader: 'Grupo',
-    buttonText: sucessInvited ? 'Redirecionando...' : 'Entrar no grupo',
+    buttonText: sucessInvited ? 'Redirecionando...' : notRegistered? 'Opa! Você não está logado. Aguarde estamos redirecionando...' : 'Entrar no grupo',
     buttonVariant: 'contained'
   }
     ;
@@ -144,9 +157,25 @@ export default function Invite() {
 
             :
 
-            !!!inviteInfo ?
+            inviteInfo === null ?
 
-              navigate('/')
+              <>
+                <Container disableGutters maxWidth="sm" component="main" sx={{ pt: 8, pb: 6 }}>
+
+                  <Typography
+                    component="h3"
+                    variant="h4"
+                    align="center"
+                    color="text.primary"
+                    gutterBottom
+                  >
+                    Convite inválido ou talvez já não exista mais! 🥺
+                  </Typography>
+                  <Typography variant="h5" align="center" color="text.secondary" component="p">
+                    Informe ao dono do grupo para criar um novo convite ou te mandar o novo link. 
+                  </Typography>
+                </Container>
+              </>
 
               :
 
@@ -160,7 +189,7 @@ export default function Invite() {
                     color="text.primary"
                     gutterBottom
                   >
-                    {inviteInfo!.nameOwner?.split(" ")[0]} te enviou um convite
+                    {inviteInfo!.ownerName?.split(" ")[0]} te enviou um convite
                   </Typography>
                   <Typography variant="h5" align="center" color="text.secondary" component="p">
                     Você está a um passo de nunca mais esquecer de celebrar os aniversários de seus amigos!
@@ -198,10 +227,11 @@ export default function Invite() {
                           <LoadingButton
                             onClick={handleAddMember}
                             fullWidth
+                            disabled={sucessInvited || loadingAddMember || notRegistered}
                             loading={loadingAddMember}
                             color={sucessInvited ? 'success' : 'info'}
                             variant={tier.buttonVariant as 'outlined' | 'contained'}
-                            startIcon={sucessInvited ? <CheckCircleIcon /> : <GroupsIcon />}
+                            startIcon={sucessInvited ? <CheckCircleIcon /> : notRegistered ? '' : <GroupsIcon />}
                           >
                             {tier.buttonText}
                           </LoadingButton>

@@ -17,6 +17,7 @@ jobs:
         node-version: '16.14'
     - name: Install yarn and run unittest
       run: |
+        cd niver-web
         yarn
         yarn test
       env:

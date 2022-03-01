@@ -19,7 +19,7 @@ jobs:
       run: |
         cd niver-web
         yarn
-        yarn test
+        yarn test --passWithNoTests
       env:
         CI: true
     - name: Publish to Github Packages Registry

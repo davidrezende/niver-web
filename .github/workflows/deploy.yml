@@ -31,3 +31,21 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           dockerfile: Dockerfile-prod
           tags: latest
+      - name: Deploy to Prod 
+        uses: appleboy/ssh-action@master
+        env:
+          USER_NAME_GITHUB: ${{ secrets.USER_NAME_GITHUB }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          passphrase: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          envs: GITHUB_USERNAME, GITHUB_TOKEN
+          script: |
+            cd /home/niver/niver-web
+            docker stop $(docker ps -a -q)
+            docker login docker.pkg.github.com -u $USER_NAME_GITHUB -p $GITHUB_TOKEN
+            docker pull docker.pkg.github.com/davidrezende/niver-web/niver-web-app:latest
+            docker run -dit -p 80:80 docker.pkg.github.com/davidrezende/niver-web/niver-web-app:latest

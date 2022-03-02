@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: "16.14"
-      - name: Install yarn and run unittest
+      - name: Install dependencies
         run: |
           cd niver-web
           npm install
@@ -42,7 +42,7 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSWORD }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          envs: GITHUB_USERNAME, GITHUB_TOKEN
+          envs: USER_NAME_GITHUB, GITHUB_TOKEN
           script: |
             cd /home/niver/niver-web
             docker stop $(docker ps -a -q)

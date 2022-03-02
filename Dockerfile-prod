@@ -2,9 +2,9 @@ FROM node:16.14.0-alpine as build
 
 WORKDIR /usr/src/app
 COPY niver-web/package*.json ./
-RUN yarn cache clean && yarn --update-checksums
+RUN npm cache clean && npm install
 COPY . ./
-RUN yarn && yarn build
+RUN npm run build
 
 # Stage - Production
 FROM nginx:1.21.6-alpine

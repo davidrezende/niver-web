@@ -17,10 +17,7 @@ jobs:
         with:
           node-version: "16.14"
       - name: Install yarn and run unittest
-        run: |
-          cd niver-web
-          yarn
-          yarn test --passWithNoTests
+        run: npm install
         env:
           CI: true
       - name: Publish to Github Packages Registry

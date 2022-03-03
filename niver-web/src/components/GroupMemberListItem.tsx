@@ -31,13 +31,11 @@ export const GroupMemberListItem: React.FC<ListProps> = ({ member, idPerson, idG
     return "#" + Math.floor(param * 1675).toString(16).padStart(6, '0').toUpperCase();
   }
 
-  function dataFormatada(dataParam: Date): string {
-    var data = new Date(dataParam),
-      dia = data.getDate().toString(),
-      diaF = (dia.length == 1) ? '0' + dia : dia,
-      mes = (data.getMonth() + 1).toString(), //+1 pois no getMonth Janeiro começa com zero.
-      mesF = (mes.length == 1) ? '0' + mes : mes,
-      anoF = data.getFullYear();
+  function dataFormatada(dataParam: string): string {
+    var data = dataParam.split('-'),
+      diaF = data[2],
+      mesF = data[1], //+1 pois no getMonth Janeiro começa com zero.
+      anoF = data[0];
     return diaF + "/" + mesF + "/" + anoF;
   }
 

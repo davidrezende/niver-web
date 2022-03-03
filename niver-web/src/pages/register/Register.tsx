@@ -24,6 +24,7 @@ import BG_2 from '../../shared/images/bg_2.jpg';
 import BG_3 from '../../shared/images/bg_3.jpg';
 import { DarkTheme } from '../../shared/themes/Dark';
 import AuthContext from '../../context/auth';
+import { CircularProgress } from '@mui/material';
 const theme = DarkTheme;
 
 export default function SignUp() {
@@ -36,6 +37,7 @@ export default function SignUp() {
   let navigate = useNavigate();
   const [banner, setBanner] = useState<{ url: number }>();
   const { user } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false)
 
   const banners =
     [
@@ -46,6 +48,11 @@ export default function SignUp() {
 
   function setRandomBanner(max: number) {
     return setBanner(banners[(Math.floor(Math.random() * max))]);
+  }
+
+
+  function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   const handleRegister = async () => {
@@ -64,15 +71,18 @@ export default function SignUp() {
     } else if (!(passUser.length >= 6)) {
       return enqueueSnackbar('A senha precisa ter no mínimo 6 caracteres 😕')
     }
-
+    setLoading(true)
+    await delay(2000)
     await AuthenticationService.register(
       { "name": userName, "birthday": birthdayDate!, "email": emailUser, "password": passUser }
     ).then((response) => {
       console.log(response)
+      setLoading(false)
       enqueueSnackbar('🌟 Cadastro realizado com sucesso 🌟')
       navigate('/login')
     }).catch((error) => {
       console.log(error)
+      setLoading(false)
       enqueueSnackbar('Serviço indisponível 😨')
     })
   };
@@ -90,7 +100,7 @@ export default function SignUp() {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
       <ThemeProvider theme={theme}>
-      <CssBaseline />
+        <CssBaseline />
         <Grid container component="main" justifyContent="flex-end" sx={{
           height: '100vh',
           backgroundImage: `url(${banner?.url === 1 ? BG_1 : banner?.url === 2 ? BG_2 : BG_3})`,
@@ -101,8 +111,8 @@ export default function SignUp() {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}>
-          <Container component="main" maxWidth="xs" sx={{bgcolor: 'rgb(0 0 0 / 80%)',}}>
-            
+          <Container component="main" maxWidth="xs" sx={{ bgcolor: 'rgb(0 0 0 / 80%)', }}>
+
             <Box
               sx={{
                 marginTop: 8,
@@ -112,12 +122,12 @@ export default function SignUp() {
               }}
             >
               <Box sx={{ mb: 5 }} alignContent='center' >
-              <img width="90%" src={require('./../../shared/images/logo_niver.png')} />
-            </Box>
+                <img width="90%" src={require('./../../shared/images/logo_niver.png')} />
+              </Box>
 
 
               <Typography component="h1" variant="h5">
-              <CakeSharpIcon /> Falta pouco!
+                <CakeSharpIcon /> Falta pouco!
               </Typography>
               <Box component="form" noValidate onSubmit={handleRegister} sx={{ mt: 3 }}>
                 <Grid container spacing={2}>
@@ -198,6 +208,19 @@ export default function SignUp() {
                     />
                   </Grid>
                 </Grid>
+
+                {
+
+                  loading ?
+
+                    <Box sx={{ m: 5, display: 'flex', justifyContent: 'center' }}>
+                      <CircularProgress color='secondary' disableShrink />
+                    </Box>
+
+                    :
+
+                    ''
+                }
                 <Button
                   type="button"
                   disabled={!(emailUser && userName && birthdayDate && passUser && passUserConfirm)}

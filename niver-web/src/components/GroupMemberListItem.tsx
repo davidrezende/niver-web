@@ -34,7 +34,7 @@ export const GroupMemberListItem: React.FC<ListProps> = ({ member, idPerson, idG
   function dataFormatada(dataParam: string): string {
     var data = dataParam.split('-'),
       diaF = data[2],
-      mesF = data[1], //+1 pois no getMonth Janeiro começa com zero.
+      mesF = data[1], 
       anoF = data[0];
     return diaF + "/" + mesF + "/" + anoF;
   }

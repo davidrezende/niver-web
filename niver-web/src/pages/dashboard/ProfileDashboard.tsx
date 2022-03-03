@@ -24,7 +24,7 @@ import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { useNavigate } from 'react-router-dom';
 import { AppBarDashboard } from '../../components/AppBarDashboard';
 import { DefaultTheme } from '../../shared/themes/Default';
-import { add, toDate, formatISO   } from 'date-fns'
+import { add, parseISO, format, isValid } from 'date-fns'
 
 const drawerWidth = 240;
 
@@ -112,11 +112,21 @@ export default function ResponsiveDrawer(props: Props) {
     setEditButton(!editButton)
   }
 
+  const handleNewDate = (newDate: Date) => {
+    setBirthdayDate(newDate);
+  }
+
   const handleConfirm = async () => {
     if (passUser && passUser.length >= 6) {
       setLoading(true)
       await delay(2000)
-      await PersonService.updatePerson({ "idPerson": user, "name": userName, "birthday": birthdayDate!, "email": emailUser, "confirmPassword": passUser })
+      console.log('data a ser atualizada:', birthdayDate)
+      if(!isValid(birthdayDate)){
+        return enqueueSnackbar('Data inválida 📅')
+      }
+      var dateFormat = format(new Date(birthdayDate!), 'yyyy-MM-dd')
+      var parsedDate = parseISO(dateFormat!)
+      await PersonService.updatePerson({ "idPerson": user, "name": userName, "birthday": parsedDate!, "email": emailUser, "confirmPassword": passUser })
         .then((response) => {
           console.log(response)
           enqueueSnackbar('Alterações realizadas ✔️')
@@ -246,7 +256,8 @@ export default function ResponsiveDrawer(props: Props) {
                         views={['year', 'month', 'day']}
                         value={birthdayDate}
                         onChange={(newValue) => {
-                          setBirthdayDate(newValue!);
+                          handleNewDate(newValue!);
+                          // setBirthdayDate(newValue!);
                         }}
                         renderInput={(params) => <TextField required variant='standard' {...params} />}
                       />

@@ -34,7 +34,7 @@ export default function ServerRequestDatePicker() {
   const fetchHighlightedDays = async (dateParam: Date) => {
     console.log('procurando aniversariantes da data:', dateParam, ' do mês:', dateParam.getMonth())
     setIsLoading(true)
-    await delay(2000)
+    await delay(250)
     await CalendarService.getBirthdaysOfMonthFromAllGroupsByPerson(dateParam.getMonth() + 1, user!).then((response) => {
       console.log(response)
       setBirthdaysMonth(response.data)

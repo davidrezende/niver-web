@@ -29,7 +29,7 @@ export default function Home() {
     [
       { title: 'Esqueceu do aniversário de alguém importante pra você? 🙊😿', subtitle: 'Não se preocupe, estamos aqui para garantir que isso não irá se repetir. Cadastre-se, crie seu grupo e convide seus amigos. É simples e rápido. Avisamos vocês com antecedência para não esquecerem nenhuma data de aniversário.' },
       { title: 'Não é bom com datas? 😥', subtitle: 'Deixe com a gente. Cadastre-se, crie seu grupo e convide seus amigos. É simples e rápido. Avisamos vocês com antecedência para não esquecerem nenhuma data de aniversário.' },
-      { title: 'Avise de forma simples e prática seu grupo dos aniversários 🎉', subtitle: 'Avisamos vocês quando alguém do grupo estiver próximo de fazer aniversário!' },
+      { title: 'Avise de forma simples e prática seu grupo 🎉', subtitle: 'Avisamos vocês quando alguém do grupo estiver próximo de fazer aniversário!' },
     ];
 
     const banners = 
@@ -57,7 +57,7 @@ export default function Home() {
       }}>
         < ResponsiveAppBar />
         <Grid container component="main" justifyContent="flex-end" sx={{
-          height: '93vh',
+          height: '93.5vh',
           // backgroundImage: 'url(https://source.unsplash.com/random)',
           backgroundImage: `url(${banner?.url === 1 ? BG_1 : banner?.url === 2 ? BG_2 : BG_3})`,
           backgroundRepeat: 'no-repeat',
@@ -87,7 +87,7 @@ export default function Home() {
                 justifyContent: 'flex-end',
                 p: 1,
                 m: 1,
-                bgcolor: 'rgb(0 0 0 / 66%)',
+                bgcolor: 'rgb(0 0 0 / 76%)',
                 borderRadius: 1,
                 flexWrap: 'wrap',
                 flexGrow: 1,
@@ -98,11 +98,11 @@ export default function Home() {
               </Grid >
               <Divider sx={{ ml: 2 }} orientation="vertical" variant='middle' flexItem />
               <Grid item xs>
-                <Typography variant="h3" component="div" sx={{ fontFamily: 'Roboto' }} align='left'>
+                <Typography variant="h4" component="div" sx={{ fontFamily: 'Roboto' }} align='left'>
                   <strong>{phrase?.title}</strong>
                 </Typography>
                 <br />
-                <Typography variant="h4" component="div" sx={{ fontFamily: 'Roboto'}} align='left'>
+                <Typography variant="h6" component="div" sx={{ fontFamily: 'Roboto'}} align='left'>
                   {phrase?.subtitle}
                 </Typography>
                 <br />

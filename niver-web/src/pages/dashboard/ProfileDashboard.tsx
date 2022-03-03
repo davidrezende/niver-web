@@ -24,6 +24,8 @@ import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { useNavigate } from 'react-router-dom';
 import { AppBarDashboard } from '../../components/AppBarDashboard';
 import { DefaultTheme } from '../../shared/themes/Default';
+import { add, toDate, formatISO   } from 'date-fns'
+
 const drawerWidth = 240;
 
 interface Props {
@@ -35,14 +37,13 @@ interface Props {
 }
 
 export default function ResponsiveDrawer(props: Props) {
-
   const [person, setPerson] = useState<IPersonData>();
   const [editButton, setEditButton] = useState(false);
   const [editPasswordButton, setEditPasswordButton] = useState(false);
   const [themeSwitch, setThemeSwitch] = useState(localStorage.getItem('themeDefault') === 'true' ? true : false);
   const [loading, setLoading] = useState(false);
   const { user } = useContext(AuthContext);
-  const [birthdayDate, setBirthdayDate] = useState<Date | undefined>(person?.birthday);
+  const [birthdayDate, setBirthdayDate] = useState<Date | undefined>();
   const [emailUser, setEmailUser] = useState(person?.email);
   const [userName, setUserName] = useState(person?.name);
   const [passUser, setPassUser] = useState('');
@@ -73,7 +74,10 @@ export default function ResponsiveDrawer(props: Props) {
   }, [])
 
   useEffect(() => {
-    setBirthdayDate(person?.birthday)
+    const dateFix = add(new Date(person?.birthday!), {
+      days: 1,
+    })
+    setBirthdayDate(dateFix)
     setEmailUser(person?.email)
     setUserName(person?.name)
     setPassUser('')
@@ -98,8 +102,11 @@ export default function ResponsiveDrawer(props: Props) {
   }
 
   const handleEdit = async () => {
+    const dateFix = add(new Date(person?.birthday!), {
+      days: 1,
+    })
     setPassUser('')
-    setBirthdayDate(person?.birthday)
+    setBirthdayDate(dateFix)
     setEmailUser(person?.email)
     setUserName(person?.name)
     setEditButton(!editButton)
@@ -113,7 +120,7 @@ export default function ResponsiveDrawer(props: Props) {
         .then((response) => {
           console.log(response)
           enqueueSnackbar('Alterações realizadas ✔️')
-          setPerson({ idPerson: user, name: userName, email: emailUser, birthday: birthdayDate })
+          setPerson({ idPerson: user, name: response.data.name, email: response.data.email, birthday: response.data.birthday })
           setEditButton(false)
           setLoading(false)
         }).catch((error) => {

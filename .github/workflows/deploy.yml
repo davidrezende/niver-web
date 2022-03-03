@@ -49,3 +49,6 @@ jobs:
             docker login docker.pkg.github.com -u $USER_NAME_GITHUB -p $GITHUB_TOKEN
             docker pull docker.pkg.github.com/davidrezende/niver-web/niver-web-app:latest
             docker run -dit -p 80:80 docker.pkg.github.com/davidrezende/niver-web/niver-web-app:latest
+            cd /home/niver/niver-api
+            docker-compose down
+            docker-compose up -d

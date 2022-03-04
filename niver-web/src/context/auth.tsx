@@ -77,8 +77,10 @@ export const AuthProvider: React.FC = ({ children }) => {
     }).catch((error) => {
       if (error.response?.status === 401) {
         enqueueSnackbar('Usuário ou senha incorretos. 😢');
+        alert(JSON.stringify(error))
       }else{
         enqueueSnackbar('Desculpe, estamos enfrentando problemas 😢');
+        alert(JSON.stringify(error))
       }
     })
 

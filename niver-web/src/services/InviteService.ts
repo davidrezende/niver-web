@@ -1,7 +1,7 @@
 import { InviteApi } from "../providers"
 import IRequestCreateInviteData from "../shared/types/RequestCreateInvite"
 
-const getInfoFromInvite = (hashInvite: string) => InviteApi.get('/' + hashInvite)
+const getInfoFromInvite = (hashInvite: string) => InviteApi.get('/info/' + hashInvite)
 const generateOrRecreateInvite = (requestInvite: IRequestCreateInviteData) => InviteApi.post('/', requestInvite)
 const getInviteExistsFromGroup = (groupId: number, ownerId: number) => InviteApi.get('/' + groupId + '/' + ownerId)
 

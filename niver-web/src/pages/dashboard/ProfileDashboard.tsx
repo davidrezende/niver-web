@@ -117,12 +117,18 @@ export default function ResponsiveDrawer(props: Props) {
   }
 
   const handleConfirm = async () => {
+    const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
     if (passUser && passUser.length >= 6) {
       setLoading(true)
       await delay(2000)
       console.log('data a ser atualizada:', birthdayDate)
       if(!isValid(birthdayDate)){
+        setLoading(false)
         return enqueueSnackbar('Data inválida 📅')
+      }
+      if (!regexpEmail.test(emailUser!)) {
+        setLoading(false)
+        return enqueueSnackbar('Email inválido 😕')
       }
       var dateFormat = format(new Date(birthdayDate!), 'yyyy-MM-dd')
       var parsedDate = parseISO(dateFormat!)

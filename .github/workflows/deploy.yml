@@ -16,21 +16,38 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: "16.14"
-      - name: Install dependencies
+      - name: Install dependencies and build project to deploy
         run: |
           cd niver-web
           npm install
+          npm run build
         env:
           CI: true
-      - name: Publish to Github Packages Registry
-        uses: elgohr/Publish-Docker-Github-Action@master
+      - name: Upload Build Folder
+        uses: actions/upload-artifact@v3
         with:
-          name: davidrezende/niver-web/niver-web-app
-          registry: docker.pkg.github.com
-          username: ${{ secrets.USER_NAME_GITHUB }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          dockerfile: Dockerfile-prod
-          tags: latest
+          name: build
+          path: build/
+      - name: SCP to Ocean
+        uses: appleboy/scp-action@master  
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          passphrase: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "/home/runner/work/build"
+          strip_components: 2
+          target: "/home/niver/niver-web/test"
+      # - name: Publish to Github Packages Registry
+      #   uses: elgohr/Publish-Docker-Github-Action@master
+      #   with:
+      #     name: davidrezende/niver-web/niver-web-app
+      #     registry: docker.pkg.github.com
+      #     username: ${{ secrets.USER_NAME_GITHUB }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
+      #     dockerfile: Dockerfile-prod
+      #     tags: latest
       - name: Deploy to Prod 
         uses: appleboy/ssh-action@master
         env:
@@ -45,10 +62,5 @@ jobs:
           envs: USER_NAME_GITHUB, GITHUB_TOKEN
           script: |
             cd /home/niver/niver-web
-            docker stop $(docker ps -a -q)
-            docker login docker.pkg.github.com -u $USER_NAME_GITHUB -p $GITHUB_TOKEN
-            docker pull docker.pkg.github.com/davidrezende/niver-web/niver-web-app:latest
-            docker run -dit -p 80:80 docker.pkg.github.com/davidrezende/niver-web/niver-web-app:latest
-            cd /home/niver/niver-api
             docker-compose down
-            docker-compose up -d
+            docker-compose up -d --build

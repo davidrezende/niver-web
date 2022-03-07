@@ -27,7 +27,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build
-          path: build/
+          path: niver-web/build
       - name: SCP to Ocean
         uses: appleboy/scp-action@master  
         with:

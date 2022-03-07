@@ -21,8 +21,8 @@ import { CircularProgress, useMediaQuery } from '@mui/material';
 import BG_1 from '../../shared/images/bg_1.jpg';
 import BG_2 from '../../shared/images/bg_2.jpg';
 import BG_3 from '../../shared/images/bg_3.jpg';
-import { DarkTheme } from '../../shared/themes/Dark';
-const theme = DarkTheme;
+import { DefaultTheme } from '../../shared/themes/Default';
+
 
 export default function SignIn() {
   const [emailUser, setEmailUser] = useState('');
@@ -77,8 +77,14 @@ export default function SignIn() {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  const themePrefer = React.useMemo(
+    () =>
+      DefaultTheme('dark'),
+    [],
+  );
+
   return (
-    <ThemeProvider theme={theme} >
+    <ThemeProvider theme={themePrefer} >
       <CssBaseline />
       <Grid container component="main" justifyContent="flex-end" sx={{
         height: '100vh',

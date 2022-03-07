@@ -38,7 +38,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           source: niver-web/build/
           strip_components: 2
-          target: "/home/niver/niver-web/niver-web/test"
+          target: "/home/niver/niver-web/niver-web/build"
       # - name: Publish to Github Packages Registry
       #   uses: elgohr/Publish-Docker-Github-Action@master
       #   with:

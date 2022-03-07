@@ -16,15 +16,14 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: "16.14"
-      - name: Install dependencies and build project to deploy
-        working-directory: frontend
+      - name: Install dependencies and build project
         run: |
           cd niver-web
           npm install
           npm run build
         env:
           CI: false
-      - name: Upload Build Folder
+      - name: Upload build folder
         uses: actions/upload-artifact@v3
         with:
           name: build

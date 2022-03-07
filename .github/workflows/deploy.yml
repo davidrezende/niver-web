@@ -17,7 +17,6 @@ jobs:
         with:
           node-version: "16.14"
       - name: Install dependencies and build project to deploy
-        working-directory: frontend
         run: |
           cd niver-web
           npm install

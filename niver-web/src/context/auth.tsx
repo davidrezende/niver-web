@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react';
-import { CalendarApi, GroupApi, MemberApi, PersonApi } from '../providers';
+import { CalendarApi, GroupApi, InviteApi, MemberApi, PersonApi } from '../providers';
 import { AuthenticationService } from '../services/AuthenticationService';
 import ICredentialsData from '../shared/types/Login';
 import ITokenData from '../shared/types/Token';
@@ -30,6 +30,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       console.log('setei o usuario logado:', storagedUserId)
       PersonApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
       MemberApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
+      InviteApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
       GroupApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
       CalendarApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
     } else {
@@ -70,6 +71,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       localStorage.setItem('@App:token', auth.accessToken);
       PersonApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
       MemberApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
+      InviteApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
       GroupApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
       CalendarApi.defaults.headers.common.Authorization = `Bearer ${auth.accessToken}`;
       enqueueSnackbar('Seja bem vindo! 👋👋👋');

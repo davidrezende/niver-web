@@ -22,7 +22,7 @@ jobs:
           npm install
           npm run build
         env:
-          CI: true
+          CI: false
       - name: Upload Build Folder
         uses: actions/upload-artifact@v3
         with:

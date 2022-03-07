@@ -17,6 +17,7 @@ jobs:
         with:
           node-version: "16.14"
       - name: Install dependencies and build project to deploy
+        working-directory: frontend
         run: |
           cd niver-web
           npm install
@@ -36,7 +37,7 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSWORD }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          source: "/home/runner/work/niver-web/niver-web/build"
+          source: niver-web/build/
           strip_components: 2
           target: "/home/niver/niver-web/niver-web/test"
       # - name: Publish to Github Packages Registry

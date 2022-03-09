@@ -15,9 +15,15 @@ import { useEffect, useState } from 'react';
 import BG_1 from '../../shared/images/bg_1.jpg';
 import BG_2 from '../../shared/images/bg_2.jpg';
 import BG_3 from '../../shared/images/bg_3.jpg';
-const theme = createTheme();
+import { DefaultTheme } from '../../shared/themes/Default';
 
 export default function Home() {
+  const themePrefer = React.useMemo(
+    () =>
+      DefaultTheme('dark'),
+    [],
+  );
+
   function setRandomPhrase(max: number) {
     return setPhrase(phrases[(Math.floor(Math.random() * max))]);
   }
@@ -27,7 +33,7 @@ export default function Home() {
 
   const phrases =
     [
-      { title: 'Esqueceu do aniversário de alguém importante pra você? 🙊😿', subtitle: 'Não se preocupe, estamos aqui para garantir que isso não irá se repetir. Cadastre-se, crie seu grupo e convide seus amigos. É simples e rápido. Avisamos vocês com antecedência para não esquecerem nenhuma data de aniversário.' },
+      { title: 'Esqueceu do aniversário de alguém? 🙊😿', subtitle: 'Cadastre-se, crie seu grupo e convide seus amigos. É simples e rápido. Avisamos vocês com antecedência para não esquecerem nenhuma data de aniversário.' },
       { title: 'Não é bom com datas? 😥', subtitle: 'Deixe com a gente. Cadastre-se, crie seu grupo e convide seus amigos. É simples e rápido. Avisamos vocês com antecedência para não esquecerem nenhuma data de aniversário.' },
       { title: 'Avise de forma simples e prática seu grupo 🎉', subtitle: 'Avisamos vocês quando alguém do grupo estiver próximo de fazer aniversário!' },
     ];
@@ -48,7 +54,7 @@ export default function Home() {
   }, [])
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={themePrefer}>
       <Grid container component="main" sx={{
         backgroundColor: 'rgb(0 0 0 / 100%)',
         backgroundRepeat: 'no-repeat',
@@ -60,11 +66,11 @@ export default function Home() {
           height: '93.5vh',
           // backgroundImage: 'url(https://source.unsplash.com/random)',
           backgroundImage: `url(${banner?.url === 1 ? BG_1 : banner?.url === 2 ? BG_2 : BG_3})`,
-          backgroundRepeat: 'no-repeat',
+          backgroundRepeat: 'repeat',
           backgroundColor: (t) =>
             t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+            backgroundPosition: 'center',
+            backgroundSize: 'cover',
         }}>
           <CssBaseline />
           
@@ -96,8 +102,7 @@ export default function Home() {
             >
               <Grid item>
               </Grid >
-              <Divider sx={{ ml: 2 }} orientation="vertical" variant='middle' flexItem />
-              <Grid item xs>
+              <Grid item xs sx={{ml: 2}}>
                 <Typography variant="h4" component="div" sx={{ fontFamily: 'Roboto' }} align='left'>
                   <strong>{phrase?.title}</strong>
                 </Typography>
@@ -134,7 +139,7 @@ export default function Home() {
               }}
             >
               <Box sx={{ mt: 1 }}>
-                <Box sx={{ mb: 5, flexWrap: 'wrap' }} >
+                <Box sx={{ flexWrap: 'wrap' }} >
                   <img width="90%" src={require('./../../shared/images/logo_niver.png')} />
                 </Box>
                 <Copyright />

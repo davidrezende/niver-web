@@ -25,7 +25,8 @@ import BG_3 from '../../shared/images/bg_3.jpg';
 import { DarkTheme } from '../../shared/themes/Dark';
 import AuthContext from '../../context/auth';
 import { CircularProgress } from '@mui/material';
-const theme = DarkTheme;
+import { DefaultTheme } from '../../shared/themes/Default';
+
 
 export default function SignUp() {
   const [birthdayDate, setBirthdayDate] = useState<Date | null>(null);
@@ -60,16 +61,23 @@ export default function SignUp() {
     const regexDatePicker = new RegExp(/^\d{2}\/\d{2}\/\d{4}$/);
     if (!(emailUser && userName && birthdayDate && passUser && passUserConfirm)) {
       return enqueueSnackbar('Precisamos de todos os dados preenchidos 😡')
-    } else if (!regexpEmail.test(emailUser)) {
+    }
+    if (!regexpEmail.test(emailUser)) {
       return enqueueSnackbar('Email inválido 😕')
-    } else if (!regexDatePicker.test(birthdayDate.toLocaleDateString())) {
+    }
+    if (!regexDatePicker.test(birthdayDate.toLocaleDateString())) {
       return enqueueSnackbar('Data de nascimento inválida 😕')
-    } else if (passUser !== passUserConfirm) {
+    }
+    if (passUser !== passUserConfirm) {
       setPassUser('')
       setPassUserConfirm('')
       return enqueueSnackbar('As senhas não coincidem 😕')
-    } else if (!(passUser.length >= 6)) {
+    }
+    if (!(passUser.length >= 6)) {
       return enqueueSnackbar('A senha precisa ter no mínimo 6 caracteres 😕')
+    }
+    if (userName.trim().length <= 0 || userName.trim().length > 25) {
+      return enqueueSnackbar('Nome inválido 😕')
     }
     setLoading(true)
     await delay(2000)
@@ -87,7 +95,6 @@ export default function SignUp() {
     })
   };
 
-
   useEffect(() => {
     setRandomBanner(banners.length)
     console.log('status do user:', user)
@@ -96,10 +103,15 @@ export default function SignUp() {
     }
   }, [])
 
+  const themePrefer = React.useMemo(
+    () =>
+      DefaultTheme('dark'),
+    [],
+  );
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} locale={ptBR}>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={themePrefer}>
         <CssBaseline />
         <Grid container component="main" justifyContent="flex-end" sx={{
           height: '100vh',
@@ -110,18 +122,19 @@ export default function SignUp() {
             t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
         }}>
           <Container component="main" maxWidth="xs" sx={{ bgcolor: 'rgb(0 0 0 / 80%)', }}>
 
             <Box
               sx={{
-                marginTop: 8,
+                marginTop: 2,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
               }}
             >
-              <Box sx={{ mb: 5 }} alignContent='center' >
+              <Box sx={{ mb: 2 }} alignContent='center' >
                 <img width="90%" src={require('./../../shared/images/logo_niver.png')} />
               </Box>
 
@@ -227,7 +240,7 @@ export default function SignUp() {
                   fullWidth
                   onClick={handleRegister}
                   variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
+                  sx={{ mt: 3, }}
                 >
                   ESTOU PRONTO! VAMOS LÁ
                 </Button>
@@ -240,7 +253,7 @@ export default function SignUp() {
                 </Grid>
               </Box>
             </Box>
-            <Copyright sx={{ mt: 5 }} />
+            <Copyright sx={{ mt: 2 }} />
           </Container>
         </Grid>
       </ThemeProvider>

@@ -27,8 +27,6 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { InviteService } from '../services/InviteService';
 import { useSnackbar } from 'notistack';
 
-
-
 type ListProps = {
   group: IGroupData;
   onDelete: (idGroup: number, idPerson: number) => void;
@@ -68,7 +66,6 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
 
   const handleClickOpenDialogInviteGroup = () => {
     handleCloseUserMenu()
-    console.log('carregando accordion: criador do Grupo:', group.owner, ' pessoa logada:', idPerson)
     if (group.owner?.idPerson === idPerson) {
       handleGetInviteGroup(group.idGroup, idPerson)
     }
@@ -102,14 +99,11 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
   const handleGetInviteGroup = async (idGroup: number, idPerson: number) => {
     setLoadingInviteCreate(false)
     await delay(2000)
-    console.log('group:', idGroup, ' person:', idPerson)
     await InviteService.getInviteExistsFromGroup(idGroup, idPerson)
       .then(({ status, data, config }) => {
         if (status === 200) {
-          console.log('achei um convite para esse grupo', data.inviteHash)
           setInviteLink(data.inviteHash)
           setLoadingInviteCreate(true)
-          enqueueSnackbar('Setei o invite la no campo pq ja existia');
         }
       }).catch(async ex => {
         if (ex.response.status === 400) {
@@ -119,14 +113,12 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
               if (response.status === 200) {
                 setInviteLink(response.data.inviteHash)
                 setLoadingInviteCreate(true)
-                enqueueSnackbar('Setei o invite la no campo pq tive q criar');
               } else {
                 console.log('erro ao tentar criar convite')
               }
             }).catch((response) => {
               enqueueSnackbar('Desculpe! Não estamos conseguimos criar um convite para o seu grupo. Tente novamente mais tarde. 😢');
               console.log('erro desconhecido ao criar um convite para um grupo pela primeira vez')
-              console.log(response)
             })
         } else {
           enqueueSnackbar('Desculpe! Estamos passando por problemas. Tente novamente mais tarde. 😢');
@@ -142,7 +134,6 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
   const handleGenerateInviteGroup = async (idGroup: number, idPerson: number) => {
     setLoadingInviteCreate(false)
     await delay(3000)
-    console.log('recriando convite para o grupo:', idGroup, ' person:', idPerson)
     await InviteService.generateOrRecreateInvite({ idGroup: idGroup, owner: idPerson })
       .then((response) => {
         if (response.status === 200) {
@@ -155,7 +146,6 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
       }).catch((response) => {
         enqueueSnackbar('Desculpe! Estamos passando por problemas. Tente novamente mais tarde. 🙀');
         console.log('erro desconhecido ao tentar recriar um convite para um grupo')
-        console.log(response)
       })
   }
 
@@ -208,8 +198,8 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
                 fullWidth
                 id="standard-basic"
                 inputProps={{ maxLength: 15 }}
-                error={groupName!.length <= 0 || groupName!.length > 15}
-                helperText={groupName!.length <= 0 || groupName!.length > 15 ? "Nome do grupo precisa ter entre 1 a 15 caracteres" : ""}
+                error={groupName!.trim().length <= 0 || groupName!.trim().length > 15}
+                helperText={groupName!.trim().length <= 0 || groupName!.trim().length > 15 ? "Nome do grupo precisa ter entre 1 a 15 caracteres" : ""}
                 variant="standard" value={groupName} onChange={(e) => setGroupName(e.target.value)} />
           }
         </ListItem>
@@ -259,7 +249,7 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
                   <IconButton
                     edge="end"
                     aria-label="confirmGroup"
-                    disabled={groupName!.length <= 0 || groupName!.length > 15}
+                    disabled={groupName!.trim().length <= 0 || groupName!.trim().length > 15}
                     onClick={handleEdit}
                   >
                     <CheckCircle />
@@ -287,80 +277,6 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
           }
 
         </ListItem>
-        {/* 
-
-        <ListItem >
-          <Tooltip title="Opções">
-            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <MoreHorizIcon />
-            </IconButton>
-          </Tooltip>
-          {group.owner?.idPerson === idPerson ?
-            <>
-              <Tooltip title="Adicionar membros" sx={{ mr: 1 }}>
-                <IconButton
-                  edge="end"
-                  aria-label="addMember"
-                  onClick={handleClickOpenDialogInviteGroup}
-                >
-                  <PersonAddIcon />
-                </IconButton>
-              </Tooltip>
-              {
-                !edit ?
-                  <Tooltip title="Editar" sx={{ mr: 1 }}>
-                    <IconButton
-                      edge="end"
-                      aria-label="editGroup"
-                      onClick={() => setEdit(true)}
-                    >
-                      <ModeEdit />
-                    </IconButton>
-                  </Tooltip>
-                  :
-                  <>
-                    <Tooltip title="Confirmar" >
-                      <IconButton
-                        edge="end"
-                        aria-label="confirmGroup"
-                        disabled={groupName!.length <= 0 || groupName!.length > 15}
-                        onClick={handleEdit}
-                      >
-                        <CheckCircle />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Cancelar" sx={{ mr: 1 }}>
-                      <IconButton
-                        edge="end"
-                        aria-label="cancelGroup"
-                        onClick={() => setEdit(false)}
-                      >
-                        <ClearIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </>
-              }
-              <Tooltip title="Deletar Grupo" >
-                <IconButton
-                  edge="end"
-                  aria-label="deleteGroup"
-                  onClick={handleClickOpenDialogDeleteGroup}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </Tooltip>
-            </>
-            :
-            <Tooltip title="Sair do Grupo">
-              <IconButton
-                edge="end"
-                aria-label="exitGroup"
-                onClick={handleClickOpenDialogExitGroup}>
-                <GroupRemoveIcon />
-              </IconButton>
-            </Tooltip>}
-        </ListItem> */}
-
 
       </MuiAccordionSummary >
       <AccordionDetails>

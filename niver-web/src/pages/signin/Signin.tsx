@@ -95,6 +95,7 @@ export default function SignIn() {
           t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
         backgroundSize: 'cover',
         backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
       }}>
         <Container component="main" maxWidth="xs" sx={{bgcolor: 'rgb(0 0 0 / 80%)',}}>
           

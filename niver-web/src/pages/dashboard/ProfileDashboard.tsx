@@ -121,7 +121,6 @@ export default function ResponsiveDrawer(props: Props) {
     if (passUser && passUser.length >= 6) {
       setLoading(true)
       await delay(2000)
-      console.log('data a ser atualizada:', birthdayDate)
       if(!isValid(birthdayDate)){
         setLoading(false)
         return enqueueSnackbar('Data inválida 📅')
@@ -130,17 +129,19 @@ export default function ResponsiveDrawer(props: Props) {
         setLoading(false)
         return enqueueSnackbar('Email inválido 😕')
       }
+      if(userName === undefined || userName.trim().length<=0 || userName.trim().length > 25){
+        setLoading(false)
+        return enqueueSnackbar('Nome inválido 😕')
+      }
       var dateFormat = format(new Date(birthdayDate!), 'yyyy-MM-dd')
       var parsedDate = parseISO(dateFormat!)
       await PersonService.updatePerson({ "idPerson": user, "name": userName, "birthday": parsedDate!, "email": emailUser, "confirmPassword": passUser })
         .then((response) => {
-          console.log(response)
           enqueueSnackbar('Alterações realizadas ✔️')
           setPerson({ idPerson: user, name: response.data.name, email: response.data.email, birthday: response.data.birthday })
           setEditButton(false)
           setLoading(false)
         }).catch((error) => {
-          console.log(error)
           if (error.response?.status === 401) {
             enqueueSnackbar('Senha atual incorreta 🤡')
           } else {
@@ -165,12 +166,10 @@ export default function ResponsiveDrawer(props: Props) {
     await delay(2000)
     await PersonService.updatePasswordPerson({ "idPerson": user, "password": oldPassUser, "newPassword": newPassUser })
       .then((response) => {
-        console.log(response)
         setLoading(false)
         enqueueSnackbar('Senha alterada ✔️')
         setEditPasswordButton(false)
       }).catch((error) => {
-        console.log(error)
         if (error.response?.status === 401) {
           enqueueSnackbar('Senha atual incorreta 🤡')
         } else {

@@ -38,7 +38,6 @@ export default function SignIn() {
 
   useEffect(() => {
     sessionStorage.removeItem('themeDefault');
-    console.log('tema preferido pela pessoa:', localStorage.getItem('themeDefault'))
     setRandomBanner(banners.length)
     if (!!!user) {
       localStorage.clear()

@@ -82,7 +82,6 @@ export default function SignUp() {
     await AuthenticationService.register(
       { "name": userName, "birthday": birthdayDate!, "email": emailUser, "password": passUser }
     ).then((response) => {
-      console.log(response)
       setLoading(false)
       enqueueSnackbar('🌟 Cadastro realizado com sucesso 🌟')
       navigate('/login')
@@ -95,7 +94,6 @@ export default function SignUp() {
 
   useEffect(() => {
     setRandomBanner(banners.length)
-    console.log('status do user:', user)
     if (!!user) {
       navigate('/groups')
     }

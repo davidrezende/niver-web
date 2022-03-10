@@ -1,46 +1,37 @@
-import * as React from 'react';
-import Badge from '@mui/material/Badge';
-import TextField from '@mui/material/TextField';
+import { CalendarPicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import PickersDay from '@mui/lab/PickersDay';
-import getDaysInMonth from 'date-fns/getDaysInMonth';
-import { CalendarPicker, StaticDatePicker } from '@mui/lab';
-import { ptBR } from "date-fns/locale";
 import { Box, CircularProgress, Tooltip } from '@mui/material';
-import IMemberData from '../shared/types/Member';
-import { CalendarService } from '../services/CalendarService';
-import AuthContext from '../context/auth';
-import ICalendarMemberBirthdayData from '../shared/types/CalendarMemberBirthday';
+import Badge from '@mui/material/Badge';
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-
-const initialValue = new Date();
+import { ptBR } from "date-fns/locale";
+import * as React from 'react';
+import AuthContext from '../context/auth';
+import { CalendarService } from '../services/CalendarService';
+import ICalendarMemberBirthdayData from '../shared/types/CalendarMemberBirthday';
 
 export default function ServerRequestDatePicker() {
   const { user } = React.useContext(AuthContext);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [highlightedDays, setHighlightedDays] = React.useState([1, 2, 15, 16]);
   const [birthdaysMonth, setBirthdaysMonth] = React.useState<ICalendarMemberBirthdayData[]>([]);
-  const [value, setValue] = React.useState<Date | null>(initialValue);
   const [date, setDate] = React.useState<Date | null>(new Date());
 
 
   const fetchHighlightedDays = async (dateParam: Date) => {
-    console.log('procurando aniversariantes da data:', dateParam, ' do mês:', dateParam.getMonth())
     setIsLoading(true)
     await delay(250)
     await CalendarService.getBirthdaysOfMonthFromAllGroupsByPerson(dateParam.getMonth() + 1, user!).then((response) => {
-      console.log(response)
       setBirthdaysMonth(response.data)
       setIsLoading(false)
     }).catch((error) => {
-      console.log(error)
+      console.log('erro ao carregar calendario')
       setBirthdaysMonth([])
     })
   };
@@ -56,9 +47,7 @@ export default function ServerRequestDatePicker() {
 
 
   const handleMonthChange = (nextMonth: Date) => {
-    console.log('data ao mudar o mes no calendario', nextMonth.getMonth(), 'dataquechegouaomudar:', nextMonth)
     setBirthdaysMonth([])
-    setHighlightedDays([]);
     fetchHighlightedDays(nextMonth);
   };
 
@@ -141,7 +130,7 @@ export default function ServerRequestDatePicker() {
                           sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                           <TableCell align="left">{row.day}</TableCell>
-                          <TableCell align="left">{row.name}</TableCell>
+                          <TableCell align="left">{row.idPerson === user ? 'Você' : row.name }</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

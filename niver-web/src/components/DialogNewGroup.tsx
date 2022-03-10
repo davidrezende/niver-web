@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 type ListProps = {
   openDialogNewGroup: boolean,

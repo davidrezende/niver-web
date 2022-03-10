@@ -1,9 +1,9 @@
 import React from 'react';
-import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import Invite from '../pages/invite/Invite';
 import Register from '../pages/register/Register';
-
 import Signin from '../pages/signin/Signin';
+
 
 const DefaultRoutes: React.FC = () => {
   return (

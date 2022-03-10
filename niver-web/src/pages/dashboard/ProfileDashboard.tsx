@@ -1,30 +1,24 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import { DatePicker, LocalizationProvider } from '@mui/lab';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { Avatar, Button, CircularProgress, Grid, InputAdornment, TextField, ThemeProvider } from '@mui/material';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
-import Drawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import { useContext, useEffect, useState } from 'react';
-import { Avatar, Button, CircularProgress, Grid, InputAdornment, Link, TextField, ThemeProvider, useMediaQuery } from '@mui/material';
-import IPersonData from '../../shared/types/Person';
-import { PersonService } from '../../services/PersonService';
-import AuthContext from '../../context/auth';
-import { CommonDrawer } from '../../components';
-import { DatePicker, LocalizationProvider } from '@mui/lab';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { add, format, isValid, parseISO } from 'date-fns';
 import { ptBR } from "date-fns/locale";
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useSnackbar } from 'notistack';
-import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
-import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import * as React from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppBarDashboard } from '../../components/AppBarDashboard';
+import AuthContext from '../../context/auth';
+import { PersonService } from '../../services/PersonService';
 import { DefaultTheme } from '../../shared/themes/Default';
-import { add, parseISO, format, isValid } from 'date-fns'
+import IPersonData from '../../shared/types/Person';
 
 const drawerWidth = 240;
 

@@ -1,34 +1,29 @@
-import * as React from 'react';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import GroupsIcon from '@mui/icons-material/Groups';
+import StarIcon from '@mui/icons-material/StarBorder';
+import { LoadingButton } from '@mui/lab';
+import { CircularProgress, ThemeProvider } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
-import Box, { BoxProps } from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
+import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
+import GlobalStyles from '@mui/material/GlobalStyles';
 import Grid from '@mui/material/Grid';
-import StarIcon from '@mui/icons-material/StarBorder';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
-import GlobalStyles from '@mui/material/GlobalStyles';
-import Container from '@mui/material/Container';
-import { useContext, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
+import * as React from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Avatar, CircularProgress, createTheme, IconButton, Menu, MenuItem, ThemeProvider, Tooltip } from '@mui/material';
 import { Copyright } from '../../components/Copyright';
 import AuthContext from '../../context/auth';
 import { GroupService } from '../../services/GroupService';
 import { InviteService } from '../../services/InviteService';
-import IInviteInfoData from '../../shared/types/ResponseInviteInfo';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { LoadingButton } from '@mui/lab';
-import GroupsIcon from '@mui/icons-material/Groups';
 import { DefaultTheme } from '../../shared/themes/Default';
-
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+import IInviteInfoData from '../../shared/types/ResponseInviteInfo';
 
 export default function Invite() {
   let { inviteId } = useParams();
@@ -50,11 +45,9 @@ export default function Invite() {
   const handleGetInfoFromInviteGroup = async (hashInvite: string) => {
     setLoading(true)
     await delay(3000)
-    console.log('procurando info do convite:', hashInvite)
     await InviteService.getInfoFromInvite(hashInvite)
       .then((response) => {
         if (response.status === 200) {
-          console.log('achei o convite:', response)
           setLoading(false)
           setInviteInfo(response.data)
         } else {
@@ -62,14 +55,12 @@ export default function Invite() {
         }
       }).catch((response) => {
         console.log('erro desconhecido ao tentar recuperar infos do convite')
-        console.log(response)
         setLoading(false)
       })
   }
 
   useEffect(() => {
     if (!!inviteId && checkIfValidUUID(inviteId)) {
-      console.log("codigo do convite valido, procurando info do convite")
       // setInviteInfo({ "groupId": 15, "ownerId": 2, "groupName": 'Sekai', "ownerName": 'Haru' })
       handleGetInfoFromInviteGroup(inviteId)
     }
@@ -78,7 +69,6 @@ export default function Invite() {
 
   const handleAddMember = async () => {
     if (!!user && !!inviteInfo) {
-      console.log('user logado e infos do convite recuperadas')
       setLoadingAddMember(true)
       await delay(2000)
       GroupService.addPersonInGroup({ idPerson: user, idGroup: inviteInfo!.groupId, hash: inviteId }).then(async (response) => {
@@ -90,7 +80,6 @@ export default function Invite() {
         }
       }).catch((error) => {
         setLoadingAddMember(false)
-        console.log(error)
         setSucessInvited(true)
         navigate('/groups')
       })
@@ -142,7 +131,7 @@ export default function Invite() {
           <Toolbar sx={{
             justifyContent: 'center'
           }}>
-            <img width='180' height='100' src={require('./../../shared/images/logo_niver.png')} />
+            <img alt="NiverDeQuem Logo" width='180' height='100' src={require('./../../shared/images/logo_niver.png')} />
           </Toolbar>
         </AppBar>
         {/* Hero unit */}

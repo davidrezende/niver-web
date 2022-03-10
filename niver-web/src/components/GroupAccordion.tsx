@@ -1,31 +1,26 @@
-import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
-import MuiAccordionSummary, {
-  AccordionSummaryProps,
-} from '@mui/material/AccordionSummary';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
-import React, { useCallback, useEffect, useState } from 'react';
-import { IconButton, styled, ListItem, Tooltip, AccordionDetails, TextField, List, DialogTitle, Dialog, DialogContentText, DialogActions, Button, DialogContent, Box, FilledInput, FormControl, InputLabel, Menu, MenuItem, Popper, MenuList, ClickAwayListener, Paper, Grow, Divider, CircularProgress, LinearProgress } from '@mui/material';
-import Typography from '@mui/material/Typography';
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import DeleteIcon from '@mui/icons-material/Delete';
-import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
-import CheckCircle from '@mui/icons-material/CheckCircle';
-import Group from '@mui/icons-material/Group';
-import ClearIcon from '@mui/icons-material/Clear';
-import ModeEdit from '@mui/icons-material/ModeEdit';
-import IGroupData from '../shared/types/Group';
-import { GroupMemberListItem } from './GroupMemberListItem';
-import { GroupService } from '../services/GroupService';
-import IMemberData from '../shared/types/Member';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import CopyToClipboard from './CopyToClipboard';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CachedIcon from '@mui/icons-material/Cached';
+import CheckCircle from '@mui/icons-material/CheckCircle';
+import ClearIcon from '@mui/icons-material/Clear';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Group from '@mui/icons-material/Group';
+import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import ModeEdit from '@mui/icons-material/ModeEdit';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { InviteService } from '../services/InviteService';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { AccordionDetails, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FilledInput, FormControl, IconButton, InputLabel, List, ListItem, Menu, MenuItem, TextField, Tooltip } from '@mui/material';
+import MuiAccordion from '@mui/material/Accordion';
+import MuiAccordionSummary from '@mui/material/AccordionSummary';
+import Typography from '@mui/material/Typography';
 import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import { GroupService } from '../services/GroupService';
+import { InviteService } from '../services/InviteService';
+import IGroupData from '../shared/types/Group';
+import CopyToClipboard from './CopyToClipboard';
+import { GroupMemberListItem } from './GroupMemberListItem';
 
 type ListProps = {
   group: IGroupData;

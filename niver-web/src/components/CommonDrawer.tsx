@@ -1,14 +1,10 @@
-import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemIcon, ListItemText, Tooltip, Typography } from '@mui/material';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import GroupsIcon from '@mui/icons-material/Groups';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { Avatar, Box, Button, Divider, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import React, { useContext } from 'react';
-import IMemberData from '../shared/types/Member';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import { useNavigate } from "react-router-dom";
 import AuthContext from '../context/auth';
-import LogoutIcon from '@mui/icons-material/Logout';
-import GroupsIcon from '@mui/icons-material/Groups';
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 
 
 type ListProps = {
@@ -16,7 +12,7 @@ type ListProps = {
 };
 
 export const CommonDrawer: React.FC<ListProps> = ({ namePerson }) => {
-  const { signed, user, Logout } = useContext(AuthContext);
+  const { Logout } = useContext(AuthContext);
   let navigate = useNavigate();
 
   async function handleLogout() {

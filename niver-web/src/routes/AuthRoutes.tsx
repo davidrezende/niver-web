@@ -1,9 +1,9 @@
 import React from 'react';
-import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom';
-
+import { Navigate, Route, Routes } from 'react-router-dom';
 import GroupDashboard from '../pages/dashboard/GroupDashboard';
 import ProfileDashboard from '../pages/dashboard/ProfileDashboard';
 import Invite from '../pages/invite/Invite';
+
 
 const AuthRoutes: React.FC = () => {
   return (

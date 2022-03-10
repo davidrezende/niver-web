@@ -1,0 +1,66 @@
+name: build and deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js 16.14
+        uses: actions/setup-node@v1
+        with:
+          node-version: "16.14"
+      - name: Install dependencies and build project
+        run: |
+          cd niver-web
+          npm install
+          npm run build
+        env:
+          CI: false
+      - name: Upload build folder
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: niver-web/build
+      - name: SCP to Ocean
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          passphrase: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: niver-web/build/
+          strip_components: 2
+          target: "/home/niver/niver-web/niver-web/build"
+      # - name: Publish to Github Packages Registry
+      #   uses: elgohr/Publish-Docker-Github-Action@master
+      #   with:
+      #     name: davidrezende/niver-web/niver-web-app
+      #     registry: docker.pkg.github.com
+      #     username: ${{ secrets.USER_NAME_GITHUB }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
+      #     dockerfile: Dockerfile-prod
+      #     tags: latest
+      - name: Deploy to Prod
+        uses: appleboy/ssh-action@master
+        env:
+          USER_NAME_GITHUB: ${{ secrets.USER_NAME_GITHUB }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          passphrase: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          envs: USER_NAME_GITHUB, GITHUB_TOKEN
+          script: |
+            cd /home/niver/niver-web
+            docker-compose down
+            docker-compose up -d --build

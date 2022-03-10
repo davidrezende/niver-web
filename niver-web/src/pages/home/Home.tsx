@@ -1,23 +1,27 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
-import Paper from '@mui/material/Paper';
-import Box, { BoxProps } from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import { ThemeProvider } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Divider } from '@mui/material';
-import ResponsiveAppBar from '../../components/AppBarHome';
-import { Copyright } from '../../components';
-import { useNavigate } from 'react-router-dom';
+import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Copyright } from '../../components';
+import ResponsiveAppBar from '../../components/AppBarHome';
 import BG_1 from '../../shared/images/bg_1.jpg';
 import BG_2 from '../../shared/images/bg_2.jpg';
 import BG_3 from '../../shared/images/bg_3.jpg';
-const theme = createTheme();
+import { DefaultTheme } from '../../shared/themes/Default';
 
 export default function Home() {
+  const themePrefer = React.useMemo(
+    () =>
+      DefaultTheme('dark'),
+    [],
+  );
+
   function setRandomPhrase(max: number) {
     return setPhrase(phrases[(Math.floor(Math.random() * max))]);
   }
@@ -27,9 +31,9 @@ export default function Home() {
 
   const phrases =
     [
-      { title: 'Esqueceu do aniversário de alguém importante pra você? 🙊😿', subtitle: 'Não se preocupe, estamos aqui para garantir que isso não irá se repetir. Cadastre-se, crie seu grupo e convide seus amigos. É simples e rápido. Avisamos vocês com antecedência para não esquecerem nenhuma data de aniversário.' },
+      { title: 'Esqueceu do aniversário de alguém? 🙊😿', subtitle: 'Cadastre-se, crie seu grupo e convide seus amigos. É simples e rápido. Avisamos vocês com antecedência para não esquecerem nenhuma data de aniversário.' },
       { title: 'Não é bom com datas? 😥', subtitle: 'Deixe com a gente. Cadastre-se, crie seu grupo e convide seus amigos. É simples e rápido. Avisamos vocês com antecedência para não esquecerem nenhuma data de aniversário.' },
-      { title: 'Avise de forma simples e prática seu grupo dos aniversários 🎉', subtitle: 'Avisamos vocês quando alguém do grupo estiver próximo de fazer aniversário!' },
+      { title: 'Avise de forma simples e prática seu grupo 🎉', subtitle: 'Avisamos vocês quando alguém do grupo estiver próximo de fazer aniversário!' },
     ];
 
     const banners = 
@@ -48,7 +52,7 @@ export default function Home() {
   }, [])
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={themePrefer}>
       <Grid container component="main" sx={{
         backgroundColor: 'rgb(0 0 0 / 100%)',
         backgroundRepeat: 'no-repeat',
@@ -57,14 +61,14 @@ export default function Home() {
       }}>
         < ResponsiveAppBar />
         <Grid container component="main" justifyContent="flex-end" sx={{
-          height: '93vh',
+          height: '93.5vh',
           // backgroundImage: 'url(https://source.unsplash.com/random)',
           backgroundImage: `url(${banner?.url === 1 ? BG_1 : banner?.url === 2 ? BG_2 : BG_3})`,
-          backgroundRepeat: 'no-repeat',
+          backgroundRepeat: 'repeat',
           backgroundColor: (t) =>
             t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+            backgroundPosition: 'center',
+            backgroundSize: 'cover',
         }}>
           <CssBaseline />
           
@@ -87,7 +91,7 @@ export default function Home() {
                 justifyContent: 'flex-end',
                 p: 1,
                 m: 1,
-                bgcolor: 'rgb(0 0 0 / 66%)',
+                bgcolor: 'rgb(0 0 0 / 76%)',
                 borderRadius: 1,
                 flexWrap: 'wrap',
                 flexGrow: 1,
@@ -96,13 +100,12 @@ export default function Home() {
             >
               <Grid item>
               </Grid >
-              <Divider sx={{ ml: 2 }} orientation="vertical" variant='middle' flexItem />
-              <Grid item xs>
-                <Typography variant="h3" component="div" sx={{ fontFamily: 'Roboto' }} align='left'>
+              <Grid item xs sx={{ml: 2}}>
+                <Typography variant="h4" component="div" sx={{ fontFamily: 'Roboto' }} align='left'>
                   <strong>{phrase?.title}</strong>
                 </Typography>
                 <br />
-                <Typography variant="h4" component="div" sx={{ fontFamily: 'Roboto'}} align='left'>
+                <Typography variant="h6" component="div" sx={{ fontFamily: 'Roboto'}} align='left'>
                   {phrase?.subtitle}
                 </Typography>
                 <br />
@@ -134,8 +137,8 @@ export default function Home() {
               }}
             >
               <Box sx={{ mt: 1 }}>
-                <Box sx={{ mb: 5, flexWrap: 'wrap' }} >
-                  <img width="90%" src={require('./../../shared/images/logo_niver.png')} />
+                <Box sx={{ flexWrap: 'wrap' }} >
+                  <img alt="NiverDeQuem Logo" width="90%" src={require('./../../shared/images/logo_niver.png')} />
                 </Box>
                 <Copyright />
               </Box>

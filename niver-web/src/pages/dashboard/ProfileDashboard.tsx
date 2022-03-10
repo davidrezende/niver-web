@@ -1,29 +1,25 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import { DatePicker, LocalizationProvider } from '@mui/lab';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { Avatar, Button, CircularProgress, Grid, InputAdornment, TextField, ThemeProvider } from '@mui/material';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
-import Drawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import { useContext, useEffect, useState } from 'react';
-import { Avatar, Button, CircularProgress, Grid, InputAdornment, Link, TextField, ThemeProvider, useMediaQuery } from '@mui/material';
-import IPersonData from '../../shared/types/Person';
-import { PersonService } from '../../services/PersonService';
-import AuthContext from '../../context/auth';
-import { CommonDrawer } from '../../components';
-import { DatePicker, LocalizationProvider } from '@mui/lab';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { add, format, isValid, parseISO } from 'date-fns';
 import { ptBR } from "date-fns/locale";
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useSnackbar } from 'notistack';
-import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
-import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import * as React from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppBarDashboard } from '../../components/AppBarDashboard';
+import AuthContext from '../../context/auth';
+import { PersonService } from '../../services/PersonService';
 import { DefaultTheme } from '../../shared/themes/Default';
+import IPersonData from '../../shared/types/Person';
+
 const drawerWidth = 240;
 
 interface Props {
@@ -35,14 +31,13 @@ interface Props {
 }
 
 export default function ResponsiveDrawer(props: Props) {
-
   const [person, setPerson] = useState<IPersonData>();
   const [editButton, setEditButton] = useState(false);
   const [editPasswordButton, setEditPasswordButton] = useState(false);
   const [themeSwitch, setThemeSwitch] = useState(localStorage.getItem('themeDefault') === 'true' ? true : false);
   const [loading, setLoading] = useState(false);
   const { user } = useContext(AuthContext);
-  const [birthdayDate, setBirthdayDate] = useState<Date | undefined>(person?.birthday);
+  const [birthdayDate, setBirthdayDate] = useState<Date | undefined>();
   const [emailUser, setEmailUser] = useState(person?.email);
   const [userName, setUserName] = useState(person?.name);
   const [passUser, setPassUser] = useState('');
@@ -73,7 +68,10 @@ export default function ResponsiveDrawer(props: Props) {
   }, [])
 
   useEffect(() => {
-    setBirthdayDate(person?.birthday)
+    const dateFix = add(new Date(person?.birthday!), {
+      days: 1,
+    })
+    setBirthdayDate(dateFix)
     setEmailUser(person?.email)
     setUserName(person?.name)
     setPassUser('')
@@ -98,26 +96,46 @@ export default function ResponsiveDrawer(props: Props) {
   }
 
   const handleEdit = async () => {
+    const dateFix = add(new Date(person?.birthday!), {
+      days: 1,
+    })
     setPassUser('')
-    setBirthdayDate(person?.birthday)
+    setBirthdayDate(dateFix)
     setEmailUser(person?.email)
     setUserName(person?.name)
     setEditButton(!editButton)
   }
 
+  const handleNewDate = (newDate: Date) => {
+    setBirthdayDate(newDate);
+  }
+
   const handleConfirm = async () => {
+    const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
     if (passUser && passUser.length >= 6) {
       setLoading(true)
       await delay(2000)
-      await PersonService.updatePerson({ "idPerson": user, "name": userName, "birthday": birthdayDate!, "email": emailUser, "confirmPassword": passUser })
+      if(!isValid(birthdayDate)){
+        setLoading(false)
+        return enqueueSnackbar('Data inválida 📅')
+      }
+      if (!regexpEmail.test(emailUser!)) {
+        setLoading(false)
+        return enqueueSnackbar('Email inválido 😕')
+      }
+      if(userName === undefined || userName.trim().length<=0 || userName.trim().length > 25){
+        setLoading(false)
+        return enqueueSnackbar('Nome inválido 😕')
+      }
+      var dateFormat = format(new Date(birthdayDate!), 'yyyy-MM-dd')
+      var parsedDate = parseISO(dateFormat!)
+      await PersonService.updatePerson({ "idPerson": user, "name": userName, "birthday": parsedDate!, "email": emailUser, "confirmPassword": passUser })
         .then((response) => {
-          console.log(response)
           enqueueSnackbar('Alterações realizadas ✔️')
-          setPerson({ idPerson: user, name: userName, email: emailUser, birthday: birthdayDate })
+          setPerson({ idPerson: user, name: response.data.name, email: response.data.email, birthday: response.data.birthday })
           setEditButton(false)
           setLoading(false)
         }).catch((error) => {
-          console.log(error)
           if (error.response?.status === 401) {
             enqueueSnackbar('Senha atual incorreta 🤡')
           } else {
@@ -142,12 +160,10 @@ export default function ResponsiveDrawer(props: Props) {
     await delay(2000)
     await PersonService.updatePasswordPerson({ "idPerson": user, "password": oldPassUser, "newPassword": newPassUser })
       .then((response) => {
-        console.log(response)
         setLoading(false)
         enqueueSnackbar('Senha alterada ✔️')
         setEditPasswordButton(false)
       }).catch((error) => {
-        console.log(error)
         if (error.response?.status === 401) {
           enqueueSnackbar('Senha atual incorreta 🤡')
         } else {
@@ -239,7 +255,8 @@ export default function ResponsiveDrawer(props: Props) {
                         views={['year', 'month', 'day']}
                         value={birthdayDate}
                         onChange={(newValue) => {
-                          setBirthdayDate(newValue!);
+                          handleNewDate(newValue!);
+                          // setBirthdayDate(newValue!);
                         }}
                         renderInput={(params) => <TextField required variant='standard' {...params} />}
                       />

@@ -1,5 +1,5 @@
-import { createTheme, CustomTheme, PaletteMode } from '@mui/material';
-import { cyan, yellow, blue, orange } from '@mui/material/colors';
+import { createTheme, PaletteMode } from '@mui/material';
+import { blue, cyan, yellow } from '@mui/material/colors';
 
 
 export const DefaultTheme = (mode: PaletteMode) => {
@@ -62,6 +62,16 @@ export const DefaultTheme = (mode: PaletteMode) => {
         }
       },
       components: {
+        MuiOutlinedInput: {
+          styleOverrides: {
+            input: {
+              '&:-webkit-autofill': {
+                '-webkit-box-shadow': '0 0 0 100px #303134 inset',
+                '-webkit-text-fill-color': '#fff'
+              }
+            }
+          }
+        },
         MuiAppBar: {
           styleOverrides: {
             ...(mode === 'light'
@@ -83,7 +93,7 @@ export const DefaultTheme = (mode: PaletteMode) => {
         MuiDrawer: {
           styleOverrides: {
             ...(mode === 'light'
-              ? 
+              ?
               {
                 // root: {
                 //   backgroundColor: 'rgb(255 255 255)',

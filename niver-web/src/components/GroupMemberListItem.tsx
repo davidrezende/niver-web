@@ -1,5 +1,5 @@
-import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemAvatar, ListItemText, Tooltip } from '@mui/material';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, ListItem, ListItemAvatar, ListItemText, Tooltip } from '@mui/material';
 import React from 'react';
 import IMemberData from '../shared/types/Member';
 
@@ -31,13 +31,11 @@ export const GroupMemberListItem: React.FC<ListProps> = ({ member, idPerson, idG
     return "#" + Math.floor(param * 1675).toString(16).padStart(6, '0').toUpperCase();
   }
 
-  function dataFormatada(dataParam: Date): string {
-    var data = new Date(dataParam),
-      dia = data.getDate().toString(),
-      diaF = (dia.length == 1) ? '0' + dia : dia,
-      mes = (data.getMonth() + 1).toString(), //+1 pois no getMonth Janeiro começa com zero.
-      mesF = (mes.length == 1) ? '0' + mes : mes,
-      anoF = data.getFullYear();
+  function dataFormatada(dataParam: string): string {
+    var data = dataParam.split('-'),
+      diaF = data[2],
+      mesF = data[1], 
+      anoF = data[0];
     return diaF + "/" + mesF + "/" + anoF;
   }
 

@@ -1,5 +1,5 @@
-import { createTheme, CustomTheme, PaletteMode } from '@mui/material';
-import { cyan, yellow, blue, orange } from '@mui/material/colors';
+import { createTheme, PaletteMode } from '@mui/material';
+import { blue, cyan, yellow } from '@mui/material/colors';
 
 
 export const DefaultTheme = (mode: PaletteMode) => {

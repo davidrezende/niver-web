@@ -1,30 +1,28 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Copyright } from '../../components';
+import CakeSharpIcon from '@mui/icons-material/CakeSharp';
 import { DatePicker, LocalizationProvider } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { CircularProgress } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Grid from '@mui/material/Grid';
+import { ThemeProvider } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { ptBR } from "date-fns/locale";
-import { Link, useNavigate } from 'react-router-dom';
-import CakeSharpIcon from '@mui/icons-material/CakeSharp';
-import { AuthenticationService } from '../../services/AuthenticationService';
-import { useContext, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
+import * as React from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Copyright } from '../../components';
+import AuthContext from '../../context/auth';
+import { AuthenticationService } from '../../services/AuthenticationService';
 import BG_1 from '../../shared/images/bg_1.jpg';
 import BG_2 from '../../shared/images/bg_2.jpg';
 import BG_3 from '../../shared/images/bg_3.jpg';
-import { DarkTheme } from '../../shared/themes/Dark';
-import AuthContext from '../../context/auth';
-import { CircularProgress } from '@mui/material';
 import { DefaultTheme } from '../../shared/themes/Default';
 
 
@@ -135,7 +133,7 @@ export default function SignUp() {
               }}
             >
               <Box sx={{ mb: 2 }} alignContent='center' >
-                <img width="90%" src={require('./../../shared/images/logo_niver.png')} />
+                <img alt="NiverDeQuem Logo" width="90%" src={require('./../../shared/images/logo_niver.png')} />
               </Box>
 
 

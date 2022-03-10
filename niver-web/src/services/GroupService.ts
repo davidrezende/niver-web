@@ -1,4 +1,4 @@
-import { MemberApi, GroupApi } from "../providers"
+import { GroupApi, MemberApi } from "../providers"
 import IGroupData from "../shared/types/Group"
 import IMemberAddGroup from "../shared/types/RequestAddMember"
 import IRequestSaveGroup from "../shared/types/RequestSaveGroup"

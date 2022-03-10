@@ -1,31 +1,27 @@
-import * as React from 'react';
+import AddBox from '@mui/icons-material/AddBox';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import { Button, CircularProgress, Grid, Stack, styled, ThemeProvider, Zoom } from '@mui/material';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import AddBox from '@mui/icons-material/AddBox';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Avatar, Button, CircularProgress, CustomTheme, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, PaletteMode, Paper, Stack, styled, Switch, TextField, ThemeProvider, useTheme, Zoom } from '@mui/material';
-import IGroupData from '../../shared/types/Group';
-import { GroupService } from '../../services/GroupService';
-import { GroupAccordion } from '../../components/GroupAccordion';
-import CalendarBirthdays from '../../components/CalendarBirthdays';
-import IPersonData from '../../shared/types/Person';
-import { PersonService } from '../../services/PersonService';
-import AuthContext from '../../context/auth';
-import { useNavigate } from "react-router-dom";
-import { CommonDrawer, DialogNewGroup } from '../../components';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { ptBR } from "date-fns/locale";
-import { LocalizationProvider } from '@mui/lab';
-import { AppBarDashboard } from '../../components/AppBarDashboard';
-import { DarkTheme } from '../../shared/themes/Dark';
-import { DefaultTheme } from '../../shared/themes/Default';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import * as React from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import { DialogNewGroup } from '../../components';
+import { AppBarDashboard } from '../../components/AppBarDashboard';
+import CalendarBirthdays from '../../components/CalendarBirthdays';
+import { GroupAccordion } from '../../components/GroupAccordion';
+import AuthContext from '../../context/auth';
+import { GroupService } from '../../services/GroupService';
+import { PersonService } from '../../services/PersonService';
+import { DefaultTheme } from '../../shared/themes/Default';
+import IGroupData from '../../shared/types/Group';
+import IPersonData from '../../shared/types/Person';
 
 interface Props {
   window?: () => Window;
@@ -34,7 +30,6 @@ interface Props {
 
 export default function ResponsiveDrawer(props: Props) {
   const [person, setPerson] = useState<IPersonData>();
-  const [nameGroup, setNameGroup] = useState('');
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const [themeSwitch, setThemeSwitch] = useState(prefersDarkMode);
   const [loadingGroups, setLoadingGroups] = useState(false);

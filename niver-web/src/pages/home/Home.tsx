@@ -1,17 +1,15 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
-import Paper from '@mui/material/Paper';
-import Box, { BoxProps } from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import { ThemeProvider } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Divider } from '@mui/material';
-import ResponsiveAppBar from '../../components/AppBarHome';
-import { Copyright } from '../../components';
-import { useNavigate } from 'react-router-dom';
+import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Copyright } from '../../components';
+import ResponsiveAppBar from '../../components/AppBarHome';
 import BG_1 from '../../shared/images/bg_1.jpg';
 import BG_2 from '../../shared/images/bg_2.jpg';
 import BG_3 from '../../shared/images/bg_3.jpg';
@@ -140,7 +138,7 @@ export default function Home() {
             >
               <Box sx={{ mt: 1 }}>
                 <Box sx={{ flexWrap: 'wrap' }} >
-                  <img width="90%" src={require('./../../shared/images/logo_niver.png')} />
+                  <img alt="NiverDeQuem Logo" width="90%" src={require('./../../shared/images/logo_niver.png')} />
                 </Box>
                 <Copyright />
               </Box>

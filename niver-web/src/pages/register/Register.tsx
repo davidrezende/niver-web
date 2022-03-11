@@ -12,6 +12,7 @@ import Grid from '@mui/material/Grid';
 import { ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { format, parseISO } from 'date-fns';
 import { ptBR } from "date-fns/locale";
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
@@ -24,7 +25,6 @@ import BG_1 from '../../shared/images/bg_1.jpg';
 import BG_2 from '../../shared/images/bg_2.jpg';
 import BG_3 from '../../shared/images/bg_3.jpg';
 import { DefaultTheme } from '../../shared/themes/Default';
-
 
 export default function SignUp() {
   const [birthdayDate, setBirthdayDate] = useState<Date | null>(null);
@@ -63,9 +63,14 @@ export default function SignUp() {
     if (!regexpEmail.test(emailUser)) {
       return enqueueSnackbar('Email inválido 😕')
     }
+
+    var dateFormat = format(birthdayDate!, 'dd/MM/yyyy')
+    var parsedDate = parseISO(dateFormat!)
+    console.log('birthdayDate:', birthdayDate, '\ndateFormat:', dateFormat, '\nparsedDate:', parsedDate, '\nparsedDateTOLocaleDateString:', parsedDate.toLocaleDateString())
     // if (!regexDatePicker.test(birthdayDate.toLocaleDateString())) {
-    //   return enqueueSnackbar('Data de nascimento inválida 😕')
-    // }
+    if (!regexDatePicker.test(parsedDate.toLocaleDateString())) {
+      return enqueueSnackbar('Data de nascimento inválida 😕')
+    }
     if (passUser !== passUserConfirm) {
       setPassUser('')
       setPassUserConfirm('')

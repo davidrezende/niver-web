@@ -55,7 +55,7 @@ export default function SignUp() {
   }
 
   const handleRegister = async () => {
-    const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+    // const regexpEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
     const regexDatePicker = new RegExp(/^\d{2}\/\d{2}\/\d{4}$/);
     if (!(emailUser && userName && birthdayDate && passUser && passUserConfirm)) {
       return enqueueSnackbar('Precisamos de todos os dados preenchidos 😡')
@@ -63,9 +63,9 @@ export default function SignUp() {
     if (!regexpEmail.test(emailUser)) {
       return enqueueSnackbar('Email inválido 😕')
     }
-    if (!regexDatePicker.test(birthdayDate.toLocaleDateString())) {
-      return enqueueSnackbar('Data de nascimento inválida 😕')
-    }
+    // if (!regexDatePicker.test(birthdayDate.toLocaleDateString())) {
+    //   return enqueueSnackbar('Data de nascimento inválida 😕')
+    // }
     if (passUser !== passUserConfirm) {
       setPassUser('')
       setPassUserConfirm('')

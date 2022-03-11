@@ -12,7 +12,7 @@ import Grid from '@mui/material/Grid';
 import { ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { format, parseISO } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import { ptBR } from "date-fns/locale";
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
@@ -65,10 +65,10 @@ export default function SignUp() {
     }
 
     var dateFormat = format(birthdayDate!, 'dd/MM/yyyy')
-    var parsedDate = parseISO(dateFormat!)
-    console.log('birthdayDate:', birthdayDate, '\ndateFormat:', dateFormat, '\nparsedDate:', parsedDate, '\nparsedDateTOLocaleDateString:', parsedDate.toLocaleDateString())
+    // var parsedDate = parseISO(dateFormat!)
+    console.log('birthdayDate:', birthdayDate, '\ndateFormat:', dateFormat)
     // if (!regexDatePicker.test(birthdayDate.toLocaleDateString())) {
-    if (!regexDatePicker.test(parsedDate.toLocaleDateString())) {
+    if (!regexDatePicker.test(dateFormat) && !isValid(birthdayDate)) {
       return enqueueSnackbar('Data de nascimento inválida 😕')
     }
     if (passUser !== passUserConfirm) {

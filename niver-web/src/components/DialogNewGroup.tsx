@@ -29,9 +29,9 @@ export const DialogNewGroup: React.FC<ListProps> = ({ openDialogNewGroup, handle
           label="Nome do grupo"
           value={nameGroup}
           fullWidth
-          inputProps={{ maxLength: 15 }}
-          error={nameGroup.trim().length <= 0 || nameGroup.trim().length > 15}
-          helperText={nameGroup.trim().length <= 0 || nameGroup.trim().length > 15 ? "Nome do grupo precisa ter entre 1 a 15 caracteres" : ""}
+          inputProps={{ maxLength: 30 }}
+          error={nameGroup.trim().length <= 0 || nameGroup.trim().length > 30}
+          helperText={nameGroup.trim().length <= 0 || nameGroup.trim().length > 30 ? "Nome do grupo precisa ter entre 1 a 30 caracteres" : ""}
           variant="standard"
           onChange={(e) => setNameGroup(e.target.value)}
         />
@@ -41,7 +41,7 @@ export const DialogNewGroup: React.FC<ListProps> = ({ openDialogNewGroup, handle
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCloseDialogNewGroup}>Cancelar</Button>
-        <Button onClick={() => handlePrepareRegisterNewGroup(nameGroup)} disabled={nameGroup.trim().length <= 0 || nameGroup.trim().length > 15} >Confirmar</Button>
+        <Button onClick={() => handlePrepareRegisterNewGroup(nameGroup)} disabled={nameGroup.trim().length <= 0 || nameGroup.trim().length > 30} >Confirmar</Button>
       </DialogActions>
     </Dialog>
   )

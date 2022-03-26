@@ -244,7 +244,7 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
                   <IconButton
                     edge="end"
                     aria-label="confirmGroup"
-                    disabled={groupName!.trim().length <= 0 || groupName!.trim().length > 15}
+                    disabled={groupName!.trim().length <= 0 || groupName!.trim().length > 30}
                     onClick={handleEdit}
                   >
                     <CheckCircle />

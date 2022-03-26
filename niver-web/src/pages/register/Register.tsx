@@ -12,6 +12,7 @@ import Grid from '@mui/material/Grid';
 import { ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { format, isValid } from 'date-fns';
 import { ptBR } from "date-fns/locale";
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
@@ -24,7 +25,6 @@ import BG_1 from '../../shared/images/bg_1.jpg';
 import BG_2 from '../../shared/images/bg_2.jpg';
 import BG_3 from '../../shared/images/bg_3.jpg';
 import { DefaultTheme } from '../../shared/themes/Default';
-
 
 export default function SignUp() {
   const [birthdayDate, setBirthdayDate] = useState<Date | null>(null);
@@ -63,7 +63,12 @@ export default function SignUp() {
     if (!regexpEmail.test(emailUser)) {
       return enqueueSnackbar('Email inválido 😕')
     }
-    if (!regexDatePicker.test(birthdayDate.toLocaleDateString())) {
+
+    var dateFormat = format(birthdayDate!, 'dd/MM/yyyy')
+    // var parsedDate = parseISO(dateFormat!)
+    console.log('birthdayDate:', birthdayDate, '\ndateFormat:', dateFormat)
+    // if (!regexDatePicker.test(birthdayDate.toLocaleDateString())) {
+    if (!regexDatePicker.test(dateFormat) && !isValid(birthdayDate)) {
       return enqueueSnackbar('Data de nascimento inválida 😕')
     }
     if (passUser !== passUserConfirm) {
@@ -82,7 +87,6 @@ export default function SignUp() {
     await AuthenticationService.register(
       { "name": userName, "birthday": birthdayDate!, "email": emailUser, "password": passUser }
     ).then((response) => {
-      console.log(response)
       setLoading(false)
       enqueueSnackbar('🌟 Cadastro realizado com sucesso 🌟')
       navigate('/login')
@@ -95,7 +99,6 @@ export default function SignUp() {
 
   useEffect(() => {
     setRandomBanner(banners.length)
-    console.log('status do user:', user)
     if (!!user) {
       navigate('/groups')
     }

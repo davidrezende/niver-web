@@ -25,7 +25,6 @@ export const AuthProvider: React.FC = ({ children }) => {
     const storagedToken = localStorage.getItem('@App:token');
     if (storagedToken && storagedUserId && validateTokenExpiration(storagedToken)) {
       setUser(+storagedUserId);
-      console.log('setei o usuario logado:', storagedUserId)
       PersonApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
       MemberApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
       InviteApi.defaults.headers.common.Authorization = `Bearer ${storagedToken}`;
@@ -60,7 +59,6 @@ export const AuthProvider: React.FC = ({ children }) => {
     AuthenticationService.login({ "email": credentials.email, "password": credentials.password }).then((response) => {
       var auth = JSON.parse(JSON.stringify(response.data)!) as ITokenData
       setUser(auth.userId!);
-      console.log('loguei o usuario:', auth.userId!.toString())
       localStorage.setItem('@App:userId', auth.userId!.toString());
       localStorage.setItem('@App:userName', auth.userName);
       localStorage.setItem('@App:token', auth.accessToken);

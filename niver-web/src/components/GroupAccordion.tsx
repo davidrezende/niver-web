@@ -192,9 +192,9 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
               <TextField
                 fullWidth
                 id="standard-basic"
-                inputProps={{ maxLength: 15 }}
-                error={groupName!.trim().length <= 0 || groupName!.trim().length > 15}
-                helperText={groupName!.trim().length <= 0 || groupName!.trim().length > 15 ? "Nome do grupo precisa ter entre 1 a 15 caracteres" : ""}
+                inputProps={{ maxLength: 30 }}
+                error={groupName!.trim().length <= 0 || groupName!.trim().length > 30}
+                helperText={groupName!.trim().length <= 0 || groupName!.trim().length > 30 ? "Nome do grupo precisa ter entre 1 a 30 caracteres" : ""}
                 variant="standard" value={groupName} onChange={(e) => setGroupName(e.target.value)} />
           }
         </ListItem>
@@ -244,7 +244,7 @@ export const GroupAccordion: React.FC<ListProps> = ({ group, idPerson, onDelete,
                   <IconButton
                     edge="end"
                     aria-label="confirmGroup"
-                    disabled={groupName!.trim().length <= 0 || groupName!.trim().length > 15}
+                    disabled={groupName!.trim().length <= 0 || groupName!.trim().length > 30}
                     onClick={handleEdit}
                   >
                     <CheckCircle />
